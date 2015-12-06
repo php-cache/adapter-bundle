@@ -30,4 +30,12 @@ class DoctrineCacheExtension extends Extension
 
         $container->setParameter('doctrine_cache.providers', $config['providers']);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAlias()
+    {
+        return 'doctrine_cache';
+    }
 }
