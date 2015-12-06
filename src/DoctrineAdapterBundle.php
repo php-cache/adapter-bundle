@@ -1,12 +1,12 @@
 <?php
 
-namespace Cache\DoctrineCacheBundle;
+namespace Cache\Adapter\DoctrineAdapterBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class DoctrineCacheBundle extends Bundle
+class DoctrineAdapterBundle extends Bundle
 {
 }

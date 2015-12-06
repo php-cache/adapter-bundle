@@ -1,6 +1,6 @@
 <?php
 
-namespace Cache\DoctrineCacheBundle\DependencyInjection;
+namespace Cache\Adapter\DoctrineAdapterBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;

@@ -1,4 +1,4 @@
-# Doctrine Cache Bundle
+# Doctrine Adapter Bundle
 
 This bundle registers PSR6 cache services that wraps the doctrine cache. 
 

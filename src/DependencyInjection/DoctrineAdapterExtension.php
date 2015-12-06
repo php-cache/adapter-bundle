@@ -1,6 +1,6 @@
 <?php
 
-namespace Cache\DoctrineCacheBundle\DependencyInjection;
+namespace Cache\Adapter\DoctrineAdapterBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -12,7 +12,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
  *
  * @author Aaron Scherer <aequasi@gmail.com>
  */
-class DoctrineCacheExtension extends Extension
+class DoctrineAdapterExtension extends Extension
 {
     /**
      * Loads the configs for Cache and puts data into the container.

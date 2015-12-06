@@ -28,12 +28,12 @@
     },
     "autoload":     {
         "psr-4": {
-            "Cache\\DoctrineCacheBundle\\": "src/"
+            "Cache\\Adapter\\DoctrineAdapterBundle\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Cache\\DoctrineCacheBundle\\Tests\\": "tests/"
+            "Cache\\Adapter\\DoctrineAdapterBundle\\Tests\\": "tests/"
         }
     }
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace Cache\DoctrineCacheBundle\Tests\DependencyInjection;
+namespace Cache\Adapter\DoctrineAdapterBundle\Tests\DependencyInjection;
 
-use Cache\DoctrineCacheBundle\DependencyInjection\DoctrineCacheExtension;
+use Cache\Adapter\DoctrineAdapterBundle\DependencyInjection\DoctrineAdapterExtension;
 use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractExtensionTestCase;
 
 class DoctrineCacheExtensionTest extends AbstractExtensionTestCase
@@ -11,7 +11,7 @@ class DoctrineCacheExtensionTest extends AbstractExtensionTestCase
     protected function getContainerExtensions()
     {
         return array(
-            new DoctrineCacheExtension()
+            new DoctrineAdapterExtension()
         );
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Cache\DoctrineCacheBundle\DependencyInjection\CompilerPass;
+namespace Cache\Adapter\DoctrineAdapterBundle\DependencyInjection\CompilerPass;
 
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -21,7 +21,7 @@ class ServiceBuilderPass implements CompilerPassInterface
             'connect' => 'addServer',
         ],
         'memcached' => [
-            'class' => 'Cache\DoctrineCacheBundle\ProviderHelper\Memcached',
+            'class' => 'Cache\Adapter\DoctrineAdapterBundle\ProviderHelper\Memcached',
             'connect' => 'addServer',
         ],
         'redis' => [
@@ -67,7 +67,7 @@ class ServiceBuilderPass implements CompilerPassInterface
     private function createPsr7CompliantService(ContainerBuilder $container, $typeServiceId, $name)
     {
         // This is the service id for the PSR6 provider. This is the one that we use.
-        $serviceId = 'cache_adapter_doctrine.provider.'.$name;
+        $serviceId = 'cache.doctrine_adapter.provider.'.$name;
 
         // Register the CacheItemPoolInterface definition
         $def = $container->setDefinition(
