@@ -1,6 +1,6 @@
 <?php
 
-namespace Cache\DoctrineCacheBundle\Cache;
+namespace Cache\DoctrineCacheBundle\ProviderHelper;
 
 /**
  * Class Memcached.

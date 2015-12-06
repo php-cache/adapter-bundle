@@ -28,7 +28,7 @@ class DoctrineCacheExtension extends Extension
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
 
-        $container->setParameter('doctrine_cache.providers', $config['providers']);
+        $container->setParameter('cache_adapter_doctrine.providers', $config['providers']);
     }
 
     /**
@@ -36,6 +36,6 @@ class DoctrineCacheExtension extends Extension
      */
     public function getAlias()
     {
-        return 'doctrine_cache';
+        return 'cache_adapter_doctrine';
     }
 }

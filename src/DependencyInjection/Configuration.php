@@ -21,7 +21,7 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('doctrine_cache');
+        $rootNode = $treeBuilder->root('cache_adapter_doctrine');
 
         $rootNode->children()
             ->append($this->getClustersNode())

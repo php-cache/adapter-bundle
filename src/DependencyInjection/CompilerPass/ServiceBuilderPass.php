@@ -21,7 +21,7 @@ class ServiceBuilderPass implements CompilerPassInterface
             'connect' => 'addServer',
         ],
         'memcached' => [
-            'class' => 'Cache\DoctrineCacheBundle\Cache\Memcached',
+            'class' => 'Cache\DoctrineCacheBundle\ProviderHelper\Memcached',
             'connect' => 'addServer',
         ],
         'redis' => [
@@ -67,7 +67,7 @@ class ServiceBuilderPass implements CompilerPassInterface
     private function createPsr7CompliantService(ContainerBuilder $container, $typeServiceId, $name)
     {
         // This is the service id for the PSR6 provider. This is the one that we use.
-        $serviceId = 'doctrine_cache.provider.'.$name;
+        $serviceId = 'cache_adapter_doctrine.provider.'.$name;
 
         // Register the CacheItemPoolInterface definition
         $def = $container->setDefinition(
@@ -76,7 +76,7 @@ class ServiceBuilderPass implements CompilerPassInterface
         );
         $def->addArgument(0, new Reference($typeServiceId));
 
-        $container->setAlias('doctrine_cache.'.$name, $serviceId);
+        $container->setAlias('cache.provider.'.$name, $serviceId);
     }
 
     /**
@@ -101,15 +101,15 @@ class ServiceBuilderPass implements CompilerPassInterface
             case 'memcached':
             case 'redis':
             if (!empty($provider['id'])) {
-                $cacheProviderServiceId = $provider['id'];
+                $providerHelperServiceId = $provider['id'];
             } else {
                 // Create a new cache provider if none is defined
-                $cacheProviderServiceId = sprintf('doctrine_cache.provider.%s.cache_provider', $name);
-                $cacheProviderDefinition = $this->createCacheProviderDefinition($type, $provider);
-                $container->setDefinition($cacheProviderServiceId, $cacheProviderDefinition);
+                $providerHelperServiceId = sprintf('cache_adapter_doctrine.provider.%s.helper', $name);
+                $providerHelperDefinition = $this->createProviderHelperDefinition($type, $provider);
+                $container->setDefinition($providerHelperServiceId, $providerHelperDefinition);
             }
 
-            $service->addMethodCall(sprintf('set%s', ucwords($type)), [new Reference($cacheProviderServiceId)]);
+            $service->addMethodCall(sprintf('set%s', ucwords($type)), [new Reference($providerHelperServiceId)]);
 
             break;
             case 'file_system':
@@ -140,9 +140,10 @@ class ServiceBuilderPass implements CompilerPassInterface
      *
      * @return Definition
      */
-    public function createCacheProviderDefinition($type, array $provider)
+    public function createProviderHelperDefinition($type, array $provider)
     {
-        $cache = new Definition(self::$types[$type]['class']);
+        $helperDefinition = new Definition(self::$types[$type]['class']);
+        $helperDefinition->setPublic(false);
 
         // set memcached options first as they need to be set before the servers are added.
         if ($type === 'memcached') {
@@ -157,7 +158,7 @@ class ServiceBuilderPass implements CompilerPassInterface
                             );
                             break;
                     }
-                    $cache->addMethodCall(
+                    $helperDefinition->addMethodCall(
                         'setOption',
                         [constant(sprintf('\Memcached::OPT_%s', strtoupper($option))), $value]
                     );
@@ -172,7 +173,7 @@ class ServiceBuilderPass implements CompilerPassInterface
                 $persistentId = substr(md5(serialize($provider['hosts'])), 0, 5);
             }
             if ($type === 'memcached') {
-                $cache->setArguments([$persistentId]);
+                $helperDefinition->setArguments([$persistentId]);
             }
             if ($type === 'redis') {
                 self::$types[$type]['connect'] = 'pconnect';
@@ -193,19 +194,19 @@ class ServiceBuilderPass implements CompilerPassInterface
                 }
             }
 
-            $cache->addMethodCall(self::$types[$type]['connect'], $arguments);
+            $helperDefinition->addMethodCall(self::$types[$type]['connect'], $arguments);
         }
         unset($config);
 
         if ($type === 'redis') {
             if (isset($provider['auth_password']) && null !== $provider['auth_password']) {
-                $cache->addMethodCall('auth', [$provider['auth_password']]);
+                $helperDefinition->addMethodCall('auth', [$provider['auth_password']]);
             }
             if (isset($provider['database'])) {
-                $cache->addMethodCall('select', [$provider['database']]);
+                $helperDefinition->addMethodCall('select', [$provider['database']]);
             }
         }
 
-        return $cache;
+        return $helperDefinition;
     }
 }

@@ -20,6 +20,6 @@ class DoctrineCacheExtensionTest extends AbstractExtensionTestCase
         $providers = array('foo' => ['type'=>'apc']);
         $this->load(array('providers' => $providers));
 
-        $this->assertContainerBuilderHasParameter('doctrine_cache.providers');
+        $this->assertContainerBuilderHasParameter('cache_adapter_doctrine.providers');
     }
 }

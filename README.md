@@ -6,7 +6,7 @@ This bundle registers PSR6 cache services that wraps the doctrine cache.
 
 ```yaml
 
-doctrine_cache:
+cache_adapter_doctrine:
   providers:
     acme_file_system_cache:
       extension: '.fsc'
@@ -20,7 +20,7 @@ doctrine_cache:
 ``` php
 
 /** @var CacheItemPoolInterface $cacheProvider */
-$cacheProvider = $this->container->get('doctrine.acme_apc_cache');
+$cacheProvider = $this->container->get('cache.provider.acme_apc_cache');
 
 /** @var CacheItemInterface $item */
 $item = $cacheProvider->getItem('cache-key');
