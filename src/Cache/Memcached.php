@@ -3,14 +3,14 @@
 namespace Cache\DoctrineCacheBundle\Cache;
 
 /**
- * Class Memcached
+ * Class Memcached.
  *
  * @author Aaron Scherer <aequasi@gmail.com>
  */
 class Memcached extends \Memcached
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function addServer($host, $port, $weight = 0)
     {

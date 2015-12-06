@@ -8,14 +8,14 @@ use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 /**
- * Class AequasiCacheExtension
+ * Class AequasiCacheExtension.
  *
  * @author Aaron Scherer <aequasi@gmail.com>
  */
 class DoctrineCacheExtension extends Extension
 {
     /**
-     * Loads the configs for Cache and puts data into the container
+     * Loads the configs for Cache and puts data into the container.
      *
      * @param array            $configs   Array of configs
      * @param ContainerBuilder $container Container Object
@@ -25,10 +25,9 @@ class DoctrineCacheExtension extends Extension
         $configuration = new Configuration($container->getParameter('kernel.debug'));
         $config = $this->processConfiguration($configuration, $configs);
 
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
 
         $container->setParameter('doctrine_cache.providers', $config['providers']);
-
     }
 }

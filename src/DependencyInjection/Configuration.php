@@ -7,26 +7,25 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 /**
- * Class Configuration
+ * Class Configuration.
  *
  * @author Aaron Scherer <aequasi@gmail.com>
  */
 class Configuration implements ConfigurationInterface
 {
-
     /**
      * @var bool
      */
     private $debug;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param Boolean $debug Whether to use the debug mode
      */
     public function __construct($debug)
     {
-        $this->debug = (Boolean)$debug;
+        $this->debug = (Boolean) $debug;
     }
 
     /**
@@ -37,7 +36,7 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode    = $treeBuilder->root('doctrine_cache');
+        $rootNode = $treeBuilder->root('doctrine_cache');
 
         $rootNode->children()
             ->append($this->getClustersNode())
@@ -52,7 +51,7 @@ class Configuration implements ConfigurationInterface
     private function getClustersNode()
     {
         $treeBuilder = new TreeBuilder();
-        $node        = $treeBuilder->root('providers');
+        $node = $treeBuilder->root('providers');
 
         $node
             ->requiresAtLeastOneElement()
@@ -68,11 +67,11 @@ class Configuration implements ConfigurationInterface
                     ->end()
                     ->scalarNode('namespace')
                         ->defaultNull()
-                        ->info("Namespace for doctrine keys.")
+                        ->info('Namespace for doctrine keys.')
                     ->end()
                     ->integerNode('database')
                         ->defaultNull()
-                        ->info("For Redis: Specify what database you want.")
+                        ->info('For Redis: Specify what database you want.')
                     ->end()
                     ->scalarNode('persistent')
                         ->defaultNull()
@@ -88,21 +87,21 @@ class Configuration implements ConfigurationInterface
                                 }
                             )
                         ->end()
-                        ->info("For Redis and Memcached: Specify the persistent id if you want persistent connections.")
+                        ->info('For Redis and Memcached: Specify the persistent id if you want persistent connections.')
                     ->end()
                     ->scalarNode('auth_password')
-                        ->info("For Redis: Authorization info.")
+                        ->info('For Redis: Authorization info.')
                     ->end()
                     ->scalarNode('directory')
-                        ->info("For File System and PHP File: Directory to store cache.")
+                        ->info('For File System and PHP File: Directory to store cache.')
                         ->defaultNull()
                     ->end()
                     ->scalarNode('extension')
-                        ->info("For File System and PHP File: Extension to use.")
+                        ->info('For File System and PHP File: Extension to use.')
                         ->defaultNull()
                     ->end()
                     ->arrayNode('options')
-                        ->info("Options for Redis and Memcached.")
+                        ->info('Options for Redis and Memcached.')
                         ->children()
                             ->append($this->getMemcachedOptions())
                         ->end()
@@ -121,11 +120,11 @@ class Configuration implements ConfigurationInterface
                                                 return !is_null($v) && !is_numeric($v);
                                             }
                                         )
-                                        ->thenInvalid("Host port must be numeric")
+                                        ->thenInvalid('Host port must be numeric')
                                     ->end()
                                 ->end()
                                 ->scalarNode('weight')
-                                    ->info("For Memcached: Weight for given host.")
+                                    ->info('For Memcached: Weight for given host.')
                                     ->defaultNull()
                                     ->validate()
                                         ->ifTrue(
@@ -137,7 +136,7 @@ class Configuration implements ConfigurationInterface
                                     ->end()
                                 ->end()
                                 ->scalarNode('timeout')
-                                    ->info("For Redis and Memcache: Timeout for the given host.")
+                                    ->info('For Redis and Memcache: Timeout for the given host.')
                                     ->defaultNull()
                                     ->validate()
                                         ->ifTrue(
@@ -164,7 +163,7 @@ class Configuration implements ConfigurationInterface
     private function getMemcachedOptions()
     {
         $treeBuilder = new TreeBuilder();
-        $node        = $treeBuilder->root('memcached');
+        $node = $treeBuilder->root('memcached');
 
         if (class_exists('\Memcached')) {
             $node
