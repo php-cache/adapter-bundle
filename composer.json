@@ -1,6 +1,6 @@
 {
     "name":         "php-cache/doctrine-adapter-bundle",
-    "type":         "symfony2 bundle",
+    "type":         "library",
     "description":  "",
     "keywords":     [],
     "homepage":     "https://github.com/php-cache/doctrine-cache-bundle",
