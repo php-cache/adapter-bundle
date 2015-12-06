@@ -14,21 +14,6 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 class Configuration implements ConfigurationInterface
 {
     /**
-     * @var bool
-     */
-    private $debug;
-
-    /**
-     * Constructor.
-     *
-     * @param Boolean $debug Whether to use the debug mode
-     */
-    public function __construct($debug)
-    {
-        $this->debug = (Boolean) $debug;
-    }
-
-    /**
      * Generates the configuration tree builder.
      *
      * @return TreeBuilder The tree builder
@@ -55,11 +40,10 @@ class Configuration implements ConfigurationInterface
 
         $node
             ->requiresAtLeastOneElement()
-            ->addDefaultChildrenIfNoneSet('default')
             ->useAttributeAsKey('name')
             ->prototype('array')
                 ->children()
-                    ->enumNode('type')
+                    ->enumNode('type')->isRequired()
                         ->values(array('redis', 'php_file', 'file_system', 'array', 'memcached', 'apc'))
                     ->end()
                     ->scalarNode('id')

@@ -15,9 +15,10 @@ class DoctrineCacheExtensionTest extends AbstractExtensionTestCase
         );
     }
 
-    public function after_loading_the_correct_parameter_has_been_set()
+    public function testThatProvidersExists()
     {
-        $this->load();
+        $providers = array('foo' => ['type'=>'apc']);
+        $this->load(array('providers' => $providers));
 
         $this->assertContainerBuilderHasParameter('doctrine_cache.providers');
     }
