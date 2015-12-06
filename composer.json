@@ -1,5 +1,5 @@
 {
-    "name":         "php-cache/doctrine-adapter-bundle",
+    "name":         "cache/doctrine-adapter-bundle",
     "type":         "library",
     "description":  "",
     "keywords":     [],
