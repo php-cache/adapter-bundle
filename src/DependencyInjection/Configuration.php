@@ -52,7 +52,7 @@ class Configuration implements ConfigurationInterface
     private function getClustersNode()
     {
         $treeBuilder = new TreeBuilder();
-        $node        = $treeBuilder->root('instances');
+        $node        = $treeBuilder->root('providers');
 
         $node
             ->requiresAtLeastOneElement()

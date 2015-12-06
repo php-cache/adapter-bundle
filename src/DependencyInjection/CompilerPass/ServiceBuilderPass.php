@@ -11,202 +11,201 @@ use Symfony\Component\DependencyInjection\Reference;
 class ServiceBuilderPass implements CompilerPassInterface
 {
     /**
-     * Array of types, and their options
+     * Array of types, and their options.
      *
-     * @var array $types
+     * @var array
      */
     protected static $types = [
-        'memcache'  => [
-            'class'   => 'Memcache',
-            'connect' => 'addServer'
+        'memcache' => [
+            'class' => 'Memcache',
+            'connect' => 'addServer',
         ],
         'memcached' => [
-            'class'   => 'Aequasi\Bundle\CacheBundle\Cache\Memcached',
-            'connect' => 'addServer'
+            'class' => 'Cache\DoctrineCacheBundle\Cache\Memcached',
+            'connect' => 'addServer',
         ],
-        'redis'     => [
-            'class'   => 'Redis',
-            'connect' => 'connect'
-        ]
+        'redis' => [
+            'class' => 'Redis',
+            'connect' => 'connect',
+        ],
     ];
 
     /**
-     *For each configured instance, build a service
+     * For each configured provider, build a service.
      *
      * @param ContainerBuilder $container
      */
     public function process(ContainerBuilder $container)
     {
-        $instances = $container->getParameter('doctrine_cache.instance');
+        $providers = $container->getParameter('doctrine_cache.providers');
 
-        foreach ($instances as $name => $instance) {
-            $typeId = 'doctrine_cache.abstract.'.$instance['type'];
-            if (!$container->findDefinition($typeId)) {
+        foreach ($providers as $name => $provider) {
+            $typeServiceId = 'doctrine_cache.abstract.'.$provider['type'];
+            if (!$container->hasDefinition($typeServiceId)) {
                 throw new InvalidConfigurationException(
                     sprintf(
-                        "`%s` is not a valid cache type. If you are using a custom type, make sure to add your service. ",
-                        $instance['type']
+                        '`%s` is not a valid cache type. If you are using a custom type, make sure to add your service. ',
+                        $provider['type']
                     )
                 );
             }
 
-            $service = $this->buildService($container, $typeId, $name, $instance);
-            $this->prepareCacheClass($container, $service, $name, $instance);
+            $this->prepareDoctrineCacheClass($container, $typeServiceId, $name, $provider);
+            $this->createPsr7CompliantService($container, $typeServiceId, $name);
         }
     }
 
     /**
+     * Make sure to create a PRS-6 service that wrapps the doctrine service.
+     *
      * @param string $typeId
      * @param string $name
-     * @param array  $instance
+     * @param array  $provider
      *
      * @return Definition
      */
-    private function buildService(ContainerBuilder $container, $typeId, $name, array $instance)
+    private function createPsr7CompliantService(ContainerBuilder $container, $typeServiceId, $name)
     {
-        $namespace = is_null($instance['namespace']) ? $name : $instance['namespace'];
-        $serviceId = 'doctrine_cache.instance.'.$name;
-
-        // Modify the core doctrine cache class
-        $doctrine = $container->getDefinition($typeId);
-        $doctrine->addMethodCall('setNamespace', [$namespace])
-            ->setPublic(false);
+        // This is the service id for the PSR6 provider. This is the one that we use.
+        $serviceId = 'doctrine_cache.provider.'.$name;
 
         // Register the CacheItemPoolInterface definition
         $def = $container->setDefinition(
             $serviceId,
             \Cache\Doctrine\CachePoolItem::class
         );
-        $def->addArgument(0, new Reference($typeId));
+        $def->addArgument(0, new Reference($typeServiceId));
 
-        //TODO add alias
-
-        return $doctrine;
+        //TODO add alias ??
     }
 
     /**
-     * We need to prepare the doctrine cache providers
+     * We need to prepare the doctrine cache providers.
      *
      * @param Definition $service
      * @param string     $name
-     * @param array      $instance
-     *
-     * @return Boolean
+     * @param array      $provider
      */
-    private function prepareCacheClass(ContainerBuilder $container, Definition $service, $name, array $instance)
+    private function prepareDoctrineCacheClass(ContainerBuilder $container, $typeServiceId, $name, array $provider)
     {
-        $type = $instance['type'];
-        $id   = sprintf("doctrine_cache.instance.%s.cache_instance", $name);
+        $namespace = is_null($provider['namespace']) ? $name : $provider['namespace'];
+
+        // Modify the core doctrine cache class
+        $service = $container->getDefinition($typeServiceId);
+        $service->addMethodCall('setNamespace', [$namespace])
+            ->setPublic(false);
+
+        $type = $provider['type'];
         switch ($type) {
             case 'memcache':
             case 'memcached':
             case 'redis':
-                return $this->createCacheInstance($container, $service, $type, $id, $instance);
+            if (!empty($provider['id'])) {
+                $cacheProviderServiceId = $provider['id'];
+            } else {
+                // Create a new cache provider if none is defined
+                $cacheProviderServiceId = sprintf('doctrine_cache.provider.%s.cache_provider', $name);
+                $cacheProviderDefinition = $this->createCacheProviderDefinition($type, $provider);
+                $container->setDefinition($cacheProviderServiceId, $cacheProviderDefinition);
+            }
+
+            $service->addMethodCall(sprintf('set%s', ucwords($type)), [new Reference($cacheProviderServiceId)]);
+
+            break;
             case 'file_system':
             case 'php_file':
                 $directory = '%kernel.cache_dir%/doctrine/cache';
-                if (null !== $instance['directory']) {
-                    $directory = $instance['directory'];
+                if (null !== $provider['directory']) {
+                    $directory = $provider['directory'];
                 }
-                $extension = is_null($instance['extension']) ? null : $instance['extension'];
+                $extension = is_null($provider['extension']) ? null : $provider['extension'];
 
                 $service->setArguments([$directory, $extension]);
 
-                return true;
+                break;
             case 'mongo':
             case 'sqlite3':
             case 'sqlite':
             case 'riak':
             case 'chain':
-                return false;
-            default:
-                return true;
+                break;
         }
     }
 
     /**
-     * Creates a cache instance
+     * Creates a provider to the Doctrine cache provider.
      *
-     * @param Definition $service
-     * @param string     $type
-     * @param string     $id
-     * @param array      $instance
+     * @param $type
+     * @param array $provider
      *
-     * @return Boolean
+     * @return Definition
      */
-    public function createCacheInstance(ContainerBuilder $container, Definition $service, $type, $id, array $instance)
+    public function createCacheProviderDefinition($type, array $provider)
     {
-        if (empty($instance['id'])) {
-            $cache = new Definition(self::$types[$type]['class']);
+        $cache = new Definition(self::$types[$type]['class']);
 
-            // set memcached options first as they need to be set before the servers are added.
-            if ($type === 'memcached') {
-                if (!empty($instance['options']['memcached'])) {
-                    foreach ($instance['options']['memcached'] as $option => $value) {
-                        switch ($option) {
-                            case 'serializer':
-                            case 'hash':
-                            case 'distribution':
-                                $value = constant(
-                                    sprintf('\Memcached::%s_%s', strtoupper($option), strtoupper($value))
-                                );
-                                break;
-                        }
-                        $cache->addMethodCall(
-                            'setOption',
-                            [constant(sprintf('\Memcached::OPT_%s', strtoupper($option))), $value]
-                        );
+        // set memcached options first as they need to be set before the servers are added.
+        if ($type === 'memcached') {
+            if (!empty($provider['options']['memcached'])) {
+                foreach ($provider['options']['memcached'] as $option => $value) {
+                    switch ($option) {
+                        case 'serializer':
+                        case 'hash':
+                        case 'distribution':
+                            $value = constant(
+                                sprintf('\Memcached::%s_%s', strtoupper($option), strtoupper($value))
+                            );
+                            break;
                     }
+                    $cache->addMethodCall(
+                        'setOption',
+                        [constant(sprintf('\Memcached::OPT_%s', strtoupper($option))), $value]
+                    );
                 }
             }
-
-            if (isset($instance['persistent']) && $instance['persistent'] !== false) {
-                if ($instance['persistent'] !== true) {
-                    $persistentId = $instance['persistent'];
-                } else {
-                    $persistentId = substr(md5(serialize($instance['hosts'])), 0, 5);
-                }
-                if ($type === 'memcached') {
-                    $cache->setArguments([$persistentId]);
-                }
-                if ($type === 'redis') {
-                    self::$types[$type]['connect'] = 'pconnect';
-                }
-            }
-
-            foreach ($instance['hosts'] as $config) {
-                $arguments = [
-                    'host' => empty($config['host']) ? 'localhost' : $config['host'],
-                    'port' => empty($config['port']) ? 11211 : $config['port']
-                ];
-                if ($type === 'memcached') {
-                    $arguments[] = is_null($config['weight']) ? 0 : $config['weight'];
-                } else {
-                    $arguments[] = is_null($config['timeout']) ? 0 : $config['timeout'];
-                    if (isset($persistentId)) {
-                        $arguments[] = $persistentId;
-                    }
-                }
-
-                $cache->addMethodCall(self::$types[$type]['connect'], $arguments);
-            }
-            unset($config);
-
-            if ($type === 'redis') {
-                if (isset($instance['auth_password']) && null !== $instance['auth_password']) {
-                    $cache->addMethodCall('auth', [$instance['auth_password']]);
-                }
-                if (isset($instance['database'])) {
-                    $cache->addMethodCall('select', [$instance['database']]);
-                }
-            }
-
-            $container->setDefinition($id, $cache);
-        } else {
-            $id = $instance['id'];
         }
-        $service->addMethodCall(sprintf('set%s', ucwords($type)), [new Reference($id)]);
 
-        return true;
+        if (isset($provider['persistent']) && $provider['persistent'] !== false) {
+            if ($provider['persistent'] !== true) {
+                $persistentId = $provider['persistent'];
+            } else {
+                $persistentId = substr(md5(serialize($provider['hosts'])), 0, 5);
+            }
+            if ($type === 'memcached') {
+                $cache->setArguments([$persistentId]);
+            }
+            if ($type === 'redis') {
+                self::$types[$type]['connect'] = 'pconnect';
+            }
+        }
+
+        foreach ($provider['hosts'] as $config) {
+            $arguments = [
+                    'host' => empty($config['host']) ? 'localhost' : $config['host'],
+                    'port' => empty($config['port']) ? 11211 : $config['port'],
+                ];
+            if ($type === 'memcached') {
+                $arguments[] = is_null($config['weight']) ? 0 : $config['weight'];
+            } else {
+                $arguments[] = is_null($config['timeout']) ? 0 : $config['timeout'];
+                if (isset($persistentId)) {
+                    $arguments[] = $persistentId;
+                }
+            }
+
+            $cache->addMethodCall(self::$types[$type]['connect'], $arguments);
+        }
+        unset($config);
+
+        if ($type === 'redis') {
+            if (isset($provider['auth_password']) && null !== $provider['auth_password']) {
+                $cache->addMethodCall('auth', [$provider['auth_password']]);
+            }
+            if (isset($provider['database'])) {
+                $cache->addMethodCall('select', [$provider['database']]);
+            }
+        }
+
+        return $cache;
     }
 }
