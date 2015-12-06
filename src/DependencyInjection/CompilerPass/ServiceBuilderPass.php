@@ -76,7 +76,7 @@ class ServiceBuilderPass implements CompilerPassInterface
         );
         $def->addArgument(0, new Reference($typeServiceId));
 
-        //TODO add alias ??
+        $container->setAlias('doctrine_cache.'.$name, $serviceId);
     }
 
     /**
