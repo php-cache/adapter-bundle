@@ -1,5 +1,5 @@
 {
-    "name":         "php-cache/doctrine-cache-bundle",
+    "name":         "php-cache/doctrine-adapter-bundle",
     "type":         "symfony2 bundle",
     "description":  "",
     "keywords":     [],
@@ -20,7 +20,7 @@
     "require":      {
         "php":                           "^5.5|^7",
         "symfony/framework-bundle":      "^2.7|^3.0",
-        "php-cache/doctrine-cache":      "dev-master"
+        "php-cache/doctrine-adapter":      "dev-master"
     },
     "require-dev":  {
         "phpunit/phpunit": "5.0.*|^4.0",
