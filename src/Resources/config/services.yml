@@ -1,41 +1,12 @@
 
-services:
-    doctrine_cache.abstract.apc:
-        class: Doctrine\Common\Cache\ApcCache
-        abstract: true
-
-    doctrine_cache.abstract.array:
-        class: Doctrine\Common\Cache\ArrayCache
-        abstract: true
-
-    doctrine_cache.abstract.file_system:
-        class: Doctrine\Common\Cache\FilesystemCache
-        abstract: true
-
-    doctrine_cache.abstract.memcache:
-        class: Doctrine\Common\Cache\MemcacheCache
-        abstract: true
-
-    doctrine_cache.abstract.memcached:
-        class: Doctrine\Common\Cache\MemcachedCache
-        abstract: true
-
-    doctrine_cache.abstract.redis:
-        class: Doctrine\Common\Cache\RedisCache
-        abstract: true
-
-    doctrine_cache.abstract.php_file:
-        class: Doctrine\Common\Cache\PhpFileCache
-        abstract: true
-
-    doctrine_cache.abstract.win_cache:
-        class: Doctrine\Common\Cache\WinCacheCache
-        abstract: true
-
-    doctrine_cache.abstract.xcache:
-        class: Doctrine\Common\Cache\XcacheCache
-        abstract: true
-
-    doctrine_cache.zend_data:
-        class: Doctrine\Common\Cache\ZendDataCache
-        abstract: true
+parameters:
+  cache.doctrine_adapter.apc.class: Doctrine\Common\Cache\ApcCache
+  cache.doctrine_adapter.array.class: Doctrine\Common\Cache\ArrayCache
+  cache.doctrine_adapter.file_system.class: Doctrine\Common\Cache\FilesystemCache
+  cache.doctrine_adapter.memcache.class: Doctrine\Common\Cache\MemcacheCache
+  cache.doctrine_adapter.memcached.class: Doctrine\Common\Cache\MemcachedCache
+  cache.doctrine_adapter.redis.class: Doctrine\Common\Cache\RedisCache
+  cache.doctrine_adapter.php_file.class: Doctrine\Common\Cache\PhpFileCache
+  cache.doctrine_adapter.win_cache.class: Doctrine\Common\Cache\WinCacheCache
+  cache.doctrine_adapter.xcache.class: Doctrine\Common\Cache\XcacheCache
+  cache.doctrine_adapter.zend_data.class: Doctrine\Common\Cache\ZendDataCache

@@ -7,17 +7,16 @@ use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractExtensionTestCase;
 
 class DoctrineCacheExtensionTest extends AbstractExtensionTestCase
 {
-
     protected function getContainerExtensions()
     {
         return array(
-            new DoctrineAdapterExtension()
+            new DoctrineAdapterExtension(),
         );
     }
 
     public function testThatProvidersExists()
     {
-        $providers = array('foo' => ['type'=>'apc']);
+        $providers = array('foo' => ['type' => 'apc']);
         $this->load(array('providers' => $providers));
 
         $this->assertContainerBuilderHasParameter('cache_adapter_doctrine.providers');
