@@ -40,29 +40,30 @@ class ServiceBuilderPass implements CompilerPassInterface
         $providers = $container->getParameter('cache_adapter_doctrine.providers');
 
         foreach ($providers as $name => $provider) {
-            $typeServiceId = 'cache.doctrine_adapter.abstract.'.$provider['type'];
-            if (!$container->hasDefinition($typeServiceId)) {
+            $typeServiceId = sprintf('cache.doctrine_adapter.abstract.%s', $provider['type']);
+            $classParameter = sprintf('cache.doctrine_adapter.%s.class',$provider['type']);
+            if (!$container->hasParameter($classParameter)) {
                 throw new InvalidConfigurationException(
                     sprintf(
-                        '`%s` is not a valid cache type. If you are using a custom type, make sure to add your service. ',
-                        $provider['type']
+                        '"%s" is not a valid cache type. We cannot find a container parameter named "%s" with a class namespace as value. Make sure to add that or use any built in services',
+                        $provider['type'],
+                        $classParameter
                     )
                 );
             }
+            $class = $container->getParameter($classParameter);
 
-            $this->prepareDoctrineCacheClass($container, $typeServiceId, $name, $provider);
+            $this->createDoctrineCacheDefinition($container, $typeServiceId, $class, $name, $provider);
             $this->createPsr7CompliantService($container, $typeServiceId, $name);
         }
     }
 
     /**
-     * Make sure to create a PRS-6 service that wrapps the doctrine service.
+     * Make sure to create a PRS-6 service that wraps the doctrine service.
      *
-     * @param string $typeId
+     * @param ContainerBuilder $container
+     * @param string $typeServiceId
      * @param string $name
-     * @param array  $provider
-     *
-     * @return Definition
      */
     private function createPsr7CompliantService(ContainerBuilder $container, $typeServiceId, $name)
     {
@@ -80,16 +81,18 @@ class ServiceBuilderPass implements CompilerPassInterface
     /**
      * We need to prepare the doctrine cache providers.
      *
-     * @param Definition $service
-     * @param string     $name
-     * @param array      $provider
+     * @param ContainerBuilder $container
+     * @param string $typeServiceId
+     * @param string $class
+     * @param string $name
+     * @param array $provider
      */
-    private function prepareDoctrineCacheClass(ContainerBuilder $container, $typeServiceId, $name, array $provider)
+    private function createDoctrineCacheDefinition(ContainerBuilder $container, $typeServiceId, $class, $name, array $provider)
     {
         $namespace = is_null($provider['namespace']) ? $name : $provider['namespace'];
 
-        // Modify the core doctrine cache class
-        $definition = $container->getDefinition($typeServiceId);
+        // Create a service for the requested doctrine cache
+        $definition = new Definition($class);
         $definition->addMethodCall('setNamespace', [$namespace])
             ->setPublic(false);
 
@@ -127,7 +130,7 @@ class ServiceBuilderPass implements CompilerPassInterface
                 break;
         }
 
-        // TODO is this line needed?
+        // Add the definition to the container
         $container->setDefinition($typeServiceId, $definition);
     }
 
