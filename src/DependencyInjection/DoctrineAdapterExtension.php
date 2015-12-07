@@ -10,11 +10,12 @@ use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
+use Cache\Doctrine\CachePoolItem;
 
 /**
- * Class AequasiCacheExtension.
  *
  * @author Aaron Scherer <aequasi@gmail.com>
+ * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
 class DoctrineAdapterExtension extends Extension
 {
@@ -69,8 +70,8 @@ class DoctrineAdapterExtension extends Extension
         $providers = $container->getParameter('cache_adapter_doctrine.providers');
 
         foreach ($providers as $name => $provider) {
-            $typeServiceId = sprintf('cache.doctrine_adapter.abstract.%s', $provider['type']);
             $classParameter = sprintf('cache.doctrine_adapter.%s.class',$provider['type']);
+            $doctrineServiceId = sprintf('cache.doctrine_adapter.doctrine_service.%s', $provider['type']);
             if (!$container->hasParameter($classParameter)) {
                 throw new InvalidConfigurationException(
                     sprintf(
@@ -80,49 +81,30 @@ class DoctrineAdapterExtension extends Extension
                     )
                 );
             }
-            $class = $container->getParameter($classParameter);
+            $doctrineClass = $container->getParameter($classParameter);
 
-            $this->createDoctrineCacheDefinition($container, $typeServiceId, $class, $name, $provider);
-            $this->createPsr7CompliantService($container, $typeServiceId, $name);
+            $this->createDoctrineCacheDefinition($container, $doctrineServiceId, $doctrineClass, $name, $provider);
+            $this->createPsr7CompliantService($container, $doctrineServiceId, $name);
         }
     }
 
-    /**
-     * Make sure to create a PRS-6 service that wraps the doctrine service.
-     *
-     * @param ContainerBuilder $container
-     * @param string $typeServiceId
-     * @param string $name
-     */
-    private function createPsr7CompliantService(ContainerBuilder $container, $typeServiceId, $name)
-    {
-        // This is the service id for the PSR6 provider. This is the one that we use.
-        $serviceId = 'cache.doctrine_adapter.provider.'.$name;
 
-        // Register the CacheItemPoolInterface definition
-        $def = new Definition(\Cache\Doctrine\CachePoolItem::class);
-        $def->addArgument(new Reference($typeServiceId));
-        $def->setTags(['cache.provider'=>[]]);
-
-        $container->setDefinition($serviceId, $def);
-        $container->setAlias('cache.provider.'.$name, $serviceId);
-    }
 
     /**
      * We need to prepare the doctrine cache providers.
      *
      * @param ContainerBuilder $container
-     * @param string $typeServiceId
-     * @param string $class
+     * @param string $doctrineServiceId
+     * @param string $doctrineClass
      * @param string $name
      * @param array $provider
      */
-    private function createDoctrineCacheDefinition(ContainerBuilder $container, $typeServiceId, $class, $name, array $provider)
+    protected function createDoctrineCacheDefinition(ContainerBuilder $container, $doctrineServiceId, $doctrineClass, $name, array $provider)
     {
         $namespace = is_null($provider['namespace']) ? $name : $provider['namespace'];
 
         // Create a service for the requested doctrine cache
-        $definition = new Definition($class);
+        $definition = new Definition($doctrineClass);
         $definition->addMethodCall('setNamespace', [$namespace])
             ->setPublic(false);
 
@@ -157,11 +139,33 @@ class DoctrineAdapterExtension extends Extension
             case 'sqlite':
             case 'riak':
             case 'chain':
+                throw new \InvalidArgumentException(sprintf('The cache provider type "%s" is not yet implemented.', $type));
                 break;
         }
 
         // Add the definition to the container
-        $container->setDefinition($typeServiceId, $definition);
+        $container->setDefinition($doctrineServiceId, $definition);
+    }
+
+    /**
+     * Make sure to create a PRS-6 service that wraps the doctrine service.
+     *
+     * @param ContainerBuilder $container
+     * @param string $doctrineServiceId
+     * @param string $name
+     */
+    protected function createPsr7CompliantService(ContainerBuilder $container, $doctrineServiceId, $name)
+    {
+        // This is the service id for the PSR6 provider. This is the one that we use.
+        $serviceId = 'cache.doctrine_adapter.provider.'.$name;
+
+        // Register the CacheItemPoolInterface definition
+        $def = new Definition(CachePoolItem::class);
+        $def->addArgument(new Reference($doctrineServiceId));
+        $def->setTags(['cache.provider'=>[]]);
+
+        $container->setDefinition($serviceId, $def);
+        $container->setAlias('cache.provider.'.$name, $serviceId);
     }
 
     /**
@@ -172,7 +176,7 @@ class DoctrineAdapterExtension extends Extension
      *
      * @return Definition
      */
-    public function createProviderHelperDefinition($type, array $provider)
+    private function createProviderHelperDefinition($type, array $provider)
     {
         $helperDefinition = new Definition(self::$types[$type]['class']);
         $helperDefinition->setPublic(false);

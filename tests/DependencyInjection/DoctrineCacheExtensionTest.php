@@ -1,6 +1,6 @@
 <?php
 
-namespace Cache\Adapter\DoctrineAdapterBundle\tests\DependencyInjection;
+namespace Cache\Adapter\DoctrineAdapterBundle\Tests\DependencyInjection;
 
 use Cache\Adapter\DoctrineAdapterBundle\DependencyInjection\DoctrineAdapterExtension;
 use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractExtensionTestCase;
