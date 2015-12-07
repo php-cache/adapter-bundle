@@ -1,41 +1,31 @@
 
 services:
-    doctrine_cache.abstract.apc:
+    cache.doctrine_adapter.abstract.apc:
         class: Doctrine\Common\Cache\ApcCache
-        abstract: true
 
-    doctrine_cache.abstract.array:
+    cache.doctrine_adapter.abstract.array:
         class: Doctrine\Common\Cache\ArrayCache
-        abstract: true
 
-    doctrine_cache.abstract.file_system:
+    cache.doctrine_adapter.abstract.file_system:
         class: Doctrine\Common\Cache\FilesystemCache
-        abstract: true
 
-    doctrine_cache.abstract.memcache:
+    cache.doctrine_adapter.abstract.memcache:
         class: Doctrine\Common\Cache\MemcacheCache
-        abstract: true
 
-    doctrine_cache.abstract.memcached:
+    cache.doctrine_adapter.abstract.memcached:
         class: Doctrine\Common\Cache\MemcachedCache
-        abstract: true
 
-    doctrine_cache.abstract.redis:
+    cache.doctrine_adapter.abstract.redis:
         class: Doctrine\Common\Cache\RedisCache
-        abstract: true
 
-    doctrine_cache.abstract.php_file:
+    cache.doctrine_adapter.abstract.php_file:
         class: Doctrine\Common\Cache\PhpFileCache
-        abstract: true
 
-    doctrine_cache.abstract.win_cache:
+    cache.doctrine_adapter.abstract.win_cache:
         class: Doctrine\Common\Cache\WinCacheCache
-        abstract: true
 
-    doctrine_cache.abstract.xcache:
+    cache.doctrine_adapter.abstract.xcache:
         class: Doctrine\Common\Cache\XcacheCache
-        abstract: true
 
-    doctrine_cache.zend_data:
+    cache.doctrine_adapter.zend_data:
         class: Doctrine\Common\Cache\ZendDataCache
-        abstract: true

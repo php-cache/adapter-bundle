@@ -37,10 +37,10 @@ class ServiceBuilderPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        $providers = $container->getParameter('doctrine_cache.providers');
+        $providers = $container->getParameter('cache_adapter_doctrine.providers');
 
         foreach ($providers as $name => $provider) {
-            $typeServiceId = 'doctrine_cache.abstract.'.$provider['type'];
+            $typeServiceId = 'cache.doctrine_adapter.abstract.'.$provider['type'];
             if (!$container->hasDefinition($typeServiceId)) {
                 throw new InvalidConfigurationException(
                     sprintf(
@@ -70,11 +70,9 @@ class ServiceBuilderPass implements CompilerPassInterface
         $serviceId = 'cache.doctrine_adapter.provider.'.$name;
 
         // Register the CacheItemPoolInterface definition
-        $def = $container->setDefinition(
-            $serviceId,
-            \Cache\Doctrine\CachePoolItem::class
-        );
-        $def->addArgument(0, new Reference($typeServiceId));
+        $def = new Definition(\Cache\Doctrine\CachePoolItem::class);
+        $def->addArgument(new Reference($typeServiceId));
+        $container->setDefinition($serviceId, $def);
 
         $container->setAlias('cache.provider.'.$name, $serviceId);
     }
@@ -91,8 +89,8 @@ class ServiceBuilderPass implements CompilerPassInterface
         $namespace = is_null($provider['namespace']) ? $name : $provider['namespace'];
 
         // Modify the core doctrine cache class
-        $service = $container->getDefinition($typeServiceId);
-        $service->addMethodCall('setNamespace', [$namespace])
+        $definition = $container->getDefinition($typeServiceId);
+        $definition->addMethodCall('setNamespace', [$namespace])
             ->setPublic(false);
 
         $type = $provider['type'];
@@ -109,8 +107,7 @@ class ServiceBuilderPass implements CompilerPassInterface
                 $container->setDefinition($providerHelperServiceId, $providerHelperDefinition);
             }
 
-            $service->addMethodCall(sprintf('set%s', ucwords($type)), [new Reference($providerHelperServiceId)]);
-
+            $definition->addMethodCall(sprintf('set%s', ucwords($type)), [new Reference($providerHelperServiceId)]);
             break;
             case 'file_system':
             case 'php_file':
@@ -119,8 +116,7 @@ class ServiceBuilderPass implements CompilerPassInterface
                     $directory = $provider['directory'];
                 }
                 $extension = is_null($provider['extension']) ? null : $provider['extension'];
-
-                $service->setArguments([$directory, $extension]);
+                $definition->setArguments([$directory, $extension]);
 
                 break;
             case 'mongo':
@@ -130,6 +126,9 @@ class ServiceBuilderPass implements CompilerPassInterface
             case 'chain':
                 break;
         }
+
+        // TODO is this line needed?
+        $container->setDefinition($typeServiceId, $definition);
     }
 
     /**
