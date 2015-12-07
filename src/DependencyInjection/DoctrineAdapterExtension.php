@@ -10,7 +10,7 @@ use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
-use Cache\Doctrine\CachePoolItem;
+use Cache\Doctrine\CachePool;
 
 /**
  *
@@ -160,7 +160,7 @@ class DoctrineAdapterExtension extends Extension
         $serviceId = 'cache.doctrine_adapter.provider.'.$name;
 
         // Register the CacheItemPoolInterface definition
-        $def = new Definition(CachePoolItem::class);
+        $def = new Definition(CachePool::class);
         $def->addArgument(new Reference($doctrineServiceId));
         $def->setTags(['cache.provider'=>[]]);
 
