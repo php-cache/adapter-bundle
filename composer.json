@@ -19,7 +19,7 @@
     ],
     "require":      {
         "php":                      "^5.5|^7",
-        "symfony/framework-bundle": "^2.7|^3.0",
+        "symfony/framework-bundle": "^2.6|^3.0",
         "cache/doctrine-adapter":   "^0.1"
     },
     "require-dev":  {
