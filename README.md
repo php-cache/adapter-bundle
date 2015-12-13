@@ -1,11 +1,30 @@
 # Doctrine Adapter Bundle
+[![Build Status](https://travis-ci.org/php-cache/doctrine-adapter-bundle.png?branch=master)](https://travis-ci.org/php-cache/doctrine-adapter-bundle)
 
-This bundle registers PSR6 cache services that wraps the doctrine cache. 
+This bundle helps you configurate and register PSR-6 cache services. The bundle uses Doctrine as cache implementation 
+with help from [DoctrineAdapter] to make it PSR-6 complient. 
 
-## Configuration and usage
+### To Install
+
+Run the following in your project root, assuming you have composer set up for your project
+```sh
+composer require cache/doctrine-adapter-bundle
+```
+
+Add the bundle to app/AppKernel.php
+
+```php
+$bundles(
+    // ...
+    new Cache\Adapter\DoctrineAdapterBundle\DoctrineAdapterBundle(),
+    // ...
+);
+```
+
+
+### Configuration
 
 ```yaml
-
 cache_adapter_doctrine:
   providers:
     acme_file_system_cache:
@@ -17,12 +36,28 @@ cache_adapter_doctrine:
       namespace: my_ns
 ```
 
-``` php
+### Usage
 
-/** @var CacheItemPoolInterface $cacheProvider */
-$cacheProvider = $this->container->get('cache.provider.acme_apc_cache');
+When using a configuration like below, you will get an service with the id `cache/doctrine-adapter-bundle`.
+```yaml
+cache_adapter_doctrine:
+  providers:
+    acme_apc_cache:
+      type: apc
+      namespace: my_ns
+```
+
+Use the new service as any PSR-6 cache. 
+ 
+``` php
+/** @var CacheItemPoolInterface $cache */
+$cache = $this->container->get('cache/doctrine-adapter-bundle');
 
 /** @var CacheItemInterface $item */
-$item = $cacheProvider->getItem('cache-key');
-
+$item = $cache->getItem('cache-key');
+$item->set('foobar');
+$item->expiresAfter(3600);
+$cache->save($item);
 ```
+
+[DoctrineAdapter]: https://github.com/php-cache/doctrine-adapter
