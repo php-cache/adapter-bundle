@@ -38,7 +38,7 @@ cache_adapter_doctrine:
 
 ### Usage
 
-When using a configuration like below, you will get an service with the id `cache/doctrine-adapter-bundle`.
+When using a configuration like below, you will get an service with the id `cache.provider.acme_apc_cache`.
 ```yaml
 cache_adapter_doctrine:
   providers:
@@ -51,7 +51,7 @@ Use the new service as any PSR-6 cache.
  
 ``` php
 /** @var CacheItemPoolInterface $cache */
-$cache = $this->container->get('cache/doctrine-adapter-bundle');
+$cache = $this->container->get('cache.provider.acme_apc_cache');
 
 /** @var CacheItemInterface $item */
 $item = $cache->getItem('cache-key');
