@@ -27,10 +27,28 @@ $bundles(
 ```yaml
 cache_adapter_doctrine:
   providers:
+    acme_memcached:
+      type: memcached
+      persistent: true # Boolean or persistent_id
+      namespace: mc
+      hosts:
+        - { host: localhost, port: 11211 }
+    acme_redis:
+      type: redis
+      hosts:
+        main:
+          host: 127.0.0.1
+          port: 6379
     acme_file_system_cache:
+      type: file_system
       extension: '.fsc'
       directory: '%kernel.root_dir%/var/storage/fs_cache/'
-      type: file_system
+    acme_php_file_cache:
+      type: php_file
+      extension: '.cache'
+      directory: '%kernel.root_dir%/var/storage/'
+    acme_array_cache:
+      type: array
     acme_apc_cache:
       type: apc
       namespace: my_ns
@@ -38,7 +56,7 @@ cache_adapter_doctrine:
 
 ### Usage
 
-When using a configuration like below, you will get an service with the id `cache.provider.acme_apc_cache`.
+When using a configuration like below, you will get a service with the id `cache.provider.acme_apc_cache`.
 ```yaml
 cache_adapter_doctrine:
   providers:
