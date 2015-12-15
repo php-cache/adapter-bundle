@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of php-cache\doctrine-adapter-bundle package.
+ *
+ * (c) 2015-2015 Aaron Scherer <aequasi@gmail.com>
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Cache\Adapter\DoctrineAdapterBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
@@ -21,7 +30,7 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('cache_adapter_doctrine');
+        $rootNode    = $treeBuilder->root('cache_adapter_doctrine');
 
         $rootNode->children()
             ->append($this->getClustersNode())
@@ -36,7 +45,7 @@ class Configuration implements ConfigurationInterface
     private function getClustersNode()
     {
         $treeBuilder = new TreeBuilder();
-        $node = $treeBuilder->root('providers');
+        $node        = $treeBuilder->root('providers');
 
         $node
             ->requiresAtLeastOneElement()
@@ -44,7 +53,7 @@ class Configuration implements ConfigurationInterface
             ->prototype('array')
                 ->children()
                     ->enumNode('type')->isRequired()
-                        ->values(array('redis', 'php_file', 'file_system', 'array', 'memcached', 'apc'))
+                        ->values(['redis', 'php_file', 'file_system', 'array', 'memcached', 'apc'])
                     ->end()
                     ->scalarNode('id')
                         ->defaultNull()
@@ -135,8 +144,7 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
-            ->end()
-        ;
+            ->end();
 
         return $node;
     }
@@ -147,19 +155,19 @@ class Configuration implements ConfigurationInterface
     private function getMemcachedOptions()
     {
         $treeBuilder = new TreeBuilder();
-        $node = $treeBuilder->root('memcached');
+        $node        = $treeBuilder->root('memcached');
 
         if (class_exists('\Memcached')) {
             $node
                 ->children()
                     ->enumNode('serializer')
-                        ->values(array('php', 'igbinary', 'json'))
+                        ->values(['php', 'igbinary', 'json'])
                     ->end()
                     ->enumNode('hash')
-                        ->values(array('default', 'md5', 'crc', 'fnv1_64', 'fnv1a_64', 'fnv1_32', 'fnv1a_32', 'hsieh', 'murmur'))
+                        ->values(['default', 'md5', 'crc', 'fnv1_64', 'fnv1a_64', 'fnv1_32', 'fnv1a_32', 'hsieh', 'murmur'])
                     ->end()
                     ->enumNode('distribution')
-                        ->values(array('modula', 'consistent'))
+                        ->values(['modula', 'consistent'])
                     ->end()
                     ->booleanNode('compression')->end()
                     ->scalarNode('prefix_key')->end()

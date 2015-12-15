@@ -1,19 +1,26 @@
 <?php
 
+/*
+ * This file is part of php-cache\doctrine-adapter-bundle package.
+ *
+ * (c) 2015-2015 Aaron Scherer <aequasi@gmail.com>
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Cache\Adapter\DoctrineAdapterBundle\DependencyInjection;
 
+use Cache\Doctrine\CachePool;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Loader;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\DependencyInjection\Reference;
-use Cache\Doctrine\CachePool;
+use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 /**
- *
  * @author Aaron Scherer <aequasi@gmail.com>
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
@@ -22,19 +29,19 @@ class DoctrineAdapterExtension extends Extension
     /**
      * Array of types, and their options.
      *
-     * @var array
+     * @type array
      */
     protected static $types = [
         'memcache' => [
-            'class' => 'Memcache',
+            'class'   => 'Memcache',
             'connect' => 'addServer',
         ],
         'memcached' => [
-            'class' => 'Cache\Adapter\DoctrineAdapterBundle\ProviderHelper\Memcached',
+            'class'   => 'Cache\Adapter\DoctrineAdapterBundle\ProviderHelper\Memcached',
             'connect' => 'addServer',
         ],
         'redis' => [
-            'class' => 'Redis',
+            'class'   => 'Redis',
             'connect' => 'connect',
         ],
     ];
@@ -48,7 +55,7 @@ class DoctrineAdapterExtension extends Extension
     public function load(array $configs, ContainerBuilder $container)
     {
         $configuration = new Configuration();
-        $config = $this->processConfiguration($configuration, $configs);
+        $config        = $this->processConfiguration($configuration, $configs);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
@@ -57,8 +64,6 @@ class DoctrineAdapterExtension extends Extension
 
         $this->process($container);
     }
-
-
 
     /**
      * For each configured provider, build a service.
@@ -70,7 +75,7 @@ class DoctrineAdapterExtension extends Extension
         $providers = $container->getParameter('cache_adapter_doctrine.providers');
 
         foreach ($providers as $name => $provider) {
-            $classParameter = sprintf('cache.doctrine_adapter.%s.class',$provider['type']);
+            $classParameter    = sprintf('cache.doctrine_adapter.%s.class', $provider['type']);
             $doctrineServiceId = sprintf('cache.doctrine_adapter.doctrine_service.%s', $provider['type']);
             if (!$container->hasParameter($classParameter)) {
                 throw new InvalidConfigurationException(
@@ -88,16 +93,14 @@ class DoctrineAdapterExtension extends Extension
         }
     }
 
-
-
     /**
      * We need to prepare the doctrine cache providers.
      *
      * @param ContainerBuilder $container
-     * @param string $doctrineServiceId
-     * @param string $doctrineClass
-     * @param string $name
-     * @param array $provider
+     * @param string           $doctrineServiceId
+     * @param string           $doctrineClass
+     * @param string           $name
+     * @param array            $provider
      */
     protected function createDoctrineCacheDefinition(ContainerBuilder $container, $doctrineServiceId, $doctrineClass, $name, array $provider)
     {
@@ -117,7 +120,7 @@ class DoctrineAdapterExtension extends Extension
                     $providerHelperServiceId = $provider['id'];
                 } else {
                     // Create a new cache provider if none is defined
-                    $providerHelperServiceId = sprintf('cache_adapter_doctrine.provider.%s.helper', $name);
+                    $providerHelperServiceId  = sprintf('cache_adapter_doctrine.provider.%s.helper', $name);
                     $providerHelperDefinition = $this->createProviderHelperDefinition($type, $provider);
                     $container->setDefinition($providerHelperServiceId, $providerHelperDefinition);
                 }
@@ -151,8 +154,8 @@ class DoctrineAdapterExtension extends Extension
      * Make sure to create a PRS-6 service that wraps the doctrine service.
      *
      * @param ContainerBuilder $container
-     * @param string $doctrineServiceId
-     * @param string $name
+     * @param string           $doctrineServiceId
+     * @param string           $name
      */
     protected function createPsr7CompliantService(ContainerBuilder $container, $doctrineServiceId, $name)
     {
@@ -162,7 +165,7 @@ class DoctrineAdapterExtension extends Extension
         // Register the CacheItemPoolInterface definition
         $def = new Definition(CachePool::class);
         $def->addArgument(new Reference($doctrineServiceId));
-        $def->setTags(['cache.provider'=>[]]);
+        $def->setTags(['cache.provider' => []]);
 
         $container->setDefinition($serviceId, $def);
         $container->setAlias('cache.provider.'.$name, $serviceId);
