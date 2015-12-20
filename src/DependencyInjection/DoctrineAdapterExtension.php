@@ -35,14 +35,17 @@ class DoctrineAdapterExtension extends Extension
         'memcache' => [
             'class'   => 'Memcache',
             'connect' => 'addServer',
+            'port'    => 11211,
         ],
         'memcached' => [
             'class'   => 'Cache\Adapter\DoctrineAdapterBundle\ProviderHelper\Memcached',
             'connect' => 'addServer',
+            'port'    => 11211,
         ],
         'redis' => [
             'class'   => 'Redis',
             'connect' => 'connect',
+            'port'    => 6379,
         ],
     ];
 
@@ -186,25 +189,10 @@ class DoctrineAdapterExtension extends Extension
 
         // set memcached options first as they need to be set before the servers are added.
         if ($type === 'memcached') {
-            if (!empty($provider['options']['memcached'])) {
-                foreach ($provider['options']['memcached'] as $option => $value) {
-                    switch ($option) {
-                        case 'serializer':
-                        case 'hash':
-                        case 'distribution':
-                            $value = constant(
-                                sprintf('\Memcached::%s_%s', strtoupper($option), strtoupper($value))
-                            );
-                            break;
-                    }
-                    $helperDefinition->addMethodCall(
-                        'setOption',
-                        [constant(sprintf('\Memcached::OPT_%s', strtoupper($option))), $value]
-                    );
-                }
-            }
+            $provider = $this->setMemcachedOptions($provider, $helperDefinition);
         }
 
+        $persistentId = null;
         if (isset($provider['persistent']) && $provider['persistent'] !== false) {
             if ($provider['persistent'] !== true) {
                 $persistentId = $provider['persistent'];
@@ -219,23 +207,21 @@ class DoctrineAdapterExtension extends Extension
             }
         }
 
-        foreach ($provider['hosts'] as $config) {
+        // If no host is configured, use localhost and default port
+        if (empty($provider['hosts'])) {
             $arguments = [
-                'host' => empty($config['host']) ? 'localhost' : $config['host'],
-                'port' => empty($config['port']) ? 11211 : $config['port'],
+                'host' => 'localhost',
+                'port' => self::$types[$type]['port'],
             ];
-            if ($type === 'memcached') {
-                $arguments[] = is_null($config['weight']) ? 0 : $config['weight'];
-            } else {
-                $arguments[] = is_null($config['timeout']) ? 0 : $config['timeout'];
-                if (isset($persistentId)) {
-                    $arguments[] = $persistentId;
-                }
-            }
-
             $helperDefinition->addMethodCall(self::$types[$type]['connect'], $arguments);
+        } else {
+            // If one or more hosts are configured
+            foreach ($provider['hosts'] as $config) {
+                $arguments = $this->getHelperArguments($type, $config, $persistentId);
+
+                $helperDefinition->addMethodCall(self::$types[$type]['connect'], $arguments);
+            }
         }
-        unset($config);
 
         if ($type === 'redis') {
             if (isset($provider['auth_password']) && null !== $provider['auth_password']) {
@@ -255,5 +241,62 @@ class DoctrineAdapterExtension extends Extension
     public function getAlias()
     {
         return 'cache_adapter_doctrine';
+    }
+
+    /**
+     * @param array $provider
+     * @param $helperDefinition
+     *
+     * @return array
+     */
+    private function setMemcachedOptions(array $provider, $helperDefinition)
+    {
+        if (!empty($provider['options']['memcached'])) {
+            foreach ($provider['options']['memcached'] as $option => $value) {
+                switch ($option) {
+                    case 'serializer':
+                    case 'hash':
+                    case 'distribution':
+                        $value = constant(
+                            sprintf('\Memcached::%s_%s', strtoupper($option), strtoupper($value))
+                        );
+                        break;
+                }
+                $helperDefinition->addMethodCall(
+                    'setOption',
+                    [constant(sprintf('\Memcached::OPT_%s', strtoupper($option))), $value]
+                );
+            }
+
+            return $provider;
+        }
+
+        return $provider;
+    }
+
+    /**
+     * @param $type
+     * @param $config
+     * @param $persistentId
+     *
+     * @return array
+     */
+    private function getHelperArguments($type, $config, $persistentId = null)
+    {
+        $arguments = [
+            'host' => empty($config['host']) ? 'localhost' : $config['host'],
+            'port' => empty($config['port']) ? self::$types[$type]['port'] : $config['port'],
+        ];
+
+        if ($type === 'memcached') {
+            $arguments[] = is_null($config['weight']) ? 0 : $config['weight'];
+        } else {
+            $arguments[] = is_null($config['timeout']) ? 0 : $config['timeout'];
+            if ($persistentId !== null) {
+                $arguments[] = $persistentId;
+            }
+        }
+
+        return $arguments;
     }
 }
