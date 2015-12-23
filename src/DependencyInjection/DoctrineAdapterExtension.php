@@ -32,7 +32,7 @@ class DoctrineAdapterExtension extends Extension
      * @type array
      */
     protected static $types = [
-        'memcache' => [
+        'memcache'  => [
             'class'   => 'Memcache',
             'connect' => 'addServer',
             'port'    => 11211,
@@ -42,7 +42,7 @@ class DoctrineAdapterExtension extends Extension
             'connect' => 'addServer',
             'port'    => 11211,
         ],
-        'redis' => [
+        'redis'     => [
             'class'   => 'Redis',
             'connect' => 'connect',
             'port'    => 6379,
@@ -77,7 +77,12 @@ class DoctrineAdapterExtension extends Extension
     {
         $providers = $container->getParameter('cache_adapter_doctrine.providers');
 
+        $first = isset($providers['default']) ? 'default' : null;
         foreach ($providers as $name => $provider) {
+            if ($first === null) {
+                $first = $name;
+            }
+
             $classParameter    = sprintf('cache.doctrine_adapter.%s.class', $provider['type']);
             $doctrineServiceId = sprintf('cache.doctrine_adapter.doctrine_service.%s', $provider['type']);
             if (!$container->hasParameter($classParameter)) {
@@ -94,6 +99,8 @@ class DoctrineAdapterExtension extends Extension
             $this->createDoctrineCacheDefinition($container, $doctrineServiceId, $doctrineClass, $name, $provider);
             $this->createPsr7CompliantService($container, $doctrineServiceId, $name);
         }
+
+        $container->setAlias('cache', 'cache.doctrine_adapter.provider.'.$first);
     }
 
     /**
@@ -105,8 +112,13 @@ class DoctrineAdapterExtension extends Extension
      * @param string           $name
      * @param array            $provider
      */
-    protected function createDoctrineCacheDefinition(ContainerBuilder $container, $doctrineServiceId, $doctrineClass, $name, array $provider)
-    {
+    protected function createDoctrineCacheDefinition(
+        ContainerBuilder $container,
+        $doctrineServiceId,
+        $doctrineClass,
+        $name,
+        array $provider
+    ) {
         $namespace = is_null($provider['namespace']) ? $name : $provider['namespace'];
 
         // Create a service for the requested doctrine cache
@@ -145,7 +157,9 @@ class DoctrineAdapterExtension extends Extension
             case 'sqlite':
             case 'riak':
             case 'chain':
-                throw new \InvalidArgumentException(sprintf('The cache provider type "%s" is not yet implemented.', $type));
+                throw new \InvalidArgumentException(
+                    sprintf('The cache provider type "%s" is not yet implemented.', $type)
+                );
                 break;
         }
 
@@ -177,7 +191,7 @@ class DoctrineAdapterExtension extends Extension
     /**
      * Creates a provider to the Doctrine cache provider.
      *
-     * @param $type
+     * @param       $type
      * @param array $provider
      *
      * @return Definition
@@ -245,7 +259,7 @@ class DoctrineAdapterExtension extends Extension
 
     /**
      * @param array $provider
-     * @param $helperDefinition
+     * @param       $helperDefinition
      *
      * @return array
      */
