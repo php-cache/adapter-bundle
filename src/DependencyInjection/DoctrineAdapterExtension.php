@@ -160,7 +160,6 @@ class DoctrineAdapterExtension extends Extension
                 throw new \InvalidArgumentException(
                     sprintf('The cache provider type "%s" is not yet implemented.', $type)
                 );
-                break;
         }
 
         // Add the definition to the container
