@@ -70,6 +70,8 @@ Use the new service as any PSR-6 cache.
 ``` php
 /** @var CacheItemPoolInterface $cache */
 $cache = $this->container->get('cache.provider.acme_apc_cache');
+// Or
+$cache = $this->container->get('cache'); // This is either the `default` provider, or the first provider in the config
 
 /** @var CacheItemInterface $item */
 $item = $cache->getItem('cache-key');
