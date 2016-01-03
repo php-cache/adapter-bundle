@@ -1,14 +1,14 @@
-# Doctrine Adapter Bundle
-[![Build Status](https://travis-ci.org/php-cache/doctrine-adapter-bundle.png?branch=master)](https://travis-ci.org/php-cache/doctrine-adapter-bundle) [![SensioLabsInsight](https://insight.sensiolabs.com/projects/5b4a0e25-8b81-44b1-8c99-2d2d387939e1/mini.png)](https://insight.sensiolabs.com/projects/5b4a0e25-8b81-44b1-8c99-2d2d387939e1)
+# Adapter Bundle
+[![Build Status](https://travis-ci.org/php-cache/adapter-bundle.png?branch=master)](https://travis-ci.org/php-cache/adapter-bundle) 
 
 This bundle helps you configurate and register PSR-6 cache services. The bundle uses Doctrine as cache implementation 
-with help from [DoctrineAdapter] to make it PSR-6 complient. 
+with help from [DoctrineAdapter] to make it PSR-6 compliant. 
 
 ### To Install
 
 Run the following in your project root, assuming you have composer set up for your project
 ```sh
-composer require cache/doctrine-adapter-bundle
+composer require cache/adapter-bundle
 ```
 
 Add the bundle to app/AppKernel.php
@@ -16,7 +16,7 @@ Add the bundle to app/AppKernel.php
 ```php
 $bundles(
     // ...
-    new Cache\Adapter\DoctrineAdapterBundle\DoctrineAdapterBundle(),
+    new Cache\AdapterBundle\CacheAdapterBundle(),
     // ...
 );
 ```

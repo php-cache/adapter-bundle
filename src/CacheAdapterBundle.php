@@ -9,21 +9,13 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Cache\Adapter\DoctrineAdapterBundle;
+namespace Cache\AdapterBundle;
 
-use Cache\Adapter\DoctrineAdapterBundle\DependencyInjection\DoctrineAdapterExtension;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class DoctrineAdapterBundle extends Bundle
+class CacheAdapterBundle extends Bundle
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getContainerExtension()
-    {
-        return new DoctrineAdapterExtension();
-    }
 }

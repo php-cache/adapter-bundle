@@ -9,7 +9,7 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Cache\Adapter\DoctrineAdapterBundle\DependencyInjection;
+namespace Cache\AdapterBundle\DependencyInjection;
 
 use Cache\Adapter\Doctrine\DoctrineCachePool;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
@@ -24,7 +24,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
  * @author Aaron Scherer <aequasi@gmail.com>
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class DoctrineAdapterExtension extends Extension
+class CacheAdapterExtension extends Extension
 {
     /**
      * Array of types, and their options.
@@ -246,14 +246,6 @@ class DoctrineAdapterExtension extends Extension
         }
 
         return $helperDefinition;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAlias()
-    {
-        return 'cache_adapter_doctrine';
     }
 
     /**
