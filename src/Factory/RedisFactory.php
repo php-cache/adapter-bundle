@@ -44,8 +44,8 @@ class RedisFactory implements AdapterFactoryInterface
     {
         $resolver = new OptionsResolver();
         $resolver->setDefaults([
-            'host' => '127.0.0.1',
-            'port' => '6379',
+            'host'     => '127.0.0.1',
+            'port'     => '6379',
             'protocol' => 'tcp',
         ]);
 

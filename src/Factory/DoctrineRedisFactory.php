@@ -30,7 +30,7 @@ class DoctrineRedisFactory implements AdapterFactoryInterface
         }
 
         $config = $this->configureOptions($options);
-        $redis = new \Redis();
+        $redis  = new \Redis();
         $redis->connect($config['host'], $config['port']);
 
         $client = new RedisCache();
@@ -38,7 +38,6 @@ class DoctrineRedisFactory implements AdapterFactoryInterface
 
         return new DoctrineCachePool($client);
     }
-
 
     /**
      * @param array $options
