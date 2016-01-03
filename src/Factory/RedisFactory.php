@@ -18,31 +18,23 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class RedisFactory implements AdapterFactoryInterface
+class RedisFactory extends AbstractAdapterFactory
 {
     /**
      * {@inheritdoc}
      */
-    public function createAdapter(array $options = [])
+    public function getAdapter(array $config)
     {
-        if (!class_exists('Cache\Adapter\Redis\RedisCachePool')) {
-            throw new \LogicException('You must install the "cache/redis-adapter" package to use the "redis" provider.');
-        }
-
-        $config = $this->configureOptions($options);
         $client = new Client(sprintf('%s://%s:%s', $config['protocol'], $config['host'], $config['port']));
 
         return new RedisCachePool($client);
     }
 
     /**
-     * @param array $options
-     *
-     * @return array
+     * {@inheritdoc}
      */
-    private function configureOptions(array $options)
+    protected function configureOptionResolver(OptionsResolver $resolver)
     {
-        $resolver = new OptionsResolver();
         $resolver->setDefaults([
             'host'     => '127.0.0.1',
             'port'     => '6379',
@@ -52,7 +44,29 @@ class RedisFactory implements AdapterFactoryInterface
         $resolver->setAllowedTypes('host', ['string']);
         $resolver->setAllowedTypes('port', ['string', 'int']);
         $resolver->setAllowedTypes('protocol', ['string']);
+    }
 
-        return $resolver->resolve($options);
+    /**
+     * {@inheritdoc}
+     */
+    protected function getRequiredClass()
+    {
+        return 'Cache\Adapter\Redis\RedisCachePool';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getPackageName()
+    {
+        return 'cache/redis-adapter';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getName()
+    {
+        return 'redis';
     }
 }
