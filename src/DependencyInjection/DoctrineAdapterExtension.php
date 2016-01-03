@@ -11,7 +11,7 @@
 
 namespace Cache\Adapter\DoctrineAdapterBundle\DependencyInjection;
 
-use Cache\Doctrine\CachePool;
+use Cache\Adapter\Doctrine\DoctrineCachePool;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -179,7 +179,7 @@ class DoctrineAdapterExtension extends Extension
         $serviceId = 'cache.doctrine_adapter.provider.'.$name;
 
         // Register the CacheItemPoolInterface definition
-        $def = new Definition(CachePool::class);
+        $def = new Definition(DoctrineCachePool::class);
         $def->addArgument(new Reference($doctrineServiceId));
         $def->setTags(['cache.provider' => []]);
 
