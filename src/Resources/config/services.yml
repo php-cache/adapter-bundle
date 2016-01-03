@@ -14,3 +14,7 @@ parameters:
 services:
   cache.factory.redis:
     class: Cache\AdapterBundle\Factory\RedisFactory
+
+  cache.factory.doctrine_redis:
+    class: Cache\AdapterBundle\Factory\DoctrineRedisFactory
+
