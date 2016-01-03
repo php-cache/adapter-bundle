@@ -10,3 +10,7 @@ parameters:
   cache.doctrine_adapter.win_cache.class: Doctrine\Common\Cache\WinCacheCache
   cache.doctrine_adapter.xcache.class: Doctrine\Common\Cache\XcacheCache
   cache.doctrine_adapter.zend_data.class: Doctrine\Common\Cache\ZendDataCache
+
+services:
+  cache.factory.redis:
+    class: Cache\AdapterBundle\Factory\RedisFactory

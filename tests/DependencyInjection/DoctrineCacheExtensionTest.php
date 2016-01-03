@@ -11,7 +11,8 @@
 
 namespace Cache\Adapter\DoctrineAdapterBundle\Tests\DependencyInjection;
 
-use Cache\Adapter\DoctrineAdapterBundle\DependencyInjection\CacheAdapterExtension;
+use Cache\AdapterBundle\DependencyInjection\CacheAdapterExtension;
+use Cache\AdapterBundle\DummyAdapter;
 use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractExtensionTestCase;
 
 class DoctrineCacheExtensionTest extends AbstractExtensionTestCase
@@ -25,9 +26,11 @@ class DoctrineCacheExtensionTest extends AbstractExtensionTestCase
 
     public function testThatProvidersExists()
     {
-        $providers = ['foo' => ['type' => 'apc']];
+        $providers = ['foo' => ['factory' => 'cache.factory.redis']];
         $this->load(['providers' => $providers]);
 
-        $this->assertContainerBuilderHasParameter('cache_adapter_doctrine.providers');
+
+        $this->assertContainerBuilderHasService('cache.provider.foo', DummyAdapter::class);
+        $this->assertContainerBuilderHasAlias('cache', 'cache.provider.foo');
     }
 }
