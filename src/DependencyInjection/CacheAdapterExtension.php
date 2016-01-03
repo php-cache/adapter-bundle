@@ -38,7 +38,7 @@ class CacheAdapterExtension extends Extension
         $loader->load('services.yml');
 
         // Configure client services
-        $first = isset($providers['default']) ? 'default' : null;
+        $first = isset($config['providers']['default']) ? 'default' : null;
         foreach ($config['providers'] as $name => $arguments) {
             if ($first === null) {
                 $first = $name;

@@ -11,7 +11,17 @@
 
 namespace Cache\AdapterBundle\Factory;
 
+use Psr\Cache\CacheItemPoolInterface;
+
+/**
+ * @author Tobias Nyholm <tobias.nyholm@gmail.com>
+ */
 interface AdapterFactoryInterface
 {
+    /**
+     * @param array $options
+     *
+     * @return CacheItemPoolInterface
+     */
     public function createAdapter(array $options = []);
 }
