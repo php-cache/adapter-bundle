@@ -13,19 +13,46 @@ namespace Cache\AdapterBundle\Factory;
 
 use Cache\Adapter\Redis\RedisCachePool;
 use Predis\Client;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @author Tobias Nyholm <tobias.nyholm@gmail.com>
+ */
 class RedisFactory implements AdapterFactoryInterface
 {
+    /**
+     * {@inheritdoc}
+     */
     public function createAdapter(array $options = [])
     {
         if (!class_exists('Cache\Adapter\Redis\RedisCachePool')) {
             throw new \LogicException('You must install the "cache/redis-adapter" package to use the "redis" provider.');
         }
 
-        // TOOD validate the options with symfony options resolver
-        // TODO get ip, port and protocol from options.
-        $client = new Client('tcp:/127.0.0.1:6379');
+        $config = $this->configureOptions($options);
+        $client = new Client(sprintf('%s://%s:%s', $config['protocol'], $config['host'], $config['port']));
 
         return new RedisCachePool($client);
+    }
+
+    /**
+     * @param array $options
+     *
+     * @return array
+     */
+    private function configureOptions(array $options)
+    {
+        $resolver = new OptionsResolver();
+        $resolver->setDefaults([
+            'host' => '127.0.0.1',
+            'port' => '6379',
+            'protocol' => 'tcp',
+        ]);
+
+        $resolver->setAllowedTypes('host', ['string']);
+        $resolver->setAllowedTypes('port', ['string', 'int']);
+        $resolver->setAllowedTypes('protocol', ['string']);
+
+        return $resolver->resolve($options);
     }
 }
