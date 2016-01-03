@@ -9,7 +9,7 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Cache\Adapter\DoctrineAdapterBundle\ProviderHelper;
+namespace Cache\AdapterBundle\ProviderHelper;
 
 /**
  * Class Memcached.

@@ -1,9 +1,9 @@
 {
-    "name":         "cache/doctrine-adapter-bundle",
+    "name":         "cache/adapter-bundle",
     "type":         "library",
-    "description":  "A bundle that registers Doctrine cache implementations as Symfony services supporting PSR-6 and tagging",
+    "description":  "A bundle that registers cache implementations as Symfony services supporting PSR-6 and tagging",
     "keywords":     [],
-    "homepage":     "https://github.com/php-cache/doctrine-cache-bundle",
+    "homepage":     "https://github.com/php-cache/adapter-bundle",
     "license":      "MIT",
     "authors":      [
         {
@@ -28,12 +28,12 @@
     },
     "autoload":     {
         "psr-4": {
-            "Cache\\Adapter\\DoctrineAdapterBundle\\": "src/"
+            "Cache\\AdapterBundle\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Cache\\Adapter\\DoctrineAdapterBundle\\Tests\\": "tests/"
+            "Cache\\AdapterBundle\\Tests\\": "tests/"
         }
     }
 }
