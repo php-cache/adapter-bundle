@@ -20,6 +20,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class DoctrineRedisFactory extends AbstractAdapterFactory
 {
+    protected static $dependencies = [
+        ['requiredClass' => 'Cache\Adapter\Doctrine\DoctrineCachePool', 'packageName' => 'cache/doctrine-adapter'],
+    ];
+
     /**
      * {@inheritdoc}
      */
@@ -41,7 +45,7 @@ class DoctrineRedisFactory extends AbstractAdapterFactory
     /**
      * {@inheritdoc}
      */
-    protected function configureOptionResolver(OptionsResolver $resolver)
+    protected static function configureOptionResolver(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'host' => '127.0.0.1',
@@ -50,29 +54,5 @@ class DoctrineRedisFactory extends AbstractAdapterFactory
 
         $resolver->setAllowedTypes('host', ['string']);
         $resolver->setAllowedTypes('port', ['string', 'int']);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getRequiredClass()
-    {
-        return 'Cache\Adapter\Doctrine\DoctrineCachePool';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getPackageName()
-    {
-        return 'cache/doctrine-adapter';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getName()
-    {
-        return 'doctrine_redis';
     }
 }

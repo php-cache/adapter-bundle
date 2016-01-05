@@ -11,6 +11,7 @@
 
 namespace Cache\AdapterBundle\Factory;
 
+use Cache\AdapterBundle\Exception\ConfigurationException;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -19,10 +20,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 abstract class AbstractAdapterFactory implements AdapterFactoryInterface
 {
-    /**
-     * @param OptionsResolver $resolver
-     */
-    abstract protected function configureOptionResolver(OptionsResolver $resolver);
+    protected static $dependencies = [];
 
     /**
      * @param array $config
@@ -32,27 +30,6 @@ abstract class AbstractAdapterFactory implements AdapterFactoryInterface
     abstract protected function getAdapter(array $config);
 
     /**
-     * Get the class name that is required for this adapter. This should more often than not be the cache pool.
-     *
-     * @return string
-     */
-    abstract protected function getRequiredClass();
-
-    /**
-     * Get the name of the package where require class lives.
-     *
-     * @return string
-     */
-    abstract protected function getPackageName();
-
-    /**
-     * Get the name of the adapter.
-     *
-     * @return string
-     */
-    abstract protected function getName();
-
-    /**
      * {@inheritdoc}
      */
     public function createAdapter(array $options = [])
@@ -60,10 +37,34 @@ abstract class AbstractAdapterFactory implements AdapterFactoryInterface
         $this->verifyDependencies();
 
         $resolver = new OptionsResolver();
-        $this->configureOptionResolver($resolver);
+        static::configureOptionResolver($resolver);
         $config = $resolver->resolve($options);
 
         return $this->getAdapter($config);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function validate(array $options = [], $adapterName)
+    {
+        static::verifyDependencies();
+
+        $resolver = new OptionsResolver();
+        static::configureOptionResolver($resolver);
+
+        try {
+            $resolver->resolve($options);
+        } catch (\Exception $e) {
+            $message = sprintf(
+                'Error while configure adapter %s. Verify your options under "cache_adapter.providers.%s.options". %s',
+                $adapterName,
+                $adapterName,
+                $e->getMessage()
+            );
+
+            throw new ConfigurationException($message, $e->getCode(), $e);
+        }
     }
 
     /**
@@ -71,16 +72,28 @@ abstract class AbstractAdapterFactory implements AdapterFactoryInterface
      *
      * @throws \LogicException
      */
-    protected function verifyDependencies()
+    protected static function verifyDependencies()
     {
-        if (!class_exists($this->getRequiredClass())) {
-            throw new \LogicException(
-                sprintf(
-                    'You must install the "%s" package to use the "%s" provider.',
-                    $this->getPackageName(),
-                    $this->getName()
-                )
-            );
+        foreach (static::$dependencies as $dependency) {
+            if (!class_exists($dependency['requiredClass'])) {
+                throw new \LogicException(
+                    sprintf(
+                        'You must install the "%s" package to use the "%s" factory.',
+                        $dependency['packageName'],
+                        static::class
+                    )
+                );
+            }
         }
+    }
+
+    /**
+     * By default we have not options ot configure. A factory should override this function and confgure
+     * the options resolver.
+     *
+     * @param OptionsResolver $resolver
+     */
+    protected static function configureOptionResolver(OptionsResolver $resolver)
+    {
     }
 }

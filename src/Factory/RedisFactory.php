@@ -20,6 +20,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class RedisFactory extends AbstractAdapterFactory
 {
+    protected static $dependencies = [
+        ['requiredClass' => 'Cache\Adapter\Redis\RedisCachePool', 'packageName' => 'cache/redis-adapter'],
+    ];
+
     /**
      * {@inheritdoc}
      */
@@ -33,7 +37,7 @@ class RedisFactory extends AbstractAdapterFactory
     /**
      * {@inheritdoc}
      */
-    protected function configureOptionResolver(OptionsResolver $resolver)
+    protected static function configureOptionResolver(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'host'     => '127.0.0.1',
@@ -44,29 +48,5 @@ class RedisFactory extends AbstractAdapterFactory
         $resolver->setAllowedTypes('host', ['string']);
         $resolver->setAllowedTypes('port', ['string', 'int']);
         $resolver->setAllowedTypes('protocol', ['string']);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getRequiredClass()
-    {
-        return 'Cache\Adapter\Redis\RedisCachePool';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getPackageName()
-    {
-        return 'cache/redis-adapter';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getName()
-    {
-        return 'redis';
     }
 }
