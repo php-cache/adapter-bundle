@@ -16,6 +16,9 @@ use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
+ * An abstract factory that makes it easier to implement new factories. A class that extend the AbstractAdapterFactory
+ * should override AbstractAdapterFactory::$dependencies and AbstractAdapterFactory::configureOptionResolver().
+ *
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
 abstract class AbstractAdapterFactory implements AdapterFactoryInterface
@@ -57,7 +60,7 @@ abstract class AbstractAdapterFactory implements AdapterFactoryInterface
             $resolver->resolve($options);
         } catch (\Exception $e) {
             $message = sprintf(
-                'Error while configure adapter %s. Verify your options under "cache_adapter.providers.%s.options". %s',
+                'Error while configure adapter %s. Verify your configuration at "cache_adapter.providers.%s.options". %s',
                 $adapterName,
                 $adapterName,
                 $e->getMessage()
@@ -68,7 +71,7 @@ abstract class AbstractAdapterFactory implements AdapterFactoryInterface
     }
 
     /**
-     * Make sure that we have the required class and throws and exception if we dont.
+     * Make sure that we have the required class and throw and exception if we don't.
      *
      * @throws \LogicException
      */
@@ -88,7 +91,7 @@ abstract class AbstractAdapterFactory implements AdapterFactoryInterface
     }
 
     /**
-     * By default we have not options ot configure. A factory should override this function and confgure
+     * By default we do not have any options to configure. A factory should override this function and confgure
      * the options resolver.
      *
      * @param OptionsResolver $resolver
