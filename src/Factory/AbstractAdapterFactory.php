@@ -49,7 +49,7 @@ abstract class AbstractAdapterFactory implements AdapterFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public static function validate(array $options = [], $adapterName)
+    public static function validate(array $options, $adapterName)
     {
         static::verifyDependencies();
 
