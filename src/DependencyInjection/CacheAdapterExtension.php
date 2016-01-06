@@ -47,6 +47,13 @@ class CacheAdapterExtension extends Extension
             $factoryClass = $container->getDefinition($arguments['factory'])->getClass();
             $factoryClass::validate($arguments['options'], $name);
 
+            // See if any option has a service reference
+            foreach ($arguments['options'] as $key => $value) {
+                if (substr($key, -8) === '_service') {
+                    $arguments['options'][$key] = new Reference($value);
+                }
+            }
+
             $def = $container->register('cache.provider.'.$name, DummyAdapter::class);
             $def->setFactory([new Reference($arguments['factory']), 'createAdapter'])
                 ->addArgument($arguments['options']);
