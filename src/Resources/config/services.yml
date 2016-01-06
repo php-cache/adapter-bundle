@@ -11,8 +11,8 @@ services:
     class: Cache\AdapterBundle\Factory\FilesystemFactory
   cache.factory.memcached:
     class: Cache\AdapterBundle\Factory\MemcachedFactory
-  cache.factory.phpredis:
-    class: Cache\AdapterBundle\Factory\PhpRedisFactory
+  cache.factory.predis:
+    class: Cache\AdapterBundle\Factory\PredisFactory
   cache.factory.redis:
     class: Cache\AdapterBundle\Factory\RedisFactory
   cache.factory.void:
