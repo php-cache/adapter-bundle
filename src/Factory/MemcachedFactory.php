@@ -11,17 +11,16 @@
 
 namespace Cache\AdapterBundle\Factory;
 
-use Cache\Adapter\Doctrine\DoctrineCachePool;
-use Doctrine\Common\Cache\RedisCache;
+use Cache\Adapter\Memcached\MemcachedCachePool;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class DoctrineRedisFactory extends AbstractAdapterFactory
+class MemcachedFactory extends AbstractAdapterFactory
 {
     protected static $dependencies = [
-        ['requiredClass' => 'Cache\Adapter\Doctrine\DoctrineCachePool', 'packageName' => 'cache/doctrine-adapter'],
+        ['requiredClass' => 'Cache\Adapter\Memcached\MemcachedCachePool', 'packageName' => 'cache/memcached-adapter'],
     ];
 
     /**
@@ -29,13 +28,10 @@ class DoctrineRedisFactory extends AbstractAdapterFactory
      */
     public function getAdapter(array $config)
     {
-        $redis  = new \Redis();
-        $redis->connect($config['host'], $config['port']);
+        $client = new \Memcached();
+        $client->addServer($config['host'], $config['port']);
 
-        $client = new RedisCache();
-        $client->setRedis($redis);
-
-        return new DoctrineCachePool($client);
+        return new MemcachedCachePool($client);
     }
 
     /**
@@ -44,8 +40,8 @@ class DoctrineRedisFactory extends AbstractAdapterFactory
     protected static function configureOptionResolver(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'host' => '127.0.0.1',
-            'port' => '6379',
+            'host'     => '127.0.0.1',
+            'port'     => '6379',
         ]);
 
         $resolver->setAllowedTypes('host', ['string']);

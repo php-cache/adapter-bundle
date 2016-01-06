@@ -39,5 +39,5 @@ interface AdapterFactoryInterface
      * @throws \Symfony\Component\OptionsResolver\Exception\NoSuchOptionException     If a lazy option reads an unavailable option
      * @throws \Symfony\Component\OptionsResolver\Exception\AccessException           If called from a lazy option or normalizer
      */
-    public static function validate(array $options = [], $adapterName);
+    public static function validate(array $options, $adapterName);
 }

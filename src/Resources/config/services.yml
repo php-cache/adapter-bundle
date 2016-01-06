@@ -1,7 +1,22 @@
 services:
-  cache.factory.redis:
-    class: Cache\AdapterBundle\Factory\RedisFactory
-
+  cache.factory.apc:
+    class: Cache\AdapterBundle\Factory\ApcFactory
+  cache.factory.uapc:
+    class: Cache\AdapterBundle\Factory\ApcuFactory
+  cache.factory.array:
+    class: Cache\AdapterBundle\Factory\ArrayFactory
   cache.factory.doctrine_redis:
     class: Cache\AdapterBundle\Factory\DoctrineRedisFactory
+  cache.factory.filesystem:
+    class: Cache\AdapterBundle\Factory\FilesystemFactory
+  cache.factory.memcached:
+    class: Cache\AdapterBundle\Factory\MemcachedFactory
+  cache.factory.phpredis:
+    class: Cache\AdapterBundle\Factory\PhpRedisFactory
+  cache.factory.redis:
+    class: Cache\AdapterBundle\Factory\RedisFactory
+  cache.factory.void:
+    class: Cache\AdapterBundle\Factory\VoidFactory
+
+
 
