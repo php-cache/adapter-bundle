@@ -18,18 +18,21 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class DoctrineRedisFactory implements AdapterFactoryInterface
+class DoctrineRedisFactory extends AbstractAdapterFactory
 {
+    protected static $dependencies = [
+        ['requiredClass' => 'Cache\Adapter\Doctrine\DoctrineCachePool', 'packageName' => 'cache/doctrine-adapter'],
+    ];
+
     /**
      * {@inheritdoc}
      */
-    public function createAdapter(array $options = [])
+    public function getAdapter(array $config)
     {
         if (!class_exists('Cache\Adapter\Doctrine\DoctrineCachePool')) {
             throw new \LogicException('You must install the "cache/doctrine-adapter" package to use the "doctrine_redis" provider.');
         }
 
-        $config = $this->configureOptions($options);
         $redis  = new \Redis();
         $redis->connect($config['host'], $config['port']);
 
@@ -40,13 +43,10 @@ class DoctrineRedisFactory implements AdapterFactoryInterface
     }
 
     /**
-     * @param array $options
-     *
-     * @return array
+     * {@inheritdoc}
      */
-    private function configureOptions(array $options)
+    protected static function configureOptionResolver(OptionsResolver $resolver)
     {
-        $resolver = new OptionsResolver();
         $resolver->setDefaults([
             'host' => '127.0.0.1',
             'port' => '6379',
@@ -54,7 +54,5 @@ class DoctrineRedisFactory implements AdapterFactoryInterface
 
         $resolver->setAllowedTypes('host', ['string']);
         $resolver->setAllowedTypes('port', ['string', 'int']);
-
-        return $resolver->resolve($options);
     }
 }
