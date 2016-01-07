@@ -26,7 +26,7 @@ class DoctrineCacheExtensionTest extends AbstractExtensionTestCase
 
     public function testThatProvidersExists()
     {
-        $providers = ['foo' => ['factory' => 'cache.factory.redis']];
+        $providers = ['foo' => ['factory' => 'cache.factory.array']];
         $this->load(['providers' => $providers]);
 
         $this->assertContainerBuilderHasService('cache.provider.foo', DummyAdapter::class);
