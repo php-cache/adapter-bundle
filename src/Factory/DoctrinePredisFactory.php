@@ -11,17 +11,19 @@
 
 namespace Cache\AdapterBundle\Factory;
 
-use Cache\Adapter\Predis\PredisCachePool;
+use Cache\Adapter\Doctrine\DoctrineCachePool;
+use Doctrine\Common\Cache\PredisCache;
 use Predis\Client;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class PredisFactory extends AbstractAdapterFactory
+class DoctrinePredisFactory extends AbstractDoctrineAdapterFactory
 {
     protected static $dependencies = [
-        ['requiredClass' => 'Cache\Adapter\Predis\PredisCachePool', 'packageName' => 'cache/predis-adapter'],
+        ['requiredClass' => 'Cache\Adapter\Doctrine\DoctrineCachePool', 'packageName' => 'cache/doctrine-adapter'],
+        ['requiredClass' => 'Predis\Client', 'packageName' => 'predis/predis'],
     ];
 
     /**
@@ -35,7 +37,7 @@ class PredisFactory extends AbstractAdapterFactory
             'port'   => $config['port'],
         ]);
 
-        return new PredisCachePool($client);
+        return new DoctrineCachePool(new PredisCache($client));
     }
 
     /**

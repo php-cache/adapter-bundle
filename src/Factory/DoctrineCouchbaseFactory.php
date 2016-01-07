@@ -11,31 +11,27 @@
 
 namespace Cache\AdapterBundle\Factory;
 
-use Cache\Adapter\Predis\PredisCachePool;
-use Predis\Client;
+use Cache\Adapter\Doctrine\DoctrineCachePool;
+use Couchbase;
+use Doctrine\Common\Cache\CouchbaseCache;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class PredisFactory extends AbstractAdapterFactory
+class DoctrineCouchbaseFactory extends AbstractDoctrineAdapterFactory
 {
-    protected static $dependencies = [
-        ['requiredClass' => 'Cache\Adapter\Predis\PredisCachePool', 'packageName' => 'cache/predis-adapter'],
-    ];
-
     /**
      * {@inheritdoc}
      */
     public function getAdapter(array $config)
     {
-        $client = new Client([
-            'scheme' => $config['scheme'],
-            'host'   => $config['host'],
-            'port'   => $config['port'],
-        ]);
+        $couchbase = new Couchbase($config['host'], $config['user'], $config['password'], $config['bucket']);
 
-        return new PredisCachePool($client);
+        $client = new CouchbaseCache();
+        $client->setCouchbase($couchbase);
+
+        return new DoctrineCachePool($client);
     }
 
     /**
@@ -44,13 +40,15 @@ class PredisFactory extends AbstractAdapterFactory
     protected static function configureOptionResolver(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'host'   => '127.0.0.1',
-            'port'   => '6379',
-            'scheme' => 'tcp',
+            'host'     => '127.0.0.1',
+            'user'     => 'Administrator',
+            'password' => 'password',
+            'bucket'   => 'default',
         ]);
 
         $resolver->setAllowedTypes('host', ['string']);
-        $resolver->setAllowedTypes('port', ['string', 'int']);
-        $resolver->setAllowedTypes('scheme', ['string']);
+        $resolver->setAllowedTypes('user', ['string']);
+        $resolver->setAllowedTypes('password', ['string']);
+        $resolver->setAllowedTypes('bucket', ['string']);
     }
 }

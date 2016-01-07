@@ -11,31 +11,26 @@
 
 namespace Cache\AdapterBundle\Factory;
 
-use Cache\Adapter\Predis\PredisCachePool;
-use Predis\Client;
+use Cache\Adapter\Doctrine\DoctrineCachePool;
+use Doctrine\Common\Cache\RiakCache;
+use Riak\Bucket;
+use Riak\Connection;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class PredisFactory extends AbstractAdapterFactory
+class DoctrineRiakFactory extends AbstractDoctrineAdapterFactory
 {
-    protected static $dependencies = [
-        ['requiredClass' => 'Cache\Adapter\Predis\PredisCachePool', 'packageName' => 'cache/predis-adapter'],
-    ];
-
     /**
      * {@inheritdoc}
      */
     public function getAdapter(array $config)
     {
-        $client = new Client([
-            'scheme' => $config['scheme'],
-            'host'   => $config['host'],
-            'port'   => $config['port'],
-        ]);
+        $connection = new Connection($config['host'], $config['port']);
+        $bucket     = new Bucket($connection, $config['type']);
 
-        return new PredisCachePool($client);
+        return new DoctrineCachePool(new RiakCache($bucket));
     }
 
     /**
@@ -44,13 +39,13 @@ class PredisFactory extends AbstractAdapterFactory
     protected static function configureOptionResolver(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'host'   => '127.0.0.1',
-            'port'   => '6379',
-            'scheme' => 'tcp',
+            'host' => '127.0.0.1',
+            'port' => '8087',
+            'type' => null,
         ]);
 
         $resolver->setAllowedTypes('host', ['string']);
         $resolver->setAllowedTypes('port', ['string', 'int']);
-        $resolver->setAllowedTypes('scheme', ['string']);
+        $resolver->setAllowedTypes('type', ['string', 'null']);
     }
 }
