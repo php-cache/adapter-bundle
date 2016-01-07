@@ -58,7 +58,7 @@ class CacheAdapterExtension extends Extension
             $def->setFactory([new Reference($arguments['factory']), 'createAdapter'])
                 ->addArgument($arguments['options']);
 
-            $def->setTags(['cache.provider' => []]);
+            $def->addTag('cache.provider');
         }
 
         $container->setAlias('cache', 'cache.provider.'.$first);
