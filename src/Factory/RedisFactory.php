@@ -12,7 +12,6 @@
 namespace Cache\AdapterBundle\Factory;
 
 use Cache\Adapter\Redis\RedisCachePool;
-use Predis\Client;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -29,7 +28,8 @@ class RedisFactory extends AbstractAdapterFactory
      */
     public function getAdapter(array $config)
     {
-        $client = new Client(sprintf('%s://%s:%s', $config['protocol'], $config['host'], $config['port']));
+        $client = new \Redis();
+        $client->client($config['host'], $config['port']);
 
         return new RedisCachePool($client);
     }
@@ -42,11 +42,9 @@ class RedisFactory extends AbstractAdapterFactory
         $resolver->setDefaults([
             'host'     => '127.0.0.1',
             'port'     => '6379',
-            'protocol' => 'tcp',
         ]);
 
         $resolver->setAllowedTypes('host', ['string']);
         $resolver->setAllowedTypes('port', ['string', 'int']);
-        $resolver->setAllowedTypes('protocol', ['string']);
     }
 }

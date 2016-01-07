@@ -11,16 +11,17 @@
 
 namespace Cache\AdapterBundle\Factory;
 
-use Cache\Adapter\PhpRedis\PhpRedisCachePool;
+use Cache\Adapter\Predis\PredisCachePool;
+use Predis\Client;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class PhpRedisFactory extends AbstractAdapterFactory
+class PredisFactory extends AbstractAdapterFactory
 {
     protected static $dependencies = [
-        ['requiredClass' => 'Cache\Adapter\PhpRedis\PhpRedisCachePool', 'packageName' => 'cache/phpredis-adapter'],
+        ['requiredClass' => 'Cache\Adapter\Predis\PredisCachePool', 'packageName' => 'cache/predis-adapter'],
     ];
 
     /**
@@ -28,10 +29,9 @@ class PhpRedisFactory extends AbstractAdapterFactory
      */
     public function getAdapter(array $config)
     {
-        $client = new \Redis();
-        $client->client($config['host'], $config['port']);
+        $client = new Client(sprintf('%s://%s:%s', $config['protocol'], $config['host'], $config['port']));
 
-        return new PhpRedisCachePool($client);
+        return new PredisCachePool($client);
     }
 
     /**
@@ -42,9 +42,11 @@ class PhpRedisFactory extends AbstractAdapterFactory
         $resolver->setDefaults([
             'host'     => '127.0.0.1',
             'port'     => '6379',
+            'protocol' => 'tcp',
         ]);
 
         $resolver->setAllowedTypes('host', ['string']);
         $resolver->setAllowedTypes('port', ['string', 'int']);
+        $resolver->setAllowedTypes('protocol', ['string']);
     }
 }
