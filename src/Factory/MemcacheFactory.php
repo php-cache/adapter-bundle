@@ -11,16 +11,17 @@
 
 namespace Cache\AdapterBundle\Factory;
 
-use Cache\Adapter\Memcached\MemcachedCachePool;
+use Cache\Adapter\Memcache\MemcacheCachePool;
+use Memcache;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * @author Tobias Nyholm <tobias.nyholm@gmail.com>
+ * @author Nicholas Ruunu <nicholas@ruu.nu>
  */
-class MemcachedFactory extends AbstractAdapterFactory
+class MemcacheFactory extends AbstractAdapterFactory
 {
     protected static $dependencies = [
-        ['requiredClass' => 'Cache\Adapter\Memcached\MemcachedCachePool', 'packageName' => 'cache/memcached-adapter'],
+      ['requiredClass' => 'Cache\Adapter\Memcache\MemcacheCachePool', 'packageName' => 'cache/memcache-adapter'],
     ];
 
     /**
@@ -28,10 +29,10 @@ class MemcachedFactory extends AbstractAdapterFactory
      */
     public function getAdapter(array $config)
     {
-        $client = new \Memcached();
-        $client->addServer($config['host'], $config['port']);
+        $client = new Memcache();
+        $client->connect($config['host'], $config['port']);
 
-        return new MemcachedCachePool($client);
+        return new MemcacheCachePool($client);
     }
 
     /**
@@ -40,8 +41,8 @@ class MemcachedFactory extends AbstractAdapterFactory
     protected static function configureOptionResolver(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'host'     => '127.0.0.1',
-            'port'     => 11211,
+          'host'     => '127.0.0.1',
+          'port'     => 11211,
         ]);
 
         $resolver->setAllowedTypes('host', ['string']);
