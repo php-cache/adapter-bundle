@@ -41,7 +41,7 @@ class MemcachedFactory extends AbstractAdapterFactory
     {
         $resolver->setDefaults([
             'host'     => '127.0.0.1',
-            'port'     => '6379',
+            'port'     => 11211,
         ]);
 
         $resolver->setAllowedTypes('host', ['string']);
