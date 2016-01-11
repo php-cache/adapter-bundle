@@ -5,8 +5,6 @@ services:
     class: Cache\AdapterBundle\Factory\ApcuFactory
   cache.factory.array:
     class: Cache\AdapterBundle\Factory\ArrayFactory
-  cache.factory.doctrine_redis:
-    class: Cache\AdapterBundle\Factory\DoctrineRedisFactory
   cache.factory.filesystem:
     class: Cache\AdapterBundle\Factory\FilesystemFactory
   cache.factory.memcached:
@@ -18,5 +16,26 @@ services:
   cache.factory.void:
     class: Cache\AdapterBundle\Factory\VoidFactory
 
-
+  cache.factory.doctrine_couchbase:
+    class: Cache\AdapterBundle\Factory\DoctrineCouchbaseFactory
+  cache.factory.doctrine_memcached:
+    class: Cache\AdapterBundle\Factory\DoctrineMemcachedFactory
+  cache.factory.doctrine_memcache:
+    class: Cache\AdapterBundle\Factory\DoctrineMemcacheFactory
+  cache.factory.doctrine_mongodb:
+    class: Cache\AdapterBundle\Factory\DoctrineMongodDBFactory
+  cache.factory.doctrine_predis:
+    class: Cache\AdapterBundle\Factory\DoctrinePredisFactory
+  cache.factory.doctrine_redis:
+    class: Cache\AdapterBundle\Factory\DoctrineRedisFactory
+  cache.factory.doctrine_riak:
+    class: Cache\AdapterBundle\Factory\DoctrineRiakFactory
+  cache.factory.doctrine_sqlite3:
+    class: Cache\AdapterBundle\Factory\DoctrineSQLite3Factory
+  cache.factory.doctrine_wincache:
+    class: Cache\AdapterBundle\Factory\DoctrineWinCacheFactory
+  cache.factory.doctrine_xcache:
+    class: Cache\AdapterBundle\Factory\DoctrineXcacheFactory
+  cache.factory.doctrine_zenddata:
+    class: Cache\AdapterBundle\Factory\DoctrineZendDataFactory
 

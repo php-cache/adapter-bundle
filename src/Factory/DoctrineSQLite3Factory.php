@@ -12,26 +12,23 @@
 namespace Cache\AdapterBundle\Factory;
 
 use Cache\Adapter\Doctrine\DoctrineCachePool;
-use Doctrine\Common\Cache\RedisCache;
+use Doctrine\Common\Cache\SQLite3Cache;
+use SQLite3;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class DoctrineRedisFactory extends AbstractDoctrineAdapterFactory
+class DoctrineSQLite3Factory extends AbstractDoctrineAdapterFactory
 {
     /**
      * {@inheritdoc}
      */
     public function getAdapter(array $config)
     {
-        $redis  = new \Redis();
-        $redis->connect($config['host'], $config['port']);
+        $sqlite = new SQLite3($config['file_path']);
 
-        $client = new RedisCache();
-        $client->setRedis($redis);
-
-        return new DoctrineCachePool($client);
+        return new DoctrineCachePool(new SQLite3Cache($sqlite, $config['table']));
     }
 
     /**
@@ -39,12 +36,9 @@ class DoctrineRedisFactory extends AbstractDoctrineAdapterFactory
      */
     protected static function configureOptionResolver(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            'host' => '127.0.0.1',
-            'port' => '6379',
-        ]);
+        $resolver->setRequired(['file_path', 'table']);
 
-        $resolver->setAllowedTypes('host', ['string']);
-        $resolver->setAllowedTypes('port', ['string', 'int']);
+        $resolver->setAllowedTypes('file_path', ['string']);
+        $resolver->setAllowedTypes('table', ['string']);
     }
 }

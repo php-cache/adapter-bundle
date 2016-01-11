@@ -11,31 +11,25 @@
 
 namespace Cache\AdapterBundle\Factory;
 
-use Cache\Adapter\Predis\PredisCachePool;
-use Predis\Client;
+use Cache\Adapter\Doctrine\DoctrineCachePool;
+use Doctrine\Common\Cache\MemcacheCache;
+use Memcache;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class PredisFactory extends AbstractAdapterFactory
+class DoctrineMemcacheFactory extends AbstractDoctrineAdapterFactory
 {
-    protected static $dependencies = [
-        ['requiredClass' => 'Cache\Adapter\Predis\PredisCachePool', 'packageName' => 'cache/predis-adapter'],
-    ];
-
     /**
      * {@inheritdoc}
      */
     public function getAdapter(array $config)
     {
-        $client = new Client([
-            'scheme' => $config['scheme'],
-            'host'   => $config['host'],
-            'port'   => $config['port'],
-        ]);
+        $memcache = new Memcache();
+        $memcache->connect($config['host'], $config['port']);
 
-        return new PredisCachePool($client);
+        return new DoctrineCachePool(new MemcacheCache($memcache));
     }
 
     /**
@@ -44,13 +38,11 @@ class PredisFactory extends AbstractAdapterFactory
     protected static function configureOptionResolver(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'host'   => '127.0.0.1',
-            'port'   => '6379',
-            'scheme' => 'tcp',
+            'host' => '127.0.0.1',
+            'port' => '11211',
         ]);
 
         $resolver->setAllowedTypes('host', ['string']);
         $resolver->setAllowedTypes('port', ['string', 'int']);
-        $resolver->setAllowedTypes('scheme', ['string']);
     }
 }

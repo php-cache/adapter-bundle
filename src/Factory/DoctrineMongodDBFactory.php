@@ -12,26 +12,24 @@
 namespace Cache\AdapterBundle\Factory;
 
 use Cache\Adapter\Doctrine\DoctrineCachePool;
-use Doctrine\Common\Cache\RedisCache;
+use Doctrine\Common\Cache\MongoDBCache;
+use MongoClient;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class DoctrineRedisFactory extends AbstractDoctrineAdapterFactory
+class DoctrineMongodDBFactory extends AbstractDoctrineAdapterFactory
 {
     /**
      * {@inheritdoc}
      */
     public function getAdapter(array $config)
     {
-        $redis  = new \Redis();
-        $redis->connect($config['host'], $config['port']);
+        $mongo      = new MongoClient();
+        $collection = $mongo->selectCollection($config['host'], $config['collection']);
 
-        $client = new RedisCache();
-        $client->setRedis($redis);
-
-        return new DoctrineCachePool($client);
+        return new DoctrineCachePool(new MongoDBCache($collection));
     }
 
     /**
@@ -39,12 +37,18 @@ class DoctrineRedisFactory extends AbstractDoctrineAdapterFactory
      */
     protected static function configureOptionResolver(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            'host' => '127.0.0.1',
-            'port' => '6379',
-        ]);
+        $resolver->setRequired(['host', 'collection']);
 
         $resolver->setAllowedTypes('host', ['string']);
-        $resolver->setAllowedTypes('port', ['string', 'int']);
+        $resolver->setAllowedTypes('collection', ['string']);
+    }
+
+    protected static function verifyDependencies()
+    {
+        if (!version_compare(phpversion('mongo'), '1.3.0', '>=')) {
+            throw new \LogicException('Mongo >= 1.3.0 is required.');
+        }
+
+        parent::verifyDependencies();
     }
 }
