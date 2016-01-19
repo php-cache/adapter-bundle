@@ -29,7 +29,7 @@ class RedisFactory extends AbstractAdapterFactory
     public function getAdapter(array $config)
     {
         $client = new \Redis();
-        $client->client($config['host'], $config['port']);
+        $client->connect($config['host'], $config['port']);
 
         return new RedisCachePool($client);
     }

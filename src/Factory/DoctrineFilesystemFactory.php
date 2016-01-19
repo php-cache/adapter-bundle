@@ -25,7 +25,7 @@ class DoctrineFilesystemFactory extends AbstractDoctrineAdapterFactory
      */
     public function getAdapter(array $config)
     {
-        $client = new FilesystemCache($config['directory'], $config['extension'], $config['umask']);
+        $client = new FilesystemCache($config['directory'], $config['extension'], (int) $config['umask']);
 
         return new DoctrineCachePool($client);
     }
