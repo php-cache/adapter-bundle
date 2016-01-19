@@ -18,6 +18,8 @@ services:
 
   cache.factory.doctrine_couchbase:
     class: Cache\AdapterBundle\Factory\DoctrineCouchbaseFactory
+  cache.factory.doctrine_filesystem:
+    class: Cache\AdapterBundle\Factory\DoctrineFilesystemFactory
   cache.factory.doctrine_memcached:
     class: Cache\AdapterBundle\Factory\DoctrineMemcachedFactory
   cache.factory.doctrine_memcache:
