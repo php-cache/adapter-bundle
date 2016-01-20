@@ -28,7 +28,7 @@ class FilesystemFactory extends AbstractAdapterFactory
      */
     public function getAdapter(array $config)
     {
-        return new FilesystemCachePool($config['flysystem']);
+        return new FilesystemCachePool($config['flysystem_service']);
     }
 
     /**
@@ -36,10 +36,8 @@ class FilesystemFactory extends AbstractAdapterFactory
      */
     protected static function configureOptionResolver(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            'flysystem_service' => null,
-        ]);
+        $resolver->setRequired(['flysystem_service']);
 
-        $resolver->setAllowedTypes('host', ['string', 'object']);
+        $resolver->setAllowedTypes('flysystem_service', ['string', 'object']);
     }
 }
