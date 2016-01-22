@@ -29,7 +29,7 @@ class MongoDBFactory extends AbstractAdapterFactory
      */
     public function getAdapter(array $config)
     {
-        $manager = new Manager(sprintf('mongodb://%s:%s', $config['host'], $config['port']));
+        $manager    = new Manager(sprintf('mongodb://%s:%s', $config['host'], $config['port']));
         $collection = MongoDBCachePool::createCollection($manager, $config['namespace']);
 
         return new MongoDBCachePool($collection);
