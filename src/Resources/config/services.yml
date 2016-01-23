@@ -1,7 +1,7 @@
 services:
   cache.factory.apc:
     class: Cache\AdapterBundle\Factory\ApcFactory
-  cache.factory.uapc:
+  cache.factory.apcu:
     class: Cache\AdapterBundle\Factory\ApcuFactory
   cache.factory.array:
     class: Cache\AdapterBundle\Factory\ArrayFactory
