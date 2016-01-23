@@ -1,7 +1,7 @@
 services:
   cache.factory.apc:
     class: Cache\AdapterBundle\Factory\ApcFactory
-  cache.factory.uapc:
+  cache.factory.apcu:
     class: Cache\AdapterBundle\Factory\ApcuFactory
   cache.factory.array:
     class: Cache\AdapterBundle\Factory\ArrayFactory
@@ -9,6 +9,8 @@ services:
     class: Cache\AdapterBundle\Factory\FilesystemFactory
   cache.factory.memcached:
     class: Cache\AdapterBundle\Factory\MemcachedFactory
+  cache.factory.memcache:
+    class: Cache\AdapterBundle\Factory\MemcacheFactory
   cache.factory.predis:
     class: Cache\AdapterBundle\Factory\PredisFactory
   cache.factory.redis:
