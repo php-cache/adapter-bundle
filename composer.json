@@ -29,7 +29,8 @@
         "cache/array-adapter": "@stable"
     },
     "suggest": {
-        "cache/*-adapter": "To integrate with a PSR-6 cache"
+        "cache/*-adapter": "A actual implementation of PSR-6 cache",
+        "cache/cache-bundle": "To integrate with the symfony framework"
     },
     "autoload": {
         "psr-4": {
