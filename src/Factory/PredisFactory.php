@@ -17,8 +17,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
+ * @author Aaron Scherer <aequasi@gmail.com>
  */
-class PredisFactory extends AbstractAdapterFactory
+class PredisFactory extends AbstractDsnAdapterFactory
 {
     protected static $dependencies = [
         ['requiredClass' => 'Cache\Adapter\Predis\PredisCachePool', 'packageName' => 'cache/predis-adapter'],
@@ -29,11 +30,18 @@ class PredisFactory extends AbstractAdapterFactory
      */
     public function getAdapter(array $config)
     {
-        $client = new Client([
-            'scheme' => $config['scheme'],
-            'host'   => $config['host'],
-            'port'   => $config['port'],
-        ]);
+        $dsn = static::getDsn();
+        if (empty($dsn)) {
+            $client = new Client(
+                [
+                    'scheme' => $config['scheme'],
+                    'host'   => $config['host'],
+                    'port'   => $config['port'],
+                ]
+            );
+        } else {
+            $client = new Client($dsn->getDsn());
+        }
 
         return new PredisCachePool($client);
     }
@@ -43,11 +51,15 @@ class PredisFactory extends AbstractAdapterFactory
      */
     protected static function configureOptionResolver(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            'host'   => '127.0.0.1',
-            'port'   => '6379',
-            'scheme' => 'tcp',
-        ]);
+        parent::configureOptionResolver($resolver);
+
+        $resolver->setDefaults(
+            [
+                'host'   => '127.0.0.1',
+                'port'   => '6379',
+                'scheme' => 'tcp',
+            ]
+        );
 
         $resolver->setAllowedTypes('host', ['string']);
         $resolver->setAllowedTypes('port', ['string', 'int']);
