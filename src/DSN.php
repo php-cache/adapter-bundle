@@ -18,7 +18,7 @@ namespace Cache\AdapterBundle;
  */
 class DSN
 {
-    const PORTS = [
+    private static $PORTS = [
         'redis'   => 6379,
         'mongodb' => 27017,
         'tcp'     => 6379,
@@ -229,7 +229,9 @@ class DSN
 
         $hosts = [];
         foreach ($matches['host'] as $index => $match) {
-            $port    = !empty($matches['port'][$index]) ? (int) $matches['port'][$index] : self::PORTS[$this->protocol];
+            $port    = !empty($matches['port'][$index])
+                ? (int) $matches['port'][$index]
+                : self::$PORTS[$this->protocol];
             $hosts[] = ['host' => $match, 'port' => $port];
         }
 
