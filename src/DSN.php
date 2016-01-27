@@ -185,7 +185,6 @@ class DSN
             return;
         }
 
-
         // Remove the protocol
         $dsn = str_replace($this->protocol.'://', '', $dsn);
 
