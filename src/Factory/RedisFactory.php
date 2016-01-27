@@ -16,8 +16,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
+ * @author Aaron Scherer <aequasi@gmail.com>
  */
-class RedisFactory extends AbstractAdapterFactory
+class RedisFactory extends AbstractDsnAdapterFactory
 {
     protected static $dependencies = [
         ['requiredClass' => 'Cache\Adapter\Redis\RedisCachePool', 'packageName' => 'cache/redis-adapter'],
@@ -29,7 +30,17 @@ class RedisFactory extends AbstractAdapterFactory
     public function getAdapter(array $config)
     {
         $client = new \Redis();
-        $client->connect($config['host'], $config['port']);
+
+        $dsn = static::getDsn();
+        if (empty($dsn)) {
+            $client->connect($config['host'], $config['port']);
+        } else {
+            if (!empty($dsn->getPassword())) {
+                $client->auth($dsn->getPassword());
+            }
+
+            $client->connect($dsn->getFirstHost(), $dsn->getFirstPort());
+        }
 
         return new RedisCachePool($client);
     }
@@ -39,10 +50,14 @@ class RedisFactory extends AbstractAdapterFactory
      */
     protected static function configureOptionResolver(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            'host'     => '127.0.0.1',
-            'port'     => '6379',
-        ]);
+        parent::configureOptionResolver($resolver);
+
+        $resolver->setDefaults(
+            [
+                'host' => '127.0.0.1',
+                'port' => '6379',
+            ]
+        );
 
         $resolver->setAllowedTypes('host', ['string']);
         $resolver->setAllowedTypes('port', ['string', 'int']);

@@ -17,11 +17,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
+ * @author Aaron Scherer <aequasi@gmail.com>
  */
-class MongoDBFactory extends AbstractAdapterFactory
+class MongoDBFactory extends AbstractDsnAdapterFactory
 {
     protected static $dependencies = [
-      ['requiredClass' => 'Cache\Adapter\MongoDB\MongoDBCachePool', 'packageName' => 'cache/mongodb-adapter'],
+        ['requiredClass' => 'Cache\Adapter\MongoDB\MongoDBCachePool', 'packageName' => 'cache/mongodb-adapter'],
     ];
 
     /**
@@ -29,7 +30,13 @@ class MongoDBFactory extends AbstractAdapterFactory
      */
     public function getAdapter(array $config)
     {
-        $manager    = new Manager(sprintf('mongodb://%s:%s', $config['host'], $config['port']));
+        $dsn = static::getDsn();
+        if (empty($dsn)) {
+            $manager = new Manager(sprintf('mongodb://%s:%s', $config['host'], $config['port']));
+        } else {
+            $manager = new Manager($dsn->getDsn());
+        }
+
         $collection = MongoDBCachePool::createCollection($manager, $config['namespace']);
 
         return new MongoDBCachePool($collection);
@@ -40,11 +47,15 @@ class MongoDBFactory extends AbstractAdapterFactory
      */
     protected static function configureOptionResolver(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-          'host'      => '127.0.0.1',
-          'port'      => 11211,
-          'namespace' => 'cache',
-        ]);
+        parent::configureOptionResolver($resolver);
+
+        $resolver->setDefaults(
+            [
+                'host'      => '127.0.0.1',
+                'port'      => 11211,
+                'namespace' => 'cache',
+            ]
+        );
 
         $resolver->setAllowedTypes('host', ['string']);
         $resolver->setAllowedTypes('port', ['string', 'int']);
