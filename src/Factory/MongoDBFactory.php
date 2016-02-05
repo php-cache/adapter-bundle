@@ -30,7 +30,7 @@ class MongoDBFactory extends AbstractDsnAdapterFactory
      */
     public function getAdapter(array $config)
     {
-        $dsn = static::getDsn();
+        $dsn = $this->getDsn();
         if (empty($dsn)) {
             $manager = new Manager(sprintf('mongodb://%s:%s', $config['host'], $config['port']));
         } else {
