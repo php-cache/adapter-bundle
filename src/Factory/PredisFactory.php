@@ -30,7 +30,7 @@ class PredisFactory extends AbstractDsnAdapterFactory
      */
     public function getAdapter(array $config)
     {
-        $dsn = static::getDsn();
+        $dsn = $this->getDsn();
         if (empty($dsn)) {
             $client = new Client(
                 [

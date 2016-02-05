@@ -31,7 +31,7 @@ class RedisFactory extends AbstractDsnAdapterFactory
     {
         $client = new \Redis();
 
-        $dsn = static::getDsn();
+        $dsn = $this->getDsn();
         if (empty($dsn)) {
             $client->connect($config['host'], $config['port']);
         } else {
