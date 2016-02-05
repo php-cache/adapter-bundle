@@ -49,7 +49,7 @@ class CacheAdapterExtension extends Extension
 
             // See if any option has a service reference
             foreach ($arguments['options'] as $key => $value) {
-                if (substr($key, -8) === '_service') {
+                if (substr($key, -8) === '_service' || strpos($value, '@') === 0) {
                     $arguments['options'][$key] = new Reference($value);
                 }
             }
