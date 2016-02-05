@@ -5,6 +5,8 @@ services:
     class: Cache\AdapterBundle\Factory\ApcuFactory
   cache.factory.array:
     class: Cache\AdapterBundle\Factory\ArrayFactory
+  cache.factory.chain:
+    class: Cache\AdapterBundle\Factory\ChainFactory
   cache.factory.filesystem:
     class: Cache\AdapterBundle\Factory\FilesystemFactory
   cache.factory.memcached:
