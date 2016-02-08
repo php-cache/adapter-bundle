@@ -12,6 +12,7 @@
 namespace Cache\AdapterBundle\Factory;
 
 use Cache\Adapter\Chain\CachePoolChain;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * @author Aaron Scherer <aequasi@gmail.com>
@@ -27,6 +28,17 @@ class ChainFactory extends AbstractAdapterFactory
      */
     public function getAdapter(array $config)
     {
-        return new CachePoolChain($config);
+        return new CachePoolChain($config['services']);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected static function configureOptionResolver(OptionsResolver $resolver)
+    {
+        parent::configureOptionResolver($resolver);
+
+        $resolver->setRequired('services');
+        $resolver->setAllowedTypes('services', ['array']);
     }
 }
