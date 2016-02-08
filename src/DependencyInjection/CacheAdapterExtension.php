@@ -48,11 +48,7 @@ class CacheAdapterExtension extends Extension
             $factoryClass::validate($arguments['options'], $name);
 
             // See if any option has a service reference
-            foreach ($arguments['options'] as $key => $value) {
-                if (substr($key, -8) === '_service' || strpos($value, '@') === 0) {
-                    $arguments['options'][$key] = new Reference($value);
-                }
-            }
+            $arguments['options'] = $this->findReferences($arguments['options']);
 
             $def = $container->register('cache.provider.'.$name, DummyAdapter::class);
             $def->setFactory([new Reference($arguments['factory']), 'createAdapter'])
@@ -62,5 +58,23 @@ class CacheAdapterExtension extends Extension
         }
 
         $container->setAlias('cache', 'cache.provider.'.$first);
+    }
+
+    /**
+     * @param array $options
+     *
+     * @return array
+     */
+    private function findReferences(array $options)
+    {
+        foreach ($options as $key => $value) {
+            if (is_array($value)) {
+                $options[$key] = $this->findReferences($value);
+            } elseif (substr($key, -8) === '_service' || strpos($value, '@') === 0) {
+                $options[$key] = new Reference(ltrim($value, '@'));
+            }
+        }
+
+        return $options;
     }
 }
