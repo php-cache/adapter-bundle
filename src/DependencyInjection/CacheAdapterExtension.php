@@ -57,7 +57,9 @@ class CacheAdapterExtension extends Extension
             $def->addTag('cache.provider');
         }
 
-        $container->setAlias('cache', 'cache.provider.'.$first);
+        if ($first !== null) {
+            $container->setAlias('cache', 'cache.provider.'.$first);
+        }
     }
 
     /**
