@@ -29,7 +29,10 @@ class DoctrineMemcacheFactory extends AbstractDoctrineAdapterFactory
         $memcache = new Memcache();
         $memcache->connect($config['host'], $config['port']);
 
-        return new DoctrineCachePool(new MemcacheCache($memcache));
+        $client = new MemcacheCache();
+        $client->setMemcache($memcache);
+
+        return new DoctrineCachePool($client);
     }
 
     /**
