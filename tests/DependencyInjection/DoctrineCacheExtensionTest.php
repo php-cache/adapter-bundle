@@ -32,4 +32,28 @@ class DoctrineCacheExtensionTest extends AbstractExtensionTestCase
         $this->assertContainerBuilderHasService('cache.provider.foo', DummyAdapter::class);
         $this->assertContainerBuilderHasAlias('cache', 'cache.provider.foo');
     }
+
+    public function testAliasProvidersExists()
+    {
+        $providers = ['foo' => ['factory' => 'cache.factory.array', 'aliases' => ['alias_http']]];
+        $this->load(['providers' => $providers]);
+
+        $this->assertContainerBuilderHasService('cache.provider.foo', DummyAdapter::class);
+        $this->assertContainerBuilderHasAlias('cache', 'cache.provider.foo');
+        $this->assertContainerBuilderHasAlias('alias_http', 'cache.provider.foo');
+    }
+
+    public function testDefaultAliasProvidersExists()
+    {
+        $providers = [
+            'foo' => ['factory' => 'cache.factory.array', 'aliases' => ['alias_foo']],
+            'bar' => ['factory' => 'cache.factory.array', 'aliases' => ['alias_bar', 'alias_other']],
+        ];
+        $this->load(['providers' => $providers]);
+
+        $this->assertContainerBuilderHasService('cache.provider.foo', DummyAdapter::class);
+        $this->assertContainerBuilderHasAlias('cache', 'cache.provider.foo');
+        $this->assertContainerBuilderHasAlias('alias_foo', 'cache.provider.foo');
+        $this->assertContainerBuilderHasAlias('alias_bar', 'cache.provider.bar');
+    }
 }
