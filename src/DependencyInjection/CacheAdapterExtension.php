@@ -55,6 +55,9 @@ class CacheAdapterExtension extends Extension
                 ->addArgument($arguments['options']);
 
             $def->addTag('cache.provider');
+            foreach ($arguments['aliases'] as $alias) {
+                $container->setAlias($alias, 'cache.provider.'.$name);
+            }
         }
 
         if ($first !== null) {

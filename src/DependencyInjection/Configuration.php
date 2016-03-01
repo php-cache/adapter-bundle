@@ -54,6 +54,9 @@ class Configuration implements ConfigurationInterface
                 ->children()
                     ->scalarNode('factory')->isRequired()->cannotBeEmpty()->end()
                     ->variableNode('options')->defaultValue([])->end()
+                    ->arrayNode('aliases')
+                        ->prototype('scalar')->end()
+                    ->end()
                 ->end()
             ->end();
 
