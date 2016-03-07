@@ -28,7 +28,7 @@ class ChainFactory extends AbstractAdapterFactory
      */
     public function getAdapter(array $config)
     {
-        return new CachePoolChain($config['services']);
+        return new CachePoolChain($config['services'], $config['skipOnFailure']);
     }
 
     /**
