@@ -40,5 +40,7 @@ class ChainFactory extends AbstractAdapterFactory
 
         $resolver->setRequired('services');
         $resolver->setAllowedTypes('services', ['array']);
+
+        $resolver->setDefault('skipOnFailure', false);
     }
 }
