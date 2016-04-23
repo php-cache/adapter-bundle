@@ -25,7 +25,7 @@ class DummyAdapter implements CacheItemPoolInterface
     {
     }
 
-    public function getItems(array $keys = array())
+    public function getItems(array $keys = [])
     {
     }
 
