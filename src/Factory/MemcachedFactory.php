@@ -29,7 +29,7 @@ class MemcachedFactory extends AbstractAdapterFactory
      */
     public function getAdapter(array $config)
     {
-        $client = new Memcached();
+        $client = new Memcached($config['persistent_id']);
         $client->addServer($config['host'], $config['port']);
 
         return new MemcachedCachePool($client);
