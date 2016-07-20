@@ -12,6 +12,7 @@
 namespace Cache\AdapterBundle\Factory;
 
 use Cache\Adapter\Memcached\MemcachedCachePool;
+use Cache\AdapterBundle\ProviderHelper\Memcached;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -28,7 +29,7 @@ class MemcachedFactory extends AbstractAdapterFactory
      */
     public function getAdapter(array $config)
     {
-        $client = new \Memcached();
+        $client = new Memcached();
         $client->addServer($config['host'], $config['port']);
 
         return new MemcachedCachePool($client);
@@ -40,10 +41,12 @@ class MemcachedFactory extends AbstractAdapterFactory
     protected static function configureOptionResolver(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'host'     => '127.0.0.1',
-            'port'     => 11211,
+            'persistant_id' => null,
+            'host'          => '127.0.0.1',
+            'port'          => 11211,
         ]);
 
+        $resolver->setAllowedTypes('persistant_id', ['string', 'null']);
         $resolver->setAllowedTypes('host', ['string']);
         $resolver->setAllowedTypes('port', ['string', 'int']);
     }
