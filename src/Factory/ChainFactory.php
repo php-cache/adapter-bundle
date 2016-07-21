@@ -28,7 +28,7 @@ class ChainFactory extends AbstractAdapterFactory
      */
     public function getAdapter(array $config)
     {
-        return new CachePoolChain($config['services'], ['skip_on_failure' => $config['skipOnFailure']]);
+        return new CachePoolChain($config['services'], ['skip_on_failure' => $config['skip_on_failure']]);
     }
 
     /**
@@ -41,6 +41,6 @@ class ChainFactory extends AbstractAdapterFactory
         $resolver->setRequired('services');
         $resolver->setAllowedTypes('services', ['array']);
 
-        $resolver->setDefault('skipOnFailure', false);
+        $resolver->setDefault('skip_on_failure', false);
     }
 }
