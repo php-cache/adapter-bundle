@@ -41,8 +41,8 @@ class MemcacheFactory extends AbstractAdapterFactory
     protected static function configureOptionResolver(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-          'host'     => '127.0.0.1',
-          'port'     => 11211,
+          'host' => '127.0.0.1',
+          'port' => 11211,
         ]);
 
         $resolver->setAllowedTypes('host', ['string']);
