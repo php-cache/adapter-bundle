@@ -229,7 +229,7 @@ class DSN
 
         $hosts = [];
         foreach ($matches['host'] as $index => $match) {
-            $port    = !empty($matches['port'][$index])
+            $port = !empty($matches['port'][$index])
                 ? (int) $matches['port'][$index]
                 : self::$PORTS[$this->protocol];
             $hosts[] = ['host' => $match, 'port' => $port];
