@@ -13,6 +13,7 @@ namespace Cache\AdapterBundle\Exception;
 
 /**
  * An exception thrown when you have invalid configuration.
+ *
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
 class ConfigurationException extends \Exception
