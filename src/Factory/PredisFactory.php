@@ -12,6 +12,7 @@
 namespace Cache\AdapterBundle\Factory;
 
 use Cache\Adapter\Predis\PredisCachePool;
+use Cache\Namespaced\NamespacedCachePool;
 use Predis\Client;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -43,7 +44,13 @@ class PredisFactory extends AbstractDsnAdapterFactory
             $client = new Client($dsn->getDsn());
         }
 
-        return new PredisCachePool($client);
+        $pool = new PredisCachePool($client);
+
+        if (null !== $config['pool_namespace']) {
+            $pool = new NamespacedCachePool($pool, $config['pool_namespace']);
+        }
+
+        return $pool;
     }
 
     /**
@@ -55,14 +62,16 @@ class PredisFactory extends AbstractDsnAdapterFactory
 
         $resolver->setDefaults(
             [
-                'host'   => '127.0.0.1',
-                'port'   => '6379',
-                'scheme' => 'tcp',
+                'host'           => '127.0.0.1',
+                'port'           => '6379',
+                'scheme'         => 'tcp',
+                'pool_namespace' => null,
             ]
         );
 
         $resolver->setAllowedTypes('host', ['string']);
         $resolver->setAllowedTypes('port', ['string', 'int']);
         $resolver->setAllowedTypes('scheme', ['string']);
+        $resolver->setAllowedTypes('pool_namespace', ['string', 'null']);
     }
 }

@@ -4,9 +4,12 @@ The change log describes what is "Added", "Removed", "Changed" or "Fixed" betwee
 
 ## UNRELEASED
 
+## 0.3.5
+
 ### Added
 
 * `ConnectException` that is thrown when you fail to connect to Redis
+* Support for using the `NamespacedCachePool`
 
 ### Fixed
 

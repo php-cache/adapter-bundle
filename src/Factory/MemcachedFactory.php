@@ -13,6 +13,7 @@ namespace Cache\AdapterBundle\Factory;
 
 use Cache\Adapter\Memcached\MemcachedCachePool;
 use Cache\AdapterBundle\ProviderHelper\Memcached;
+use Cache\Namespaced\NamespacedCachePool;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -32,7 +33,13 @@ class MemcachedFactory extends AbstractAdapterFactory
         $client = new Memcached($config['persistent_id']);
         $client->addServer($config['host'], $config['port']);
 
-        return new MemcachedCachePool($client);
+        $pool = new MemcachedCachePool($client);
+
+        if (null !== $config['pool_namespace']) {
+            $pool = new NamespacedCachePool($pool, $config['pool_namespace']);
+        }
+
+        return $pool;
     }
 
     /**
@@ -41,13 +48,15 @@ class MemcachedFactory extends AbstractAdapterFactory
     protected static function configureOptionResolver(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'persistent_id' => null,
-            'host'          => '127.0.0.1',
-            'port'          => 11211,
+            'persistent_id'  => null,
+            'host'           => '127.0.0.1',
+            'port'           => 11211,
+            'pool_namespace' => null,
         ]);
 
         $resolver->setAllowedTypes('persistent_id', ['string', 'null']);
         $resolver->setAllowedTypes('host', ['string']);
         $resolver->setAllowedTypes('port', ['string', 'int']);
+        $resolver->setAllowedTypes('pool_namespace', ['string', 'null']);
     }
 }

@@ -13,6 +13,7 @@ namespace Cache\AdapterBundle\Factory;
 
 use Cache\Adapter\Redis\RedisCachePool;
 use Cache\AdapterBundle\Exception\ConnectException;
+use Cache\Namespaced\NamespacedCachePool;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -55,7 +56,13 @@ class RedisFactory extends AbstractDsnAdapterFactory
             }
         }
 
-        return new RedisCachePool($client);
+        $pool = new RedisCachePool($client);
+
+        if (null !== $config['pool_namespace']) {
+            $pool = new NamespacedCachePool($pool, $config['pool_namespace']);
+        }
+
+        return $pool;
     }
 
     /**
@@ -67,12 +74,14 @@ class RedisFactory extends AbstractDsnAdapterFactory
 
         $resolver->setDefaults(
             [
-                'host' => '127.0.0.1',
-                'port' => '6379',
+                'host'           => '127.0.0.1',
+                'port'           => '6379',
+                'pool_namespace' => null,
             ]
         );
 
         $resolver->setAllowedTypes('host', ['string']);
         $resolver->setAllowedTypes('port', ['string', 'int']);
+        $resolver->setAllowedTypes('pool_namespace', ['string', 'null']);
     }
 }
