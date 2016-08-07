@@ -62,9 +62,9 @@ class PredisFactory extends AbstractDsnAdapterFactory
 
         $resolver->setDefaults(
             [
-                'host'   => '127.0.0.1',
-                'port'   => '6379',
-                'scheme' => 'tcp',
+                'host'           => '127.0.0.1',
+                'port'           => '6379',
+                'scheme'         => 'tcp',
                 'pool_namespace' => null,
             ]
         );
@@ -73,6 +73,5 @@ class PredisFactory extends AbstractDsnAdapterFactory
         $resolver->setAllowedTypes('port', ['string', 'int']);
         $resolver->setAllowedTypes('scheme', ['string']);
         $resolver->setAllowedTypes('pool_namespace', ['string', 'null']);
-
     }
 }
