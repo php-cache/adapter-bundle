@@ -15,7 +15,7 @@ use Cache\AdapterBundle\DependencyInjection\CacheAdapterExtension;
 use Cache\AdapterBundle\DummyAdapter;
 use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractExtensionTestCase;
 
-class CacheAdapterExtensionTest extends AbstractExtensionTestCase
+class DoctrineCacheExtensionTest extends AbstractExtensionTestCase
 {
     protected function getContainerExtensions()
     {
