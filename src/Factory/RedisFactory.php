@@ -12,6 +12,7 @@
 namespace Cache\AdapterBundle\Factory;
 
 use Cache\Adapter\Redis\RedisCachePool;
+use Cache\AdapterBundle\Exception\ConnectException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -33,13 +34,25 @@ class RedisFactory extends AbstractDsnAdapterFactory
 
         $dsn = $this->getDsn();
         if (empty($dsn)) {
-            $client->connect($config['host'], $config['port']);
+            if (false === $client->connect($config['host'], $config['port'])) {
+                throw new ConnectException(sprintf('Could not connect to Redis database on "%s:%s".', $config['host'], $config['port']));
+            }
         } else {
             if (!empty($dsn->getPassword())) {
-                $client->auth($dsn->getPassword());
+                if (false === $client->auth($dsn->getPassword())) {
+                    throw new ConnectException('Could not connect authenticate connection to Redis database.');
+                }
             }
 
-            $client->connect($dsn->getFirstHost(), $dsn->getFirstPort());
+            if (false === $client->connect($dsn->getFirstHost(), $dsn->getFirstPort())) {
+                throw new ConnectException(sprintf('Could not connect to Redis database on "%s:%s".', $dsn->getFirstHost(), $dsn->getFirstPort()));
+            }
+
+            if ($dsn->getDatabase() !== null) {
+                if (false === $client->select($dsn->getDatabase())) {
+                    throw new ConnectException(sprintf('Could not select Redis database with index "%s".', $dsn->getDatabase()));
+                }
+            }
         }
 
         return new RedisCachePool($client);
