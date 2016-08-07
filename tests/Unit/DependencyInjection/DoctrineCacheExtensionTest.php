@@ -9,13 +9,13 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Cache\Adapter\DoctrineAdapterBundle\Tests\DependencyInjection;
+namespace Cache\AdapterBundle\Tests\Unit\DependencyInjection;
 
 use Cache\AdapterBundle\DependencyInjection\CacheAdapterExtension;
 use Cache\AdapterBundle\DummyAdapter;
 use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractExtensionTestCase;
 
-class DoctrineCacheExtensionTest extends AbstractExtensionTestCase
+class CacheAdapterExtensionTest extends AbstractExtensionTestCase
 {
     protected function getContainerExtensions()
     {
