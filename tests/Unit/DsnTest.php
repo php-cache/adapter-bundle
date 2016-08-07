@@ -9,7 +9,7 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Cache\Adapter\DoctrineAdapterBundle\Tests;
+namespace Cache\AdapterBundle\Tests\Unit;
 
 use Cache\AdapterBundle\DSN;
 

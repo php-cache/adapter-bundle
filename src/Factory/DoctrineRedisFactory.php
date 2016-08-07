@@ -25,7 +25,7 @@ class DoctrineRedisFactory extends AbstractDoctrineAdapterFactory
      */
     public function getAdapter(array $config)
     {
-        $redis  = new \Redis();
+        $redis = new \Redis();
         $redis->connect($config['host'], $config['port']);
 
         $client = new RedisCache();

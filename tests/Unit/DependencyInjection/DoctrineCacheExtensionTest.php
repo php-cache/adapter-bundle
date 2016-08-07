@@ -9,7 +9,7 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Cache\Adapter\DoctrineAdapterBundle\Tests\DependencyInjection;
+namespace Cache\AdapterBundle\Tests\Unit\DependencyInjection;
 
 use Cache\AdapterBundle\DependencyInjection\CacheAdapterExtension;
 use Cache\AdapterBundle\DummyAdapter;
