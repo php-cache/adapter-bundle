@@ -33,6 +33,17 @@ class MemcachedFactory extends AbstractAdapterFactory
         $client = new Memcached($config['persistent_id']);
         $client->addServer($config['host'], $config['port']);
 
+        foreach ($config['redundant_servers'] as $server) {
+            if (!isset($server['host'])) {
+                continue;
+            }
+            $port = $config['port'];
+            if (isset($server['port'])) {
+                $port = $server['port'];
+            }
+            $client->addServer($server['host'], $port);
+        }
+
         $pool = new MemcachedCachePool($client);
 
         if (null !== $config['pool_namespace']) {
@@ -48,15 +59,17 @@ class MemcachedFactory extends AbstractAdapterFactory
     protected static function configureOptionResolver(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'persistent_id'  => null,
-            'host'           => '127.0.0.1',
-            'port'           => 11211,
-            'pool_namespace' => null,
+            'persistent_id'     => null,
+            'host'              => '127.0.0.1',
+            'port'              => 11211,
+            'pool_namespace'    => null,
+            'redundant_servers' => [],
         ]);
 
         $resolver->setAllowedTypes('persistent_id', ['string', 'null']);
         $resolver->setAllowedTypes('host', ['string']);
         $resolver->setAllowedTypes('port', ['string', 'int']);
         $resolver->setAllowedTypes('pool_namespace', ['string', 'null']);
+        $resolver->setAllowedTypes('redundant_servers', ['array']);
     }
 }
