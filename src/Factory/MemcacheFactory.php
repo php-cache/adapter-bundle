@@ -32,6 +32,17 @@ class MemcacheFactory extends AbstractAdapterFactory
         $client = new Memcache();
         $client->connect($config['host'], $config['port']);
 
+        foreach ($config['redundant_servers'] as $server) {
+            if (!isset($server['host'])) {
+                continue;
+            }
+            $port = $config['port'];
+            if (isset($server['port'])) {
+                $port = $server['port'];
+            }
+            $client->addserver($server['host'], $port);
+        }
+
         return new MemcacheCachePool($client);
     }
 
@@ -41,11 +52,13 @@ class MemcacheFactory extends AbstractAdapterFactory
     protected static function configureOptionResolver(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-          'host' => '127.0.0.1',
-          'port' => 11211,
+          'host'              => '127.0.0.1',
+          'port'              => 11211,
+          'redundant_servers' => [],
         ]);
 
         $resolver->setAllowedTypes('host', ['string']);
         $resolver->setAllowedTypes('port', ['string', 'int']);
+        $resolver->setAllowedTypes('redundant_servers', ['array']);
     }
 }
