@@ -42,7 +42,7 @@ class RedisFactory extends AbstractDsnAdapterFactory
             if (false === $client->connect($dsn->getFirstHost(), $dsn->getFirstPort())) {
                 throw new ConnectException(sprintf('Could not connect to Redis database on "%s:%s".', $dsn->getFirstHost(), $dsn->getFirstPort()));
             }
-            
+
             if (!empty($dsn->getPassword())) {
                 if (false === $client->auth($dsn->getPassword())) {
                     throw new ConnectException('Could not connect authenticate connection to Redis database.');
