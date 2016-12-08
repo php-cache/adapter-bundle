@@ -12,6 +12,8 @@
 namespace Cache\AdapterBundle\Factory;
 
 use Cache\Adapter\PHPArray\ArrayCachePool;
+use Cache\Namespaced\NamespacedCachePool;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
@@ -27,6 +29,28 @@ class ArrayFactory extends AbstractAdapterFactory
      */
     public function getAdapter(array $config)
     {
-        return new ArrayCachePool();
+        $pool = new ArrayCachePool();
+
+        if (null !== $config['pool_namespace']) {
+            $pool = new NamespacedCachePool($pool, $config['pool_namespace']);
+        }
+
+        return $pool;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected static function configureOptionResolver(OptionsResolver $resolver)
+    {
+        parent::configureOptionResolver($resolver);
+
+        $resolver->setDefaults(
+          [
+            'pool_namespace' => null,
+          ]
+        );
+
+        $resolver->setAllowedTypes('pool_namespace', ['string', 'null']);
     }
 }
