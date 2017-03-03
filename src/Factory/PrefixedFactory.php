@@ -36,7 +36,6 @@ class PrefixedFactory extends AbstractAdapterFactory
         parent::configureOptionResolver($resolver);
 
         $resolver->setRequired(['prefix', 'service']);
-        $resolver->setAllowedTypes('service', ['object']);
         $resolver->setAllowedTypes('prefix', ['string']);
     }
 }
