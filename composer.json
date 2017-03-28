@@ -35,6 +35,7 @@
         "cache/chain-adapter": "@stable",
         "cache/doctrine-adapter": "@stable",
         "cache/filesystem-adapter": "@stable",
+        "cache/memcache-adapter": "@stable",
         "cache/memcached-adapter": "@stable",
         "cache/predis-adapter": "@stable",
         "cache/redis-adapter": "@stable",
