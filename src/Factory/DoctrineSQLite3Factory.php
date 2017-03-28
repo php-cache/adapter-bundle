@@ -19,7 +19,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class DoctrineSQLite3Factory extends AbstractDoctrineAdapterFactory
+final class DoctrineSQLite3Factory extends AbstractDoctrineAdapterFactory
 {
     /**
      * {@inheritdoc}

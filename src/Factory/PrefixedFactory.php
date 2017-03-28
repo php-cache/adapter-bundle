@@ -14,7 +14,7 @@ namespace Cache\AdapterBundle\Factory;
 use Cache\Prefixed\PrefixedCachePool;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class PrefixedFactory extends AbstractAdapterFactory
+final class PrefixedFactory extends AbstractAdapterFactory
 {
     protected static $dependencies = [
         ['requiredClass' => 'Cache\Prefixed\PrefixedCachePool', 'packageName' => 'cache/prefixed-cache'],

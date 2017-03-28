@@ -16,7 +16,7 @@ use Cache\Adapter\Void\VoidCachePool;
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class VoidFactory extends AbstractAdapterFactory
+final class VoidFactory extends AbstractAdapterFactory
 {
     protected static $dependencies = [
         ['requiredClass' => 'Cache\Adapter\Void\VoidCachePool', 'packageName' => 'cache/void-adapter'],

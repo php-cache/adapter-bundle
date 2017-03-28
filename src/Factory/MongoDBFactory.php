@@ -19,7 +19,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  * @author Aaron Scherer <aequasi@gmail.com>
  */
-class MongoDBFactory extends AbstractDsnAdapterFactory
+final class MongoDBFactory extends AbstractDsnAdapterFactory
 {
     protected static $dependencies = [
         ['requiredClass' => 'Cache\Adapter\MongoDB\MongoDBCachePool', 'packageName' => 'cache/mongodb-adapter'],

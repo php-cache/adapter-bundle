@@ -19,7 +19,7 @@ use Psr\Cache\CacheItemPoolInterface;
  *
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class DummyAdapter implements CacheItemPoolInterface
+final class DummyAdapter implements CacheItemPoolInterface
 {
     public function getItem($key)
     {

@@ -19,7 +19,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class MemcachedFactory extends AbstractAdapterFactory
+final class MemcachedFactory extends AbstractAdapterFactory
 {
     protected static $dependencies = [
         ['requiredClass' => 'Cache\Adapter\Memcached\MemcachedCachePool', 'packageName' => 'cache/memcached-adapter'],

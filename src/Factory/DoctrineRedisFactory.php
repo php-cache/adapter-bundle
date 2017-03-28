@@ -18,7 +18,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class DoctrineRedisFactory extends AbstractDoctrineAdapterFactory
+final class DoctrineRedisFactory extends AbstractDoctrineAdapterFactory
 {
     /**
      * {@inheritdoc}

@@ -17,7 +17,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class FilesystemFactory extends AbstractAdapterFactory
+final class FilesystemFactory extends AbstractAdapterFactory
 {
     protected static $dependencies = [
         ['requiredClass' => 'Cache\Adapter\Filesystem\FilesystemCachePool', 'packageName' => 'cache/filesystem-adapter'],

@@ -17,7 +17,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class NamespacedFactory extends AbstractAdapterFactory
+final class NamespacedFactory extends AbstractAdapterFactory
 {
     protected static $dependencies = [
         ['requiredClass' => 'Cache\Namespaced\NamespacedCachePool', 'packageName' => 'cache/namespaced-cache'],

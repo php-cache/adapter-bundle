@@ -20,7 +20,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class DoctrineRiakFactory extends AbstractDoctrineAdapterFactory
+final class DoctrineRiakFactory extends AbstractDoctrineAdapterFactory
 {
     /**
      * {@inheritdoc}

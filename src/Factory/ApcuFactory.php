@@ -16,7 +16,7 @@ use Cache\Adapter\Apcu\ApcuCachePool;
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class ApcuFactory extends AbstractAdapterFactory
+final class ApcuFactory extends AbstractAdapterFactory
 {
     protected static $dependencies = [
         ['requiredClass' => 'Cache\Adapter\Apcu\ApcuCachePool', 'packageName' => 'cache/apcu-adapter'],
