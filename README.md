@@ -4,7 +4,7 @@
 [![Total Downloads](https://poser.pugx.org/cache/adapter-bundle/downloads)](https://packagist.org/packages/cache/adapter-bundle)  
 [![Monthly Downloads](https://poser.pugx.org/cache/adapter-bundle/d/monthly.png)](https://packagist.org/packages/cache/adapter-bundle) 
 [![Quality Score](https://img.shields.io/scrutinizer/g/php-cache/adapter-bundle.svg?style=flat-square)](https://scrutinizer-ci.com/g/php-cache/adapter-bundle)
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/21963379-2b15-4cc4-bdf6-0f98aa292f8a/mini.png)](https://insight.sensiolabs.com/projects/21963379-2b15-4cc4-bdf6-0f98aa292f8a) 
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/21963379-2b15-4cc4-bdf6-0f98aa292f8a/mini.png)](https://insight.sensiolabs.com/projects/21963379-2b15-4cc4-bdf6-0f98aa292f8a)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 
 
