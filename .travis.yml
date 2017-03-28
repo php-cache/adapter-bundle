@@ -1,11 +1,15 @@
 language: php
 sudo: false
 
+services:
+  - redis-server
+  - memcached
+
 php:
-  - hhvm
   - 7.0
   - 5.6
   - 5.5
+  - hhvm
 
 env:
   global:
@@ -15,8 +19,6 @@ env:
   matrix:
     - SYMFONY_VERSION=2.7.*
     - SYMFONY_VERSION=2.8.*
-    - SYMFONY_VERSION=3.0.*
-    - SYMFONY_VERSION=3.1.*
     - SYMFONY_VERSION=3.2.*
 
 branches:
@@ -35,9 +37,9 @@ cache:
     - $HOME/.composer/cache
 
 before_install:
+  - if [[ $TRAVIS_PHP_VERSION != 'hhvm' ]]; then phpenv config-add .travis/phpconfig.ini; fi;
   - if [[ $TRAVIS_PHP_VERSION != 'hhvm' ]]; then phpenv config-rm xdebug.ini; fi;
   - pip install --user codecov
-  - composer self-update
   - composer require symfony/symfony:${SYMFONY_VERSION} --no-update
 
 install:

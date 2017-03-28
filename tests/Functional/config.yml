@@ -1,0 +1,40 @@
+cache_adapter:
+  providers:
+    my_adapter:
+      factory: 'cache.factory.array'
+      options: []
+      aliases: ['alias.my_adapter']
+
+    apc:
+      factory: 'cache.factory.apc'
+    apcu:
+      factory: 'cache.factory.apcu'
+    array:
+      factory: 'cache.factory.array'
+    chain:
+      factory: 'cache.factory.chain'
+      options:
+        services: ['alias.my_adapter', 'cache.provider.void']
+    memcache:
+      factory: 'cache.factory.memcache'
+    memcached:
+      factory: 'cache.factory.memcached'
+    predis:
+      factory: 'cache.factory.predis'
+    redis:
+      factory: 'cache.factory.redis'
+    void:
+      factory: 'cache.factory.void'
+
+    doctrine_filesystem:
+      factory: 'cache.factory.doctrine_filesystem'
+      options:
+        directory: 'doctrine_file'
+    doctrine_memcached:
+      factory: 'cache.factory.doctrine_memcached'
+    doctrine_memcache:
+      factory: 'cache.factory.doctrine_memcache'
+    doctrine_predis:
+      factory: 'cache.factory.doctrine_predis'
+    doctrine_redis:
+      factory: 'cache.factory.doctrine_redis'

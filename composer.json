@@ -28,7 +28,20 @@
         "phpunit/phpunit": "5.0.* || ^4.0",
         "symfony/symfony": "^2.7 || ^3.0",
         "matthiasnoback/symfony-dependency-injection-test": "^1.0",
-        "cache/array-adapter": "@stable"
+        "nyholm/symfony-bundle-test": "^1.0.1",
+        "cache/apc-adapter": "@stable",
+        "cache/apcu-adapter": "@stable",
+        "cache/array-adapter": "@stable",
+        "cache/chain-adapter": "@stable",
+        "cache/doctrine-adapter": "@stable",
+        "cache/filesystem-adapter": "@stable",
+        "cache/memcache-adapter": "@stable",
+        "cache/memcached-adapter": "@stable",
+        "cache/predis-adapter": "@stable",
+        "cache/redis-adapter": "@stable",
+        "cache/void-adapter": "@stable",
+        "doctrine/cache": "^1.6",
+        "predis/predis": "^1.1"
     },
     "suggest": {
         "cache/*-adapter": "A actual implementation of PSR-6 cache",
