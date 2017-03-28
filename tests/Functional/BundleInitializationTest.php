@@ -15,6 +15,7 @@ use Cache\Adapter\Apc\ApcCachePool;
 use Cache\Adapter\Apcu\ApcuCachePool;
 use Cache\Adapter\Chain\CachePoolChain;
 use Cache\Adapter\Doctrine\DoctrineCachePool;
+use Cache\Adapter\Memcache\MemcacheCachePool;
 use Cache\Adapter\Memcached\MemcachedCachePool;
 use Cache\Adapter\PHPArray\ArrayCachePool;
 use Cache\Adapter\Predis\PredisCachePool;
@@ -31,51 +32,60 @@ class BundleInitializationTest extends BaseBundleTestCase
         return CacheAdapterBundle::class;
     }
 
-    /**
-     * Make sure the bundle can initialize.
-     */
-    public function testInitBundle()
+    protected function setUp()
     {
-        // Boot the kernel.
-        $this->bootKernel();
-
-        // Get the container
-        $container = $this->getContainer();
-
-        // Test if you services exists
-        $this->assertTrue($container->has('cache.factory.apc'));
-        $service = $container->get('cache.factory.apc');
-        $this->assertInstanceOf(ApcFactory::class, $service);
+        parent::setUp();
+        $kernel = $this->createKernel();
+        $kernel->addConfigFile(__DIR__.'/config.yml');
     }
 
     public function testFactoriesWithWithDefaultConfiguration()
     {
-        // Create a new Kernel
-        $kernel = $this->createKernel();
-
-        // Add some configuration
-        $kernel->addConfigFile(__DIR__.'/config.yml');
-
-        // Boot the kernel as normal ...
         $this->bootKernel();
-
         $container = $this->getContainer();
         $this->assertInstanceOf(ArrayCachePool::class, $container->get('alias.my_adapter'));
         $this->assertInstanceOf(ApcCachePool::class, $container->get('cache.provider.apc'));
         $this->assertInstanceOf(ApcuCachePool::class, $container->get('cache.provider.apcu'));
         $this->assertInstanceOf(ArrayCachePool::class, $container->get('cache.provider.array'));
         $this->assertInstanceOf(CachePoolChain::class, $container->get('cache.provider.chain'));
-        $this->assertInstanceOf(MemcachedCachePool::class, $container->get('cache.provider.memcache'));
-        $this->assertInstanceOf(MemcachedCachePool::class, $container->get('cache.provider.memcached'));
         $this->assertInstanceOf(PredisCachePool::class, $container->get('cache.provider.predis'));
-        $this->assertInstanceOf(RedisCachePool::class, $container->get('cache.provider.redis'));
         $this->assertInstanceOf(VoidCachePool::class, $container->get('cache.provider.void'));
 
         $this->assertInstanceOf(DoctrineCachePool::class, $container->get('cache.provider.doctrine_filesystem'));
-        $this->assertInstanceOf(DoctrineCachePool::class, $container->get('cache.provider.doctrine_memcached'));
-        $this->assertInstanceOf(DoctrineCachePool::class, $container->get('cache.provider.doctrine_memcache'));
         $this->assertInstanceOf(DoctrineCachePool::class, $container->get('cache.provider.doctrine_predis'));
+    }
+
+    public function testMemcachedWithWithDefaultConfiguration()
+    {
+        if (!class_exists('Memcached')) {
+            $this->markTestSkipped('Skipping since Memcached is not installed.');
+        }
+        $this->bootKernel();
+        $container = $this->getContainer();
+        $this->assertInstanceOf(MemcachedCachePool::class, $container->get('cache.provider.memcached'));
+        $this->assertInstanceOf(DoctrineCachePool::class, $container->get('cache.provider.doctrine_memcached'));
+    }
+
+    public function testMemcacheWithWithDefaultConfiguration()
+    {
+        if (!class_exists('Memcache')) {
+            $this->markTestSkipped('Skipping since Memcache is not installed.');
+        }
+        $this->bootKernel();
+        $container = $this->getContainer();
+        $this->assertInstanceOf(MemcacheCachePool::class, $container->get('cache.provider.memcache'));
+        $this->assertInstanceOf(DoctrineCachePool::class, $container->get('cache.provider.doctrine_memcache'));
+    }
+
+    public function testRedisWithWithDefaultConfiguration()
+    {
+        if (!class_exists('Redis')) {
+            $this->markTestSkipped('Skipping since Memcache is not installed.');
+        }
+
+        $this->bootKernel();
+        $container = $this->getContainer();
+        $this->assertInstanceOf(RedisCachePool::class, $container->get('cache.provider.redis'));
         $this->assertInstanceOf(DoctrineCachePool::class, $container->get('cache.provider.doctrine_redis'));
-        $this->assertInstanceOf(DoctrineCachePool::class, $container->get('cache.provider.doctrine_sqlite3'));
     }
 }
