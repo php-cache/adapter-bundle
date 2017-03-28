@@ -30,7 +30,7 @@ class BundleInitializationTest extends BaseBundleTestCase
     }
 
     /**
-     * Make sure the bundle can initialize
+     * Make sure the bundle can initialize.
      */
     public function testInitBundle()
     {
