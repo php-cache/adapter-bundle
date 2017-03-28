@@ -21,7 +21,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 final class MemcacheFactory extends AbstractAdapterFactory
 {
     protected static $dependencies = [
-      ['requiredClass' => 'Cache\Adapter\Memcache\MemcacheCachePool', 'packageName' => 'cache/memcache-adapter'],
+        ['requiredClass' => 'Cache\Adapter\Memcache\MemcacheCachePool', 'packageName' => 'cache/memcache-adapter'],
     ];
 
     /**
@@ -52,9 +52,9 @@ final class MemcacheFactory extends AbstractAdapterFactory
     protected static function configureOptionResolver(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-          'host'              => '127.0.0.1',
-          'port'              => 11211,
-          'redundant_servers' => [],
+            'host'              => '127.0.0.1',
+            'port'              => 11211,
+            'redundant_servers' => [],
         ]);
 
         $resolver->setAllowedTypes('host', ['string']);
