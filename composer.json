@@ -41,7 +41,7 @@
         "cache/redis-adapter": "@stable",
         "cache/void-adapter": "@stable",
         "doctrine/cache": "^1.6",
-        "nyholm/symfony-bundle-test": "^1.0"
+        "nyholm/symfony-bundle-test": "^1.0.1"
     },
     "suggest": {
         "cache/*-adapter": "A actual implementation of PSR-6 cache",
