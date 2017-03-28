@@ -22,7 +22,6 @@ use Cache\Adapter\Predis\PredisCachePool;
 use Cache\Adapter\Redis\RedisCachePool;
 use Cache\Adapter\Void\VoidCachePool;
 use Cache\AdapterBundle\CacheAdapterBundle;
-use Cache\AdapterBundle\Factory\ApcFactory;
 use Nyholm\BundleTest\BaseBundleTestCase;
 
 class BundleInitializationTest extends BaseBundleTestCase
