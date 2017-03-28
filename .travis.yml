@@ -1,6 +1,9 @@
 language: php
 sudo: false
 
+services:
+  - redis-server
+
 php:
   - 7.0
   - 5.6
