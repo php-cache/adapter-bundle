@@ -22,13 +22,13 @@
         "symfony/framework-bundle": "^2.7 || ^3.0",
         "symfony/options-resolver": "^2.7 || ^3.0",
         "psr/cache":                "^1.0",
-        "cache/namespaced-cache":   "^0.1",
-        "predis/predis": "^1.1"
+        "cache/namespaced-cache":   "^0.1"
     },
     "require-dev": {
         "phpunit/phpunit": "5.0.* || ^4.0",
         "symfony/symfony": "^2.7 || ^3.0",
         "matthiasnoback/symfony-dependency-injection-test": "^1.0",
+        "nyholm/symfony-bundle-test": "^1.0.1",
         "cache/apc-adapter": "@stable",
         "cache/apcu-adapter": "@stable",
         "cache/array-adapter": "@stable",
@@ -41,7 +41,7 @@
         "cache/redis-adapter": "@stable",
         "cache/void-adapter": "@stable",
         "doctrine/cache": "^1.6",
-        "nyholm/symfony-bundle-test": "^1.0.1"
+        "predis/predis": "^1.1"
     },
     "suggest": {
         "cache/*-adapter": "A actual implementation of PSR-6 cache",
