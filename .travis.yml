@@ -3,6 +3,7 @@ sudo: false
 
 services:
   - redis-server
+  - memcached
 
 php:
   - 7.0
