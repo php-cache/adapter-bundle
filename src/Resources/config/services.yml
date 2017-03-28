@@ -13,6 +13,8 @@ services:
     class: Cache\AdapterBundle\Factory\MemcachedFactory
   cache.factory.memcache:
     class: Cache\AdapterBundle\Factory\MemcacheFactory
+  cache.factory.namespaced:
+    class: Cache\AdapterBundle\Factory\NamespacedFactory
   cache.factory.predis:
     class: Cache\AdapterBundle\Factory\PredisFactory
   cache.factory.prefixed:
