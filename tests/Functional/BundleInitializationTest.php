@@ -11,8 +11,10 @@
 
 namespace Cache\AdapterBundle\Tests\Functional;
 
+use Cache\Adapter\Apc\ApcCachePool;
 use Cache\Adapter\Apcu\ApcuCachePool;
 use Cache\Adapter\Chain\CachePoolChain;
+use Cache\Adapter\Doctrine\DoctrineCachePool;
 use Cache\Adapter\Memcached\MemcachedCachePool;
 use Cache\Adapter\PHPArray\ArrayCachePool;
 use Cache\Adapter\Predis\PredisCachePool;
@@ -59,12 +61,21 @@ class BundleInitializationTest extends BaseBundleTestCase
 
         $container = $this->getContainer();
         $this->assertInstanceOf(ArrayCachePool::class, $container->get('alias.my_adapter'));
+        $this->assertInstanceOf(ApcCachePool::class, $container->get('cache.provider.apc'));
         $this->assertInstanceOf(ApcuCachePool::class, $container->get('cache.provider.apcu'));
         $this->assertInstanceOf(ArrayCachePool::class, $container->get('cache.provider.array'));
         $this->assertInstanceOf(CachePoolChain::class, $container->get('cache.provider.chain'));
+        $this->assertInstanceOf(MemcachedCachePool::class, $container->get('cache.provider.memcache'));
         $this->assertInstanceOf(MemcachedCachePool::class, $container->get('cache.provider.memcached'));
         $this->assertInstanceOf(PredisCachePool::class, $container->get('cache.provider.predis'));
         $this->assertInstanceOf(RedisCachePool::class, $container->get('cache.provider.redis'));
         $this->assertInstanceOf(VoidCachePool::class, $container->get('cache.provider.void'));
+
+        $this->assertInstanceOf(DoctrineCachePool::class, $container->get('cache.provider.doctrine_filesystem'));
+        $this->assertInstanceOf(DoctrineCachePool::class, $container->get('cache.provider.doctrine_memcached'));
+        $this->assertInstanceOf(DoctrineCachePool::class, $container->get('cache.provider.doctrine_memcache'));
+        $this->assertInstanceOf(DoctrineCachePool::class, $container->get('cache.provider.doctrine_predis'));
+        $this->assertInstanceOf(DoctrineCachePool::class, $container->get('cache.provider.doctrine_redis'));
+        $this->assertInstanceOf(DoctrineCachePool::class, $container->get('cache.provider.doctrine_sqlite3'));
     }
 }

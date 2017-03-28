@@ -5,6 +5,8 @@ cache_adapter:
       options: []
       aliases: ['alias.my_adapter']
 
+    apc:
+      factory: 'cache.factory.apc'
     apcu:
       factory: 'cache.factory.apcu'
     array:
@@ -21,3 +23,16 @@ cache_adapter:
       factory: 'cache.factory.redis'
     void:
       factory: 'cache.factory.void'
+
+    doctrine_filesystem:
+      factory: 'cache.factory.doctrine_filesystem'
+    doctrine_memcached:
+      factory: 'cache.factory.doctrine_memcached'
+    doctrine_memcache:
+      factory: 'cache.factory.doctrine_memcache'
+    doctrine_predis:
+      factory: 'cache.factory.doctrine_predis'
+    doctrine_redis:
+      factory: 'cache.factory.doctrine_redis'
+    doctrine_sqlite3:
+      factory: 'cache.factory.doctrine_sqlite3'
