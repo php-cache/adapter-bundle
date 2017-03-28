@@ -4,6 +4,24 @@ The change log describes what is "Added", "Removed", "Changed" or "Fixed" betwee
 
 ## UNRELEASED
 
+## 0.5.0
+
+### Added
+
+- Support for NamespacedCache
+- Support for PrefixedCache
+- Tests
+
+### Changed
+
+- All factories are final
+
+## 0.4.0
+
+### Added
+
+* Added option `redudant_servers`
+
 ## 0.3.5
 
 ### Added
