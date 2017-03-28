@@ -75,7 +75,7 @@ class CacheAdapterExtension extends Extension
         foreach ($options as $key => $value) {
             if (is_array($value)) {
                 $options[$key] = $this->findReferences($value);
-            } elseif (substr($key, -8) === '_service' || strpos($value, '@') === 0) {
+            } elseif (substr($key, -8) === '_service' || strpos($value, '@') === 0 || $key === 'service') {
                 $options[$key] = new Reference(ltrim($value, '@'));
             }
         }

@@ -22,6 +22,8 @@ use Cache\Adapter\Predis\PredisCachePool;
 use Cache\Adapter\Redis\RedisCachePool;
 use Cache\Adapter\Void\VoidCachePool;
 use Cache\AdapterBundle\CacheAdapterBundle;
+use Cache\Namespaced\NamespacedCachePool;
+use Cache\Prefixed\PrefixedCachePool;
 use Nyholm\BundleTest\BaseBundleTestCase;
 
 class BundleInitializationTest extends BaseBundleTestCase
@@ -52,6 +54,9 @@ class BundleInitializationTest extends BaseBundleTestCase
 
         $this->assertInstanceOf(DoctrineCachePool::class, $container->get('cache.provider.doctrine_filesystem'));
         $this->assertInstanceOf(DoctrineCachePool::class, $container->get('cache.provider.doctrine_predis'));
+
+        $this->assertInstanceOf(NamespacedCachePool::class, $container->get('cache.provider.namespaced'));
+        $this->assertInstanceOf(PrefixedCachePool::class, $container->get('cache.provider.prefixed'));
     }
 
     public function testMemcachedWithWithDefaultConfiguration()
