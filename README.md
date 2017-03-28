@@ -1,5 +1,11 @@
 # PSR-6 Cache adapter Bundle
-[![Latest Stable Version](https://poser.pugx.org/cache/adapter-bundle/v/stable)](https://packagist.org/packages/cache/adapter-bundle) [![codecov.io](https://codecov.io/github/php-cache/adapter-bundle/coverage.svg?branch=master)](https://codecov.io/github/php-cache/adapter-bundle?branch=master) [![Build Status](https://travis-ci.org/php-cache/adapter-bundle.svg?branch=master)](https://travis-ci.org/php-cache/adapter-bundle) [![Total Downloads](https://poser.pugx.org/cache/adapter-bundle/downloads)](https://packagist.org/packages/cache/adapter-bundle)  [![Monthly Downloads](https://poser.pugx.org/cache/adapter-bundle/d/monthly.png)](https://packagist.org/packages/cache/adapter-bundle) [![SensioLabsInsight](https://insight.sensiolabs.com/projects/21963379-2b15-4cc4-bdf6-0f98aa292f8a/mini.png)](https://insight.sensiolabs.com/projects/21963379-2b15-4cc4-bdf6-0f98aa292f8a) [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
+[![Latest Stable Version](https://poser.pugx.org/cache/adapter-bundle/v/stable)](https://packagist.org/packages/cache/adapter-bundle) 
+[![codecov.io](https://codecov.io/github/php-cache/adapter-bundle/coverage.svg?branch=master)](https://codecov.io/github/php-cache/adapter-bundle?branch=master)[![Build Status](https://travis-ci.org/php-cache/adapter-bundle.svg?branch=master)](https://travis-ci.org/php-cache/adapter-bundle) 
+[![Total Downloads](https://poser.pugx.org/cache/adapter-bundle/downloads)](https://packagist.org/packages/cache/adapter-bundle)  
+[![Monthly Downloads](https://poser.pugx.org/cache/adapter-bundle/d/monthly.png)](https://packagist.org/packages/cache/adapter-bundle) 
+[![Quality Score](https://img.shields.io/scrutinizer/g/cache/adapter-bundle.svg?style=flat-square)](https://scrutinizer-ci.com/g/cache/adapter-bundle)
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/21963379-2b15-4cc4-bdf6-0f98aa292f8a/mini.png)](https://insight.sensiolabs.com/projects/21963379-2b15-4cc4-bdf6-0f98aa292f8a) 
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 
 
 This bundle helps you configurate and register PSR-6 cache services.  It is a part of the PHP Cache organisation. To read about 

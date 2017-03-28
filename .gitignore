@@ -1,5 +1,6 @@
-build
-phpunit.xml
-vendor
-composer.lock
-/composer.phar
+/behat.yml
+/build/
+/composer.lock
+/phpspec.yml
+/phpunit.xml
+/vendor/
