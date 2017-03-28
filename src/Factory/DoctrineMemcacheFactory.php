@@ -19,7 +19,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class DoctrineMemcacheFactory extends AbstractDoctrineAdapterFactory
+final class DoctrineMemcacheFactory extends AbstractDoctrineAdapterFactory
 {
     /**
      * {@inheritdoc}

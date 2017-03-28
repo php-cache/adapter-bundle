@@ -17,7 +17,7 @@ use Doctrine\Common\Cache\WinCacheCache;
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class DoctrineWinCacheFactory extends AbstractDoctrineAdapterFactory
+final class DoctrineWinCacheFactory extends AbstractDoctrineAdapterFactory
 {
     /**
      * {@inheritdoc}

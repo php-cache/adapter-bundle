@@ -20,7 +20,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  * @author Aaron Scherer <aequasi@gmail.com>
  */
-class PredisFactory extends AbstractDsnAdapterFactory
+final class PredisFactory extends AbstractDsnAdapterFactory
 {
     protected static $dependencies = [
         ['requiredClass' => 'Cache\Adapter\Predis\PredisCachePool', 'packageName' => 'cache/predis-adapter'],

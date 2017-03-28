@@ -17,7 +17,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * @author Aaron Scherer <aequasi@gmail.com>
  */
-class ChainFactory extends AbstractAdapterFactory
+final class ChainFactory extends AbstractAdapterFactory
 {
     protected static $dependencies = [
         ['requiredClass' => 'Cache\Adapter\Chain\CachePoolChain', 'packageName' => 'cache/chain-adapter'],

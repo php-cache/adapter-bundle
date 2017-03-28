@@ -20,7 +20,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  * @author Aaron Scherer <aequasi@gmail.com>
  */
-class RedisFactory extends AbstractDsnAdapterFactory
+final class RedisFactory extends AbstractDsnAdapterFactory
 {
     protected static $dependencies = [
         ['requiredClass' => 'Cache\Adapter\Redis\RedisCachePool', 'packageName' => 'cache/redis-adapter'],

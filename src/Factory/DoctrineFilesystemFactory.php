@@ -18,7 +18,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class DoctrineFilesystemFactory extends AbstractDoctrineAdapterFactory
+final class DoctrineFilesystemFactory extends AbstractDoctrineAdapterFactory
 {
     /**
      * {@inheritdoc}

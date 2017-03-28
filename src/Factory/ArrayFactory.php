@@ -18,7 +18,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class ArrayFactory extends AbstractAdapterFactory
+final class ArrayFactory extends AbstractAdapterFactory
 {
     protected static $dependencies = [
         ['requiredClass' => 'Cache\Adapter\PHPArray\ArrayCachePool', 'packageName' => 'cache/array-adapter'],

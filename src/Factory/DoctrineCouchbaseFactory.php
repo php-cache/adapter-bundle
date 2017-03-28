@@ -19,7 +19,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class DoctrineCouchbaseFactory extends AbstractDoctrineAdapterFactory
+final class DoctrineCouchbaseFactory extends AbstractDoctrineAdapterFactory
 {
     /**
      * {@inheritdoc}

@@ -19,7 +19,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class DoctrinePredisFactory extends AbstractDoctrineAdapterFactory
+final class DoctrinePredisFactory extends AbstractDoctrineAdapterFactory
 {
     protected static $dependencies = [
         ['requiredClass' => 'Cache\Adapter\Doctrine\DoctrineCachePool', 'packageName' => 'cache/doctrine-adapter'],

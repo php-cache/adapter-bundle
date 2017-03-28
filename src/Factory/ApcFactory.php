@@ -16,7 +16,7 @@ use Cache\Adapter\Apc\ApcCachePool;
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class ApcFactory extends AbstractAdapterFactory
+final class ApcFactory extends AbstractAdapterFactory
 {
     protected static $dependencies = [
         ['requiredClass' => 'Cache\Adapter\Apc\ApcCachePool', 'packageName' => 'cache/apc-adapter'],

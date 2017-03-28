@@ -17,7 +17,7 @@ use Doctrine\Common\Cache\XcacheCache;
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class DoctrineXcacheFactory extends AbstractDoctrineAdapterFactory
+final class DoctrineXcacheFactory extends AbstractDoctrineAdapterFactory
 {
     /**
      * {@inheritdoc}

@@ -17,7 +17,7 @@ use Doctrine\Common\Cache\ZendDataCache;
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class DoctrineZendDataFactory extends AbstractDoctrineAdapterFactory
+final class DoctrineZendDataFactory extends AbstractDoctrineAdapterFactory
 {
     /**
      * {@inheritdoc}

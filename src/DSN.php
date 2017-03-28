@@ -16,7 +16,7 @@ namespace Cache\AdapterBundle;
  *
  * @see    https://github.com/snc/SncRedisBundle/blob/master/DependencyInjection/Configuration/RedisDsn.php
  */
-class DSN
+final class DSN
 {
     private static $PORTS = [
         'redis'   => 6379,

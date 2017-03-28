@@ -19,7 +19,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class DoctrineMongodDBFactory extends AbstractDoctrineAdapterFactory
+final class DoctrineMongodDBFactory extends AbstractDoctrineAdapterFactory
 {
     /**
      * {@inheritdoc}
