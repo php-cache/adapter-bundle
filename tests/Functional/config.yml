@@ -38,3 +38,14 @@ cache_adapter:
       factory: 'cache.factory.doctrine_predis'
     doctrine_redis:
       factory: 'cache.factory.doctrine_redis'
+
+    namespaced:
+      factory: 'cache.factory.namespaced'
+      options:
+        service: 'cache.provider.void'
+        namespace: 'foobar'
+    prefixed:
+      factory: 'cache.factory.prefixed'
+      options:
+        service: 'cache.provider.void'
+        prefix: 'foobar'
