@@ -61,7 +61,7 @@ class CacheAdapterExtension extends Extension
         }
 
         if ($first !== null) {
-            $container->setAlias('cache', 'cache.provider.'.$first);
+            $container->setAlias('php_cache', 'cache.provider.'.$first);
         }
     }
 
