@@ -23,11 +23,10 @@ composer require cache/adapter-bundle
 Add the bundle to app/AppKernel.php
 
 ```php
-$bundles(
+$bundles = [
     // ...
     new Cache\AdapterBundle\CacheAdapterBundle(),
-    // ...
-);
+];
 ```
 
 Read the documentation at [www.php-cache.com/symfony/adapter-bundle](http://www.php-cache.com/en/latest/symfony/adapter-bundle/).
