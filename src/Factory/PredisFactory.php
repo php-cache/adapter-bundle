@@ -35,9 +35,10 @@ final class PredisFactory extends AbstractDsnAdapterFactory
         if (empty($dsn)) {
             $client = new Client(
                 [
-                    'scheme' => $config['scheme'],
-                    'host'   => $config['host'],
-                    'port'   => $config['port'],
+                    'scheme'     => $config['scheme'],
+                    'host'       => $config['host'],
+                    'port'       => $config['port'],
+                    'persistent' => isset($config['persistent']) ? $config['persistent'] : false
                 ]
             );
         } else {
