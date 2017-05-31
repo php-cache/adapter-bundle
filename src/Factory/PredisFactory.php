@@ -67,6 +67,7 @@ final class PredisFactory extends AbstractDsnAdapterFactory
                 'port'           => '6379',
                 'scheme'         => 'tcp',
                 'pool_namespace' => null,
+                'persistent'     => false,
             ]
         );
 
@@ -74,5 +75,6 @@ final class PredisFactory extends AbstractDsnAdapterFactory
         $resolver->setAllowedTypes('port', ['string', 'int']);
         $resolver->setAllowedTypes('scheme', ['string']);
         $resolver->setAllowedTypes('pool_namespace', ['string', 'null']);
+        $resolver->setAllowedTypes('persistent', ['bool']);
     }
 }
