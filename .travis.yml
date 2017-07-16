@@ -33,6 +33,7 @@ matrix:
       env: COMPOSER_COMMAND="composer update --prefer-lowest --prefer-stable" COVERAGE=true TEST_COMMAND="php -dzend_extension=xdebug.so vendor/bin/phpunit --coverage-clover=coverage.xml" SYMFONY_VERSION=2.7.*
     - php: hhvm
       env: SYMFONY_VERSION=3.3.*
+      dist: trusty
 
 cache:
   directories:

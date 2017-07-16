@@ -38,7 +38,7 @@ final class PredisFactory extends AbstractDsnAdapterFactory
                     'scheme'     => $config['scheme'],
                     'host'       => $config['host'],
                     'port'       => $config['port'],
-                    'persistent' => isset($config['persistent']) ? $config['persistent'] : false
+                    'persistent' => isset($config['persistent']) ? $config['persistent'] : false,
                 ]
             );
         } else {
