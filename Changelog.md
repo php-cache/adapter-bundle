@@ -2,7 +2,11 @@
 
 The change log describes what is "Added", "Removed", "Changed" or "Fixed" between each release. 
 
-## UNRELEASED
+## 1.0.0
+
+### Added
+
+- Support for Predis pool to be persistent
 
 ## 0.5.0
 
