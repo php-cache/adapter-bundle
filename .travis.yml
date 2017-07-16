@@ -19,7 +19,7 @@ env:
   matrix:
     - SYMFONY_VERSION=2.7.*
     - SYMFONY_VERSION=2.8.*
-    - SYMFONY_VERSION=3.2.*
+    - SYMFONY_VERSION=3.3.*
 
 branches:
   except:
@@ -31,6 +31,9 @@ matrix:
   include:
     - php: 5.5
       env: COMPOSER_COMMAND="composer update --prefer-lowest --prefer-stable" COVERAGE=true TEST_COMMAND="php -dzend_extension=xdebug.so vendor/bin/phpunit --coverage-clover=coverage.xml" SYMFONY_VERSION=2.7.*
+    - php: hhvm
+      env: SYMFONY_VERSION=3.3.*
+      dist: trusty
 
 cache:
   directories:
