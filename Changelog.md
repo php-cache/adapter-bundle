@@ -2,7 +2,16 @@
 
 The change log describes what is "Added", "Removed", "Changed" or "Fixed" between each release. 
 
-## UNRELEASED
+## 1.0.0
+
+### Added
+
+- Support for Predis pool to be persistent
+- Added new alias for the default provider: "php_cache"
+
+### Removed
+
+- Support for PHP 5.5
 
 ## 0.5.0
 
