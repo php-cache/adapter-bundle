@@ -57,5 +57,7 @@
         "psr-4": {
             "Cache\\AdapterBundle\\Tests\\": "tests/"
         }
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
