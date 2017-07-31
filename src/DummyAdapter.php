@@ -13,13 +13,15 @@ namespace Cache\AdapterBundle;
 
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * This client is used as a placeholder for the dependency injection. It will never be used.
  *
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-final class DummyAdapter implements CacheItemPoolInterface
+final class DummyAdapter implements CacheItemPoolInterface, LoggerAwareInterface
 {
     public function getItem($key)
     {
@@ -54,6 +56,10 @@ final class DummyAdapter implements CacheItemPoolInterface
     }
 
     public function commit()
+    {
+    }
+
+    public function setLogger(LoggerInterface $logger)
     {
     }
 }

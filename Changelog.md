@@ -2,6 +2,12 @@
 
 The change log describes what is "Added", "Removed", "Changed" or "Fixed" between each release. 
 
+## 1.1.0
+
+### Changed
+
+- The `DummyAdapter` implements `LoggerAwareInterface`
+
 ## 1.0.0
 
 ### Added
