@@ -22,6 +22,7 @@
         "symfony/framework-bundle": "^2.7 || ^3.0",
         "symfony/options-resolver": "^2.7 || ^3.0",
         "psr/cache": "^1.0",
+        "psr/log": "^1.0",
         "cache/namespaced-cache": "^1.0"
     },
     "require-dev": {
