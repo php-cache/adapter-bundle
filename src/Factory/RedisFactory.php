@@ -48,12 +48,11 @@ final class RedisFactory extends AbstractDsnAdapterFactory
                     throw new ConnectException('Could not connect authenticate connection to Redis database.');
                 }
             }
+            $config['database'] = $dsn->getDatabase();
+        }
 
-            if ($dsn->getDatabase() !== null) {
-                if (false === $client->select($dsn->getDatabase())) {
-                    throw new ConnectException(sprintf('Could not select Redis database with index "%s".', $dsn->getDatabase()));
-                }
-            }
+        if (null !== $config['database'] && false === $client->select($config['database'])) {
+            throw new ConnectException(sprintf('Could not select Redis database with index "%s".', $config['database']));
         }
 
         $pool = new RedisCachePool($client);
@@ -77,11 +76,13 @@ final class RedisFactory extends AbstractDsnAdapterFactory
                 'host'           => '127.0.0.1',
                 'port'           => '6379',
                 'pool_namespace' => null,
+                'database'       => null,
             ]
         );
 
         $resolver->setAllowedTypes('host', ['string']);
         $resolver->setAllowedTypes('port', ['string', 'int']);
         $resolver->setAllowedTypes('pool_namespace', ['string', 'null']);
+        $resolver->setAllowedTypes('database', ['int', 'null']);
     }
 }
