@@ -1,6 +1,6 @@
 {
     "name": "cache/adapter-bundle",
-    "type": "library",
+    "type": "symfony-bundle",
     "description": "A bundle that registers cache implementations as Symfony services supporting PSR-6 and tagging",
     "keywords": [],
     "homepage": "https://github.com/php-cache/adapter-bundle",
@@ -19,6 +19,7 @@
     ],
     "require": {
         "php": "^5.6 || ^7.0",
+        "cache/array-adapter": "^1.0",
         "symfony/framework-bundle": "^2.7 || ^3.0",
         "symfony/options-resolver": "^2.7 || ^3.0",
         "psr/cache": "^1.0",
@@ -32,7 +33,6 @@
         "nyholm/symfony-bundle-test": "^1.2.0",
         "cache/apc-adapter": "^1.0",
         "cache/apcu-adapter": "^1.0",
-        "cache/array-adapter": "^1.0",
         "cache/chain-adapter": "^1.0",
         "cache/doctrine-adapter": "^1.0",
         "cache/filesystem-adapter": "^1.0",
