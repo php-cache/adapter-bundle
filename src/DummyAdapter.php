@@ -21,7 +21,7 @@ use Psr\Log\LoggerInterface;
  *
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-final class DummyAdapter implements CacheItemPoolInterface, LoggerAwareInterface
+class DummyAdapter implements CacheItemPoolInterface, LoggerAwareInterface
 {
     public function getItem($key)
     {
