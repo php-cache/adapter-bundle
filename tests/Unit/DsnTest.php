@@ -12,11 +12,12 @@
 namespace Cache\AdapterBundle\Tests\Unit;
 
 use Cache\AdapterBundle\DSN;
+use PHPUnit\Framework\TestCase;
 
 /**
  * DsnTest.
  */
-class DsnTest extends \PHPUnit_Framework_TestCase
+class DsnTest extends TestCase
 {
     /**
      * @static
