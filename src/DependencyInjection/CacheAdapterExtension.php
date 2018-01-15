@@ -13,6 +13,7 @@ namespace Cache\AdapterBundle\DependencyInjection;
 
 use Cache\AdapterBundle\DummyAdapter;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\DependencyInjection\Reference;
@@ -52,11 +53,12 @@ class CacheAdapterExtension extends Extension
 
             $def = $container->register('cache.provider.'.$name, DummyAdapter::class);
             $def->setFactory([new Reference($arguments['factory']), 'createAdapter'])
-                ->addArgument($arguments['options']);
+                ->addArgument($arguments['options'])
+                ->setPublic(true);
 
             $def->addTag('cache.provider');
             foreach ($arguments['aliases'] as $alias) {
-                $container->setAlias($alias, 'cache.provider.'.$name);
+                $container->setAlias($alias, new Alias('cache.provider.'.$name, true));
             }
         }
 
