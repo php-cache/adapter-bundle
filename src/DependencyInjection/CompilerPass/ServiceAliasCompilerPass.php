@@ -1,12 +1,12 @@
 <?php
 
 /*
- * This file is part of cache-bundle.
+ * This file is part of php-cache organization.
  *
- * (c) Aaron Scherer <aequasi@gmail.com>
+ * (c) 2015 Aaron Scherer <aequasi@gmail.com>, Tobias Nyholm <tobias.nyholm@gmail.com>
  *
- * This source file is subject to the license that is bundled
- * with this source code in the file LICENSE
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace Cache\AdapterBundle\DependencyInjection\CompilerPass;
@@ -21,7 +21,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  */
 class ServiceAliasCompilerPass implements CompilerPassInterface
 {
-
     /**
      * You can modify the container here before it is dumped to PHP code.
      *
