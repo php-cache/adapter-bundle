@@ -31,12 +31,10 @@ class ServiceAliasCompilerPass implements CompilerPassInterface
     {
         $serviceIds = array_keys($container->findTaggedServiceIds('cache.provider'));
         foreach ($serviceIds as $serviceId) {
-            $cleanName = str_replace('.inner', '', $serviceId);
             $instance  = $container->get($serviceId);
             $class     = get_class($instance);
 
-            $container->setAlias($cleanName, $serviceId);
-            $container->setAlias($class, $cleanName);
+            $container->setAlias($class, $serviceId);
         }
     }
 }
