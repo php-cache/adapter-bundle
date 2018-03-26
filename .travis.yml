@@ -56,6 +56,7 @@ matrix:
         - env: STABILITY="dev"
 
 before_install:
+    - pecl install memcache
     - if [[ $COVERAGE != true ]]; then phpenv config-rm xdebug.ini || true; fi
     - if ! [ -z "$STABILITY" ]; then composer config minimum-stability ${STABILITY}; fi;
     - if ! [ -v "$DEPENDENCIES" ]; then composer require --no-update ${DEPENDENCIES}; fi;
