@@ -44,6 +44,10 @@ final class MemcachedFactory extends AbstractAdapterFactory
             $client->addServer($server['host'], $port);
         }
 
+        foreach ($config['driver_options'] as $constant => $value) {
+            $client->setOption(constant($constant), $value);
+        }
+
         $pool = new MemcachedCachePool($client);
 
         if (null !== $config['pool_namespace']) {
@@ -64,6 +68,7 @@ final class MemcachedFactory extends AbstractAdapterFactory
             'port'              => 11211,
             'pool_namespace'    => null,
             'redundant_servers' => [],
+            'driver_options' => [],
         ]);
 
         $resolver->setAllowedTypes('persistent_id', ['string', 'null']);
@@ -71,5 +76,6 @@ final class MemcachedFactory extends AbstractAdapterFactory
         $resolver->setAllowedTypes('port', ['string', 'int']);
         $resolver->setAllowedTypes('pool_namespace', ['string', 'null']);
         $resolver->setAllowedTypes('redundant_servers', ['array']);
+        $resolver->setAllowedTypes('driver_options', ['array']);
     }
 }
