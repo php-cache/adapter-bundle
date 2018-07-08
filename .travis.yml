@@ -1,10 +1,19 @@
 language: php
 sudo: false
+dist: trusty
 
 services:
   - redis-server
   - memcached
   - memcache
+  - mongodb
+
+addons:
+  apt:
+    sources:
+      - mongodb-3.2-trusty
+    packages:
+      - mongodb-org-server
 
 cache:
     directories:
