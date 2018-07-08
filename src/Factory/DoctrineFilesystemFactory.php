@@ -37,7 +37,7 @@ final class DoctrineFilesystemFactory extends AbstractDoctrineAdapterFactory
     {
         $resolver->setDefaults([
             'extension' => FilesystemCache::EXTENSION,
-            'umask'     => '0002',
+            'umask' => '0002',
         ]);
 
         $resolver->setRequired(['directory']);

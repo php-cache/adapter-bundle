@@ -28,7 +28,7 @@ final class DoctrineRiakFactory extends AbstractDoctrineAdapterFactory
     public function getAdapter(array $config)
     {
         $connection = new Connection($config['host'], $config['port']);
-        $bucket     = new Bucket($connection, $config['type']);
+        $bucket = new Bucket($connection, $config['type']);
 
         return new DoctrineCachePool(new RiakCache($bucket));
     }

@@ -63,10 +63,10 @@ final class MemcachedFactory extends AbstractAdapterFactory
     protected static function configureOptionResolver(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'persistent_id'     => null,
-            'host'              => '127.0.0.1',
-            'port'              => 11211,
-            'pool_namespace'    => null,
+            'persistent_id' => null,
+            'host' => '127.0.0.1',
+            'port' => 11211,
+            'pool_namespace' => null,
             'redundant_servers' => [],
             'driver_options' => [],
         ]);

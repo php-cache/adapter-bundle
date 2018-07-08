@@ -51,8 +51,8 @@ final class MongoDBFactory extends AbstractDsnAdapterFactory
 
         $resolver->setDefaults(
             [
-                'host'      => '127.0.0.1',
-                'port'      => 11211,
+                'host' => '127.0.0.1',
+                'port' => 11211,
                 'namespace' => 'cache',
             ]
         );

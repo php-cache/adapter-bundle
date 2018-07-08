@@ -40,10 +40,10 @@ final class DoctrineCouchbaseFactory extends AbstractDoctrineAdapterFactory
     protected static function configureOptionResolver(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'host'     => '127.0.0.1',
-            'user'     => 'Administrator',
+            'host' => '127.0.0.1',
+            'user' => 'Administrator',
             'password' => 'password',
-            'bucket'   => 'default',
+            'bucket' => 'default',
         ]);
 
         $resolver->setAllowedTypes('host', ['string']);

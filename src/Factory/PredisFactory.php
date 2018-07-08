@@ -35,9 +35,9 @@ final class PredisFactory extends AbstractDsnAdapterFactory
         if (empty($dsn)) {
             $client = new Client(
                 [
-                    'scheme'     => $config['scheme'],
-                    'host'       => $config['host'],
-                    'port'       => $config['port'],
+                    'scheme' => $config['scheme'],
+                    'host' => $config['host'],
+                    'port' => $config['port'],
                     'persistent' => $config['persistent'],
                 ]
             );
@@ -63,11 +63,11 @@ final class PredisFactory extends AbstractDsnAdapterFactory
 
         $resolver->setDefaults(
             [
-                'host'           => '127.0.0.1',
-                'port'           => '6379',
-                'scheme'         => 'tcp',
+                'host' => '127.0.0.1',
+                'port' => '6379',
+                'scheme' => 'tcp',
                 'pool_namespace' => null,
-                'persistent'     => false,
+                'persistent' => false,
             ]
         );
 

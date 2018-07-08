@@ -26,7 +26,7 @@ final class DoctrineMongodDBFactory extends AbstractDoctrineAdapterFactory
      */
     public function getAdapter(array $config)
     {
-        $mongo      = new MongoClient();
+        $mongo = new MongoClient();
         $collection = $mongo->selectCollection($config['host'], $config['collection']);
 
         return new DoctrineCachePool(new MongoDBCache($collection));
