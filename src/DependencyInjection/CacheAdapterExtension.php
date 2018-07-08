@@ -33,7 +33,7 @@ class CacheAdapterExtension extends Extension
     public function load(array $configs, ContainerBuilder $container)
     {
         $configuration = new Configuration();
-        $config        = $this->processConfiguration($configuration, $configs);
+        $config = $this->processConfiguration($configuration, $configs);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
@@ -41,7 +41,7 @@ class CacheAdapterExtension extends Extension
         // Configure client services
         $first = isset($config['providers']['default']) ? 'default' : null;
         foreach ($config['providers'] as $name => $arguments) {
-            if ($first === null) {
+            if (null === $first) {
                 $first = $name;
             }
 
@@ -62,7 +62,7 @@ class CacheAdapterExtension extends Extension
             }
         }
 
-        if ($first !== null) {
+        if (null !== $first) {
             $container->setAlias('cache', 'cache.provider.'.$first);
             $container->setAlias('php_cache', 'cache.provider.'.$first);
         }
@@ -78,7 +78,7 @@ class CacheAdapterExtension extends Extension
         foreach ($options as $key => $value) {
             if (is_array($value)) {
                 $options[$key] = $this->findReferences($value);
-            } elseif (substr($key, -8) === '_service' || strpos($value, '@') === 0 || $key === 'service') {
+            } elseif ('_service' === substr($key, -8) || 0 === strpos($value, '@') || 'service' === $key) {
                 $options[$key] = new Reference(ltrim($value, '@'));
             }
         }

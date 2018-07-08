@@ -33,8 +33,8 @@ final class DoctrinePredisFactory extends AbstractDoctrineAdapterFactory
     {
         $client = new Client([
             'scheme' => $config['scheme'],
-            'host'   => $config['host'],
-            'port'   => $config['port'],
+            'host' => $config['host'],
+            'port' => $config['port'],
         ]);
 
         return new DoctrineCachePool(new PredisCache($client));
@@ -46,8 +46,8 @@ final class DoctrinePredisFactory extends AbstractDoctrineAdapterFactory
     protected static function configureOptionResolver(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'host'   => '127.0.0.1',
-            'port'   => '6379',
+            'host' => '127.0.0.1',
+            'port' => '6379',
             'scheme' => 'tcp',
         ]);
 

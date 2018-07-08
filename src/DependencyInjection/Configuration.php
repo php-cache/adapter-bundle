@@ -30,7 +30,7 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode    = $treeBuilder->root('cache_adapter');
+        $rootNode = $treeBuilder->root('cache_adapter');
 
         $rootNode->children()
             ->append($this->getClustersNode())
@@ -45,7 +45,7 @@ class Configuration implements ConfigurationInterface
     private function getClustersNode()
     {
         $treeBuilder = new TreeBuilder();
-        $node        = $treeBuilder->root('providers');
+        $node = $treeBuilder->root('providers');
 
         $node
             ->requiresAtLeastOneElement()

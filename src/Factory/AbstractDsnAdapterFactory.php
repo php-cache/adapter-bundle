@@ -20,7 +20,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 abstract class AbstractDsnAdapterFactory extends AbstractAdapterFactory
 {
     /**
-     * @type DSN
+     * @var DSN
      */
     private $DSN;
 
