@@ -3,7 +3,7 @@
 echo "Add php.ini settings"
 phpenv config-add ./.travis/apc.ini
 
-if [[ $(phpenv version-name) = "5.6" ]]; then
+if [ $(phpenv version-name) = "5.6" ]; then
     # PHP 5.6
     echo "Install APC Adapter & APCu Adapter dependencies"
     yes '' | pecl install -f apcu-4.0.11
