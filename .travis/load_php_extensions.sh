@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 echo "Add php.ini settings"
-phpenv config-add ./.travis/apc.ini
+phpenv config-add ./.travis/php.ini
 
 if [ $(phpenv version-name) = "5.6" ]; then
     # PHP 5.6
