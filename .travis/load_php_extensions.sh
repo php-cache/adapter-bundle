@@ -10,6 +10,10 @@ if [ $(phpenv version-name) = "5.6" ]; then
 
     echo "Install redis"
     yes '' | pecl install -f redis-2.2.8
+
+    echo "extension = memcache.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+    echo "memcache.enabled=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+    echo "memcache.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 else
     # PHP 7.0
     echo "Install APCu Adapter dependencies"

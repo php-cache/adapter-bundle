@@ -1,0 +1,6 @@
+cache_adapter:
+  providers:
+    memcache:
+      factory: 'cache.factory.memcache'
+    doctrine_memcache:
+      factory: 'cache.factory.doctrine_memcache'
