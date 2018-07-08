@@ -75,6 +75,10 @@ class BundleInitializationTest extends BaseBundleTestCase
         if (!class_exists('Memcache')) {
             $this->markTestSkipped('Skipping since Memcache is not installed.');
         }
+
+        $kernel = $this->createKernel();
+        $kernel->addConfigFile(__DIR__.'/config_memcache.yml');
+
         $this->bootKernel();
         $container = $this->getContainer();
         $this->assertInstanceOf(MemcacheCachePool::class, $container->get('cache.provider.memcache'));

@@ -1,10 +1,19 @@
 language: php
-sudo: false
+sudo: required
+dist: trusty
 
 services:
   - redis-server
   - memcached
   - memcache
+  - mongodb
+
+addons:
+  apt:
+    sources:
+      - mongodb-3.2-trusty
+    packages:
+      - mongodb-org-server
 
 cache:
     directories:
@@ -56,6 +65,7 @@ matrix:
         - env: STABILITY="dev"
 
 before_install:
+    - sh ./.travis/load_php_extensions.sh
     - if [[ $COVERAGE != true ]]; then phpenv config-rm xdebug.ini || true; fi
     - if ! [ -z "$STABILITY" ]; then composer config minimum-stability ${STABILITY}; fi;
     - if ! [ -v "$DEPENDENCIES" ]; then composer require --no-update ${DEPENDENCIES}; fi;

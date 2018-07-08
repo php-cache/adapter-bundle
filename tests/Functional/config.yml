@@ -15,8 +15,6 @@ cache_adapter:
       factory: 'cache.factory.chain'
       options:
         services: ['alias.my_adapter', 'cache.provider.void']
-    memcache:
-      factory: 'cache.factory.memcache'
     memcached:
       factory: 'cache.factory.memcached'
     predis:
@@ -32,8 +30,6 @@ cache_adapter:
         directory: 'doctrine_file'
     doctrine_memcached:
       factory: 'cache.factory.doctrine_memcached'
-    doctrine_memcache:
-      factory: 'cache.factory.doctrine_memcache'
     doctrine_predis:
       factory: 'cache.factory.doctrine_predis'
     doctrine_redis:
