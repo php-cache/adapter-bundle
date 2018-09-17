@@ -1,5 +1,5 @@
 {
-    "name": "cache/adapter-bundle",
+    "name": "esome/adapter-bundle",
     "type": "symfony-bundle",
     "description": "A bundle that registers cache implementations as Symfony services supporting PSR-6 and tagging",
     "keywords": [],
