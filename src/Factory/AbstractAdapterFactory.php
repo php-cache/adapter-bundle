@@ -35,7 +35,7 @@ abstract class AbstractAdapterFactory implements AdapterFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function createAdapter(array $options = [])
+    public function createAdapter(array $options = [], $fallback = false)
     {
         $this->verifyDependencies();
 
@@ -43,7 +43,14 @@ abstract class AbstractAdapterFactory implements AdapterFactoryInterface
         static::configureOptionResolver($resolver);
         $config = $resolver->resolve($options);
 
-        return $this->getAdapter($config);
+        try {
+            return $this->getAdapter($config);
+        } catch (\Exception $e) {
+            if ($fallback) {
+                return (new VoidFactory())->getAdapter([]);
+            }
+            throw $e;
+        }
     }
 
     /**

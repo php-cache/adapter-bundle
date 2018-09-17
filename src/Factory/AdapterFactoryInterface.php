@@ -20,10 +20,10 @@ interface AdapterFactoryInterface
 {
     /**
      * @param array $options
-     *
+     * @param bool $fallback
      * @return CacheItemPoolInterface
      */
-    public function createAdapter(array $options = []);
+    public function createAdapter(array $options = [], $fallback = false);
 
     /**
      * Make sure the options are valid and the dependencies are met.

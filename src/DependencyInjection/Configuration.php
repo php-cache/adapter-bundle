@@ -34,6 +34,7 @@ class Configuration implements ConfigurationInterface
 
         $rootNode->children()
             ->append($this->getClustersNode())
+            ->scalarNode('fallback')->defaultFalse()
             ->end();
 
         return $treeBuilder;

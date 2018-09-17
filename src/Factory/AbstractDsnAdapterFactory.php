@@ -61,7 +61,7 @@ abstract class AbstractDsnAdapterFactory extends AbstractAdapterFactory
     /**
      * {@inheritdoc}
      */
-    public function createAdapter(array $options = [])
+    public function createAdapter(array $options = [], $fallback = false)
     {
         if (!empty($options['dsn'])) {
             $dsn = new DSN($options['dsn']);
@@ -72,6 +72,6 @@ abstract class AbstractDsnAdapterFactory extends AbstractAdapterFactory
             $this->DSN = $dsn;
         }
 
-        return parent::createAdapter($options);
+        return parent::createAdapter($options, $fallback);
     }
 }
