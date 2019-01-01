@@ -225,7 +225,7 @@ final class DSN
 
     private function parseHosts($hostString)
     {
-        preg_match_all('/(?P<host>[\w-._]+)(?::(?P<port>\d+))?/mi', $hostString, $matches);
+        preg_match_all('/(?P<host>[\w\-._]+)(?::(?P<port>\d+))?/mi', $hostString, $matches);
 
         $hosts = [];
         foreach ($matches['host'] as $index => $match) {

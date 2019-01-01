@@ -34,30 +34,33 @@ matrix:
     fast_finish: true
     include:
           # Minimum supported Symfony version and latest PHP version
-        - php: 7.2
+        - php: 7.3
           env: COMPOSER_FLAGS="--prefer-stable --prefer-lowest" SYMFONY_DEPRECATIONS_HELPER="weak"
         - php: 5.6
-          env: COMPOSER_FLAGS="--prefer-stable --prefer-lowest" SYMFONY_DEPRECATIONS_HELPER="weak"
+          env: COMPOSER_MEMORY_LIMIT=-1 COMPOSER_FLAGS="--prefer-stable --prefer-lowest" SYMFONY_DEPRECATIONS_HELPER="weak"
 
           # Test the latest stable release
         - php: 5.6
+          env: COMPOSER_MEMORY_LIMIT=-1
         - php: 7.0
           env: SYMFONY_PHPUNIT_VERSION="6.3"
         - php: 7.1
           env: SYMFONY_PHPUNIT_VERSION="6.3"
         - php: 7.2
           env: COVERAGE=true TEST_COMMAND="composer test-ci"
+        - php: 7.2
+          env: COVERAGE=true TEST_COMMAND="composer test-ci"
 
           # Test LTS versions
-        - php: 7.2
+        - php: 7.3
           env: DEPENDENCIES="dunglas/symfony-lock:^2"
-        - php: 7.2
+        - php: 7.3
           env: DEPENDENCIES="dunglas/symfony-lock:^3"
-        - php: 7.2
+        - php: 7.3
           env: DEPENDENCIES="dunglas/symfony-lock:^4"
 
           # Latest commit to master
-        - php: 7.2
+        - php: 7.3
           env: STABILITY="dev"
 
     allow_failures:
