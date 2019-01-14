@@ -29,8 +29,14 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('cache_adapter');
+
+        $treeBuilder = new TreeBuilder('cache_adapter');
+
+        if (method_exists($treeBuilder, 'getRootNode')) {
+            $rootNode = $treeBuilder->getRootNode()->children();
+        } else {
+            $rootNode = $treeBuilder->root('cache_adapter')->children();
+        }
 
         $rootNode->children()
             ->append($this->getClustersNode())
@@ -44,8 +50,14 @@ class Configuration implements ConfigurationInterface
      */
     private function getClustersNode()
     {
-        $treeBuilder = new TreeBuilder();
-        $node = $treeBuilder->root('providers');
+
+        $treeBuilder = new TreeBuilder('providers');
+
+        if (method_exists($treeBuilder, 'getRootNode')) {
+            $node = $treeBuilder->getRootNode()->children();
+        } else {
+            $node = $treeBuilder->root('providers')->children();
+        }
 
         $node
             ->requiresAtLeastOneElement()
