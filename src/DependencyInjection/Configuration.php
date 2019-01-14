@@ -33,9 +33,9 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder('cache_adapter');
 
         if (method_exists($treeBuilder, 'getRootNode')) {
-            $rootNode = $treeBuilder->getRootNode()->children();
+            $rootNode = $treeBuilder->getRootNode();
         } else {
-            $rootNode = $treeBuilder->root('cache_adapter')->children();
+            $rootNode = $treeBuilder->root('cache_adapter');
         }
 
         $rootNode->children()
@@ -54,9 +54,9 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder('providers');
 
         if (method_exists($treeBuilder, 'getRootNode')) {
-            $node = $treeBuilder->getRootNode()->children();
+            $node = $treeBuilder->getRootNode();
         } else {
-            $node = $treeBuilder->root('providers')->children();
+            $node = $treeBuilder->root('providers');
         }
 
         $node
