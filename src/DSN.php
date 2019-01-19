@@ -22,6 +22,7 @@ final class DSN
         'redis' => 6379,
         'mongodb' => 27017,
         'tcp' => 6379,
+        'memcached' => 11211,
     ];
 
     /**
@@ -148,7 +149,7 @@ final class DSN
             return false;
         }
 
-        if (!in_array($this->getProtocol(), ['redis', 'mongodb', 'tcp'])) {
+        if (!\array_key_exists($this->getProtocol(), self::$PORTS)) {
             return false;
         }
 
@@ -167,7 +168,7 @@ final class DSN
 
         if (isset($matches[1])) {
             $protocol = $matches[1];
-            if (!in_array($protocol, ['redis', 'mongodb', 'tcp'])) {
+            if (!\array_key_exists($protocol, self::$PORTS)) {
                 return false;
             }
 

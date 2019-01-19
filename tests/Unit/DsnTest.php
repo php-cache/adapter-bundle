@@ -43,6 +43,12 @@ class DsnTest extends TestCase
             ['mongodb://dev:pass@127.0.0.1:27371', '127.0.0.1'],
             ['mongodb://dev:pass@127.0.0.1:27371/database', '127.0.0.1'],
             ['mongodb://dev:pass@127.0.0.1,192.168.1.1:27371/database', ['127.0.0.1', '192.168.1.1']],
+            ['mongodb://localhost', 'localhost'],
+            ['memcached://127.0.0.1', '127.0.0.1'],
+            ['memcached://dev:pass@127.0.0.1', '127.0.0.1'],
+            ['memcached://dev:pass@127.0.0.1:27371', '127.0.0.1'],
+            ['memcached://dev:pass@127.0.0.1:27371/database', '127.0.0.1'],
+            ['memcached://dev:pass@127.0.0.1,192.168.1.1:27371/database', ['127.0.0.1', '192.168.1.1']],
         ];
     }
 
@@ -89,6 +95,11 @@ class DsnTest extends TestCase
             ['mongodb://dev:pass@127.0.0.1:27371', 27371],
             ['mongodb://dev:pass@127.0.0.1:27371/database', 27371],
             ['mongodb://dev:pass@127.0.0.1,192.168.1.1:27371/database', [27017, 27371]],
+            ['memcached://localhost', 11211],
+            ['memcached://127.0.0.1', 11211],
+            ['memcached://dev:pass@127.0.0.1', 11211],
+            ['memcached://dev:pass@127.0.0.1:11212', 11212],
+            ['memcached://dev:pass@127.0.0.1,192.168.1.1:11212', [11211, 11212]],
         ];
     }
 
@@ -176,6 +187,10 @@ class DsnTest extends TestCase
             ['mongodb://dev:pass@127.0.0.1:27371', ['dev', 'pass']],
             ['mongodb://dev:pass@127.0.0.1:27371/database', ['dev', 'pass']],
             ['mongodb://dev:pass@127.0.0.1,192.168.1.1:27371/database', ['dev', 'pass']],
+            ['memcached://localhost', null],
+            ['memcached://127.0.0.1', null],
+            ['memcached://dev:pass@127.0.0.1', ['dev', 'pass']],
+            ['memcached://dev:pass@127.0.0.1:27371', ['dev', 'pass']],
         ];
     }
 
@@ -221,6 +236,7 @@ class DsnTest extends TestCase
             ['localhost', false],
             ['localhost/1', false],
             ['pw@localhost:63790/10', false],
+            ['memcached://dev:pass@127.0.0.1:12121', true],
         ];
     }
 

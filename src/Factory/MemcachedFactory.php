@@ -19,7 +19,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-final class MemcachedFactory extends AbstractAdapterFactory
+final class MemcachedFactory extends AbstractDsnAdapterFactory
 {
     protected static $dependencies = [
         ['requiredClass' => 'Cache\Adapter\Memcached\MemcachedCachePool', 'packageName' => 'cache/memcached-adapter'],
@@ -30,22 +30,52 @@ final class MemcachedFactory extends AbstractAdapterFactory
      */
     public function getAdapter(array $config)
     {
-        $client = new Memcached($config['persistent_id']);
-        $client->addServer($config['host'], $config['port']);
+        $dsn = $this->getDsn();
+        if (empty($dsn)) {
+            $client = new Memcached($config['persistent_id']);
+            $client->addServer($config['host'], $config['port']);
 
-        foreach ($config['redundant_servers'] as $server) {
-            if (!isset($server['host'])) {
-                continue;
+            foreach ($config['redundant_servers'] as $server) {
+                if (!isset($server['host'])) {
+                    continue;
+                }
+                $port = $config['port'];
+                if (isset($server['port'])) {
+                    $port = $server['port'];
+                }
+                $client->addServer($server['host'], $port);
             }
-            $port = $config['port'];
-            if (isset($server['port'])) {
-                $port = $server['port'];
-            }
-            $client->addServer($server['host'], $port);
-        }
 
-        foreach ($config['driver_options'] as $constant => $value) {
-            $client->setOption(constant($constant), $value);
+            foreach ($config['driver_options'] as $constant => $value) {
+                $client->setOption(constant($constant), $value);
+            }
+
+            if (null !== $config['sasl']) {
+                $client->setOption(Memcached::OPT_BINARY_PROTOCOL, true);
+                $client->setSaslAuthData($config['sasl']['username'], $config['sasl']['password']);
+            }
+        } else {
+            $client = new Memcached($config['persistent_id']);
+
+            foreach ($dsn->getHosts() as $server) {
+                if (!isset($server['host'])) {
+                    continue;
+                }
+                $port = $config['port'];
+                if (isset($server['port'])) {
+                    $port = $server['port'];
+                }
+                $client->addServer($server['host'], $port);
+            }
+
+            foreach ($dsn->getParameters() as $constant => $value) {
+                $client->setOption(constant($constant), $value);
+            }
+
+            if (!empty($dsn->getAuthentication())) {
+                $client->setOption(Memcached::OPT_BINARY_PROTOCOL, true);
+                $client->setSaslAuthData($dsn->getUsername(), $dsn->getPassword());
+            }
         }
 
         $pool = new MemcachedCachePool($client);
@@ -62,11 +92,14 @@ final class MemcachedFactory extends AbstractAdapterFactory
      */
     protected static function configureOptionResolver(OptionsResolver $resolver)
     {
+        parent::configureOptionResolver($resolver);
+
         $resolver->setDefaults([
             'persistent_id' => null,
             'host' => '127.0.0.1',
             'port' => 11211,
             'pool_namespace' => null,
+            'sasl' => null,
             'redundant_servers' => [],
             'driver_options' => [],
         ]);
@@ -75,6 +108,7 @@ final class MemcachedFactory extends AbstractAdapterFactory
         $resolver->setAllowedTypes('host', ['string']);
         $resolver->setAllowedTypes('port', ['string', 'int']);
         $resolver->setAllowedTypes('pool_namespace', ['string', 'null']);
+        $resolver->setAllowedTypes('sasl', ['array', 'null']);
         $resolver->setAllowedTypes('redundant_servers', ['array']);
         $resolver->setAllowedTypes('driver_options', ['array']);
     }
