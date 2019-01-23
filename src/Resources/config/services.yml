@@ -24,6 +24,9 @@ services:
   cache.factory.void:
     class: Cache\AdapterBundle\Factory\VoidFactory
 
+  cache.guru.memcache:
+    class: Guru\Common\Bundle\CoreBundle\Cache\GuruMemcacheFactory
+
   cache.factory.doctrine_couchbase:
     class: Cache\AdapterBundle\Factory\DoctrineCouchbaseFactory
   cache.factory.doctrine_filesystem:
