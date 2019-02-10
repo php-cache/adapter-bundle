@@ -2,6 +2,13 @@
 
 The change log describes what is "Added", "Removed", "Changed" or "Fixed" between each release. 
 
+## 1.2.0
+
+### Added 
+
+- Allow passing options ot the Memcached provider
+- Autowire support for providers
+
 ## 1.1.0
 
 ### Changed
