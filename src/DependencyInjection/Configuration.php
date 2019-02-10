@@ -29,7 +29,6 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-
         $treeBuilder = new TreeBuilder('cache_adapter');
 
         if (method_exists($treeBuilder, 'getRootNode')) {
@@ -50,7 +49,6 @@ class Configuration implements ConfigurationInterface
      */
     private function getClustersNode()
     {
-
         $treeBuilder = new TreeBuilder('providers');
 
         if (method_exists($treeBuilder, 'getRootNode')) {
