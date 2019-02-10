@@ -2,6 +2,14 @@
 
 The change log describes what is "Added", "Removed", "Changed" or "Fixed" between each release. 
 
+## 1.3.0
+
+### Added
+
+- Support for PHP7.3
+- Support for Symfony 4.2
+- Better auto wire support
+
 ## 1.2.0
 
 ### Added 
