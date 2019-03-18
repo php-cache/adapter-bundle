@@ -34,25 +34,22 @@ final class RedisFactory extends AbstractDsnAdapterFactory
         $client = new \Redis();
 
         $dsn = $this->getDsn();
-        if (empty($dsn)) {
-            if (false === $client->connect($config['host'], $config['port'])) {
-                throw new ConnectException(sprintf('Could not connect to Redis database on "%s:%s".', $config['host'], $config['port']));
-            }
-        } else {
-            if (false === $client->connect($dsn->getFirstHost(), $dsn->getFirstPort())) {
-                throw new ConnectException(sprintf('Could not connect to Redis database on "%s:%s".', $dsn->getFirstHost(), $dsn->getFirstPort()));
-            }
+        $host = !empty($dsn) ? $dsn->getFirstHost() : $config['host'];
+        $port = !empty($dsn) ? $dsn->getFirstPort() : $config['port'];
+        $password = !empty($dsn) && !empty($dsn->getPassword()) ? $dsn->getPassword() : '';
+        $database = !empty($dsn) ? $dsn->getDatabase() : $config['database'];
+        $connectMethod = $config['persistent'] ? 'pconnect' : 'connect';
 
-            if (!empty($dsn->getPassword())) {
-                if (false === $client->auth($dsn->getPassword())) {
-                    throw new ConnectException('Could not connect authenticate connection to Redis database.');
-                }
-            }
-            $config['database'] = $dsn->getDatabase();
+        if (false === $client->{$connectMethod}($host, $port)) {
+            throw new ConnectException(sprintf('Could not connect to Redis database on "%s:%s".', $host, $port));
         }
 
-        if (null !== $config['database'] && false === $client->select($config['database'])) {
-            throw new ConnectException(sprintf('Could not select Redis database with index "%s".', $config['database']));
+        if (!empty($password) && $client->auth($password) === false) {
+            throw new ConnectException('Could not connect authenticate connection to Redis database.');
+        }
+
+        if ($database !== null && $client->select($config['database']) === false) {
+            throw new ConnectException(sprintf('Could not select Redis database with index "%s".', $database));
         }
 
         $pool = new RedisCachePool($client);
@@ -77,6 +74,7 @@ final class RedisFactory extends AbstractDsnAdapterFactory
                 'port'           => '6379',
                 'pool_namespace' => null,
                 'database'       => null,
+                'persistent'     => false,
             ]
         );
 
@@ -84,5 +82,6 @@ final class RedisFactory extends AbstractDsnAdapterFactory
         $resolver->setAllowedTypes('port', ['string', 'int']);
         $resolver->setAllowedTypes('pool_namespace', ['string', 'null']);
         $resolver->setAllowedTypes('database', ['int', 'null']);
+        $resolver->setAllowedTypes('persistent', ['boolean']);
     }
 }
