@@ -2,6 +2,11 @@
 
 The change log describes what is "Added", "Removed", "Changed" or "Fixed" between each release. 
 
+## 1.3.1
+
+### Fixed
+ - Fixed container compilation error when using Flysystem #86
+
 ## 1.3.0
 
 ### Added
