@@ -23,8 +23,8 @@
         "cache/namespaced-cache": "^1.0",
         "psr/cache": "^1.0",
         "psr/log": "^1.0",
-        "symfony/framework-bundle": "^2.7 || ^3.0 || ^4.0",
-        "symfony/options-resolver": "^2.7 || ^3.0 || ^4.0"
+        "symfony/framework-bundle": "^2.7 || ^3.0 || ^4.0 || ^5.0",
+        "symfony/options-resolver": "^2.7 || ^3.0 || ^4.0 || ^5.0"
     },
     "require-dev": {
         "cache/apc-adapter": "^1.0",
@@ -42,7 +42,7 @@
         "matthiasnoback/symfony-dependency-injection-test": "^1.1 || ^2.3",
         "nyholm/symfony-bundle-test": "^1.2.0",
         "predis/predis": "^1.1",
-        "symfony/phpunit-bridge": "^3.3 || ^4.0"
+        "symfony/phpunit-bridge": "^5.0"
     },
     "suggest": {
         "cache/*-adapter": "A actual implementation of PSR-6 cache",
