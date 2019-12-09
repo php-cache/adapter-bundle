@@ -53,8 +53,6 @@ matrix:
 
           # Test LTS versions
         - php: 7.3
-          env: DEPENDENCIES="dunglas/symfony-lock:^2" SYMFONY_PHPUNIT_VERSION="6.3"
-        - php: 7.3
           env: DEPENDENCIES="dunglas/symfony-lock:^3" SYMFONY_PHPUNIT_VERSION="6.3"
         - php: 7.3
           env: DEPENDENCIES="dunglas/symfony-lock:^4" SYMFONY_PHPUNIT_VERSION="6.3"
