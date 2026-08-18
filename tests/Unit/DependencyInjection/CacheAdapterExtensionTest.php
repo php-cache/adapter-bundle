@@ -29,7 +29,7 @@ final class CacheAdapterExtensionTest extends AbstractExtensionTestCase
         ];
     }
 
-    public function testThatProvidersExists(): void
+    public function testThatProvidersExists()
     {
         $providers = ['foo' => ['factory' => 'cache.factory.array']];
         $this->load(['providers' => $providers]);
@@ -39,7 +39,7 @@ final class CacheAdapterExtensionTest extends AbstractExtensionTestCase
         $this->assertContainerBuilderHasService('cache.factory.mongodb');
     }
 
-    public function testAliasProvidersExists(): void
+    public function testAliasProvidersExists()
     {
         $providers = ['foo' => ['factory' => 'cache.factory.array', 'aliases' => ['alias_http']]];
         $this->load(['providers' => $providers]);
@@ -49,7 +49,7 @@ final class CacheAdapterExtensionTest extends AbstractExtensionTestCase
         $this->assertContainerBuilderHasAlias('alias_http', 'cache.provider.foo');
     }
 
-    public function testDefaultAliasProvidersExists(): void
+    public function testDefaultAliasProvidersExists()
     {
         $providers = [
             'foo' => ['factory' => 'cache.factory.array', 'aliases' => ['alias_foo']],
@@ -63,7 +63,7 @@ final class CacheAdapterExtensionTest extends AbstractExtensionTestCase
         $this->assertContainerBuilderHasAlias('alias_bar', 'cache.provider.bar');
     }
 
-    public function testItConvertsNestedServiceReferencesAndPreservesScalarOptions(): void
+    public function testItConvertsNestedServiceReferencesAndPreservesScalarOptions()
     {
         $providers = [
             'foo' => ['factory' => 'cache.factory.array'],
@@ -85,7 +85,7 @@ final class CacheAdapterExtensionTest extends AbstractExtensionTestCase
         self::assertTrue($options['skip_on_failure']);
     }
 
-    public function testFallbackProviderWrapsTheDefaultCacheAliases(): void
+    public function testFallbackProviderWrapsTheDefaultCacheAliases()
     {
         $this->load([
             'fallback_provider' => '@cache.provider.void',
@@ -111,7 +111,7 @@ final class CacheAdapterExtensionTest extends AbstractExtensionTestCase
         self::assertSame('cache.provider.default_fallback', (string) $this->container->getAlias('app.cache'));
     }
 
-    public function testFallbackProviderRejectsTheDefaultProvider(): void
+    public function testFallbackProviderRejectsTheDefaultProvider()
     {
         $this->expectException(ConfigurationException::class);
         $this->expectExceptionMessage('must differ from the default provider');
@@ -124,7 +124,7 @@ final class CacheAdapterExtensionTest extends AbstractExtensionTestCase
         ]);
     }
 
-    public function testFallbackProviderResolvesConfiguredNamesContainingDots(): void
+    public function testFallbackProviderResolvesConfiguredNamesContainingDots()
     {
         $this->load([
             'fallback_provider' => 'warm.tier',
@@ -139,7 +139,7 @@ final class CacheAdapterExtensionTest extends AbstractExtensionTestCase
         self::assertEquals([new Reference('cache.provider.warm.tier')], $arguments[1]->getValues());
     }
 
-    public function testFallbackProviderRejectsAnAliasOfTheDefaultProvider(): void
+    public function testFallbackProviderRejectsAnAliasOfTheDefaultProvider()
     {
         $this->expectException(ConfigurationException::class);
         $this->expectExceptionMessage('must differ from the default provider');
@@ -155,7 +155,7 @@ final class CacheAdapterExtensionTest extends AbstractExtensionTestCase
         ]);
     }
 
-    public function testFallbackProviderRejectsTheGlobalCacheAlias(): void
+    public function testFallbackProviderRejectsTheGlobalCacheAlias()
     {
         $this->expectException(ConfigurationException::class);
         $this->expectExceptionMessage('must differ from the default provider');
@@ -168,7 +168,7 @@ final class CacheAdapterExtensionTest extends AbstractExtensionTestCase
         ]);
     }
 
-    public function testFallbackProviderRejectsAnAliasOfTheFallbackWrapper(): void
+    public function testFallbackProviderRejectsAnAliasOfTheFallbackWrapper()
     {
         $this->container->setAlias('fallback.loop', 'cache.provider.default_fallback');
         $this->expectException(ConfigurationException::class);
@@ -182,7 +182,7 @@ final class CacheAdapterExtensionTest extends AbstractExtensionTestCase
         ]);
     }
 
-    public function testItRejectsServicesThatAreNotAdapterFactories(): void
+    public function testItRejectsServicesThatAreNotAdapterFactories()
     {
         $this->registerService('not_a_factory', \stdClass::class);
         $this->expectException(ConfigurationException::class);
@@ -191,7 +191,7 @@ final class CacheAdapterExtensionTest extends AbstractExtensionTestCase
         $this->load(['providers' => ['foo' => ['factory' => 'not_a_factory']]]);
     }
 
-    public function testItRejectsAnEmptyNamespaceBeforeTheProviderIsInstantiated(): void
+    public function testItRejectsAnEmptyNamespaceBeforeTheProviderIsInstantiated()
     {
         $this->expectException(ConfigurationException::class);
         $this->expectExceptionMessage('pool_namespace');

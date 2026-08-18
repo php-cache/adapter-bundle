@@ -36,7 +36,7 @@ final class BundleInitializationTest extends KernelTestCase
 
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function testItRegistersConfiguredProvidersAndAliases(): void
+    public function testItRegistersConfiguredProvidersAndAliases()
     {
         self::bootKernel([
             'config' => static function (TestKernel $kernel): void {

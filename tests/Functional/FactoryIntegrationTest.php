@@ -23,7 +23,7 @@ use Psr\Cache\CacheItemPoolInterface;
 
 final class FactoryIntegrationTest extends TestCase
 {
-    public function testApcuFactoryCreatesWorkingPool(): void
+    public function testApcuFactoryCreatesWorkingPool()
     {
         if (!\extension_loaded('apcu') || !apcu_enabled()) {
             self::markTestSkipped('APCu is not enabled.');
@@ -35,7 +35,7 @@ final class FactoryIntegrationTest extends TestCase
         $this->assertPoolCanRoundTripValue($pool);
     }
 
-    public function testMemcacheFactoryCreatesWorkingPool(): void
+    public function testMemcacheFactoryCreatesWorkingPool()
     {
         $this->requireExtension('memcache');
         $this->requireService('127.0.0.1', 11211, 'Memcached');
@@ -51,7 +51,7 @@ final class FactoryIntegrationTest extends TestCase
         $this->assertPoolCanRoundTripValue($pool);
     }
 
-    public function testMemcachedFactoryCreatesWorkingPool(): void
+    public function testMemcachedFactoryCreatesWorkingPool()
     {
         $this->requireExtension('memcached');
         $this->requireService('127.0.0.1', 11211, 'Memcached');
@@ -68,7 +68,7 @@ final class FactoryIntegrationTest extends TestCase
         $this->assertPoolCanRoundTripValue($pool);
     }
 
-    public function testMongoDbFactorySupportsOptionsAndDsn(): void
+    public function testMongoDbFactorySupportsOptionsAndDsn()
     {
         $this->requireExtension('mongodb');
         $this->requireService('127.0.0.1', 27017, 'MongoDB');
@@ -87,7 +87,7 @@ final class FactoryIntegrationTest extends TestCase
         $this->assertPoolCanRoundTripValue($dsnPool);
     }
 
-    public function testPredisFactoryCreatesWorkingPool(): void
+    public function testPredisFactoryCreatesWorkingPool()
     {
         $this->requireService('127.0.0.1', 6379, 'Redis');
 
@@ -97,7 +97,7 @@ final class FactoryIntegrationTest extends TestCase
         $this->assertPoolCanRoundTripValue($pool);
     }
 
-    public function testRedisFactorySupportsOptionsAndDsn(): void
+    public function testRedisFactorySupportsOptionsAndDsn()
     {
         $this->requireExtension('redis');
         $this->requireService('127.0.0.1', 6379, 'Redis');

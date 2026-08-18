@@ -37,7 +37,7 @@ use Symfony\Component\Cache\Adapter\ArrayAdapter;
 
 final class FactoryBehaviorTest extends TestCase
 {
-    public function testArrayFactoryCreatesUsablePool(): void
+    public function testArrayFactoryCreatesUsablePool()
     {
         $pool = (new ArrayFactory())->createAdapter();
         $item = $pool->getItem('answer')->set(42);
@@ -47,7 +47,7 @@ final class FactoryBehaviorTest extends TestCase
         self::assertSame(42, $pool->getItem('answer')->get());
     }
 
-    public function testArrayFactoryCanNamespacePool(): void
+    public function testArrayFactoryCanNamespacePool()
     {
         $pool = (new ArrayFactory())->createAdapter(['pool_namespace' => 'application']);
 
@@ -56,12 +56,12 @@ final class FactoryBehaviorTest extends TestCase
         self::assertInstanceOf(TaggableCacheItemInterface::class, $pool->getItem('key'));
     }
 
-    public function testApcuFactoryCreatesPoolWithoutUsingTheExtension(): void
+    public function testApcuFactoryCreatesPoolWithoutUsingTheExtension()
     {
         self::assertInstanceOf(ApcuCachePool::class, (new ApcuFactory())->createAdapter());
     }
 
-    public function testChainFactoryUsesConfiguredPools(): void
+    public function testChainFactoryUsesConfiguredPools()
     {
         $first = new ArrayCachePool();
         $second = new VoidCachePool();
@@ -75,7 +75,7 @@ final class FactoryBehaviorTest extends TestCase
         self::assertSame('value', $first->getItem('key')->get());
     }
 
-    public function testChainFactoryRejectsGenericPsrPools(): void
+    public function testChainFactoryRejectsGenericPsrPools()
     {
         $this->expectException(\InvalidArgumentException::class);
 
@@ -84,7 +84,7 @@ final class FactoryBehaviorTest extends TestCase
         ]);
     }
 
-    public function testFallbackFactoryUsesFallbackWhenPrimaryCreationFails(): void
+    public function testFallbackFactoryUsesFallbackWhenPrimaryCreationFails()
     {
         $fallback = new ArrayCachePool();
         $factory = new FallbackAdapterFactory();
@@ -99,7 +99,7 @@ final class FactoryBehaviorTest extends TestCase
         self::assertSame($fallback, $pool);
     }
 
-    public function testFallbackFactoryKeepsAWorkingPrimary(): void
+    public function testFallbackFactoryKeepsAWorkingPrimary()
     {
         $primary = new ArrayCachePool();
         $factory = new FallbackAdapterFactory();
@@ -118,7 +118,7 @@ final class FactoryBehaviorTest extends TestCase
         self::assertFalse($fallbackCalled);
     }
 
-    public function testFilesystemFactoryUsesConfiguredFlysystemService(): void
+    public function testFilesystemFactoryUsesConfiguredFlysystemService()
     {
         $filesystem = $this->createMock(FilesystemOperator::class);
         $filesystem->expects(self::once())->method('createDirectory')->with('cache');
@@ -129,7 +129,7 @@ final class FactoryBehaviorTest extends TestCase
     }
 
     #[RunInSeparateProcess]
-    public function testMemcachedFactoryPreservesTagSupportWhenNamespaced(): void
+    public function testMemcachedFactoryPreservesTagSupportWhenNamespaced()
     {
         if (!class_exists(\Memcached::class)) {
             eval('namespace { class Memcached { public const OPT_BINARY_PROTOCOL = 18; private array $servers = []; public function __construct(?string $persistentId = null) {} public function getServerList(): array { return $this->servers; } public function addServer(mixed $host, mixed $port, mixed $weight = 0): bool { $this->servers[] = ["host" => $host, "port" => $port]; return true; } public function setOption(int $option, mixed $value): bool { return true; } } }');
@@ -141,7 +141,7 @@ final class FactoryBehaviorTest extends TestCase
         self::assertInstanceOf(TaggableCacheItemInterface::class, $pool->getItem('key'));
     }
 
-    public function testNamespacedFactoryCreatesUsablePool(): void
+    public function testNamespacedFactoryCreatesUsablePool()
     {
         $pool = (new NamespacedFactory())->createAdapter([
             'service' => new ArrayCachePool(),
@@ -158,7 +158,7 @@ final class FactoryBehaviorTest extends TestCase
         self::assertFalse($pool->hasItem('key'));
     }
 
-    public function testNamespacedFactorySupportsGenericPsrPools(): void
+    public function testNamespacedFactorySupportsGenericPsrPools()
     {
         $backend = new ArrayAdapter();
         $first = (new NamespacedFactory())->createAdapter([
@@ -177,7 +177,7 @@ final class FactoryBehaviorTest extends TestCase
         self::assertSame('second', $second->getItem('key')->get());
     }
 
-    public function testPrefixedFactoryCreatesUsablePool(): void
+    public function testPrefixedFactoryCreatesUsablePool()
     {
         $pool = (new PrefixedFactory())->createAdapter([
             'service' => new ArrayCachePool(),
@@ -194,7 +194,7 @@ final class FactoryBehaviorTest extends TestCase
         self::assertFalse($pool->hasItem('key'));
     }
 
-    public function testPredisFactorySupportsOptionsAndDsn(): void
+    public function testPredisFactorySupportsOptionsAndDsn()
     {
         $pool = (new PredisFactory())->createAdapter();
         $namespacedPool = (new PredisFactory())->createAdapter([
@@ -209,7 +209,7 @@ final class FactoryBehaviorTest extends TestCase
     }
 
     #[RunInSeparateProcess]
-    public function testRedisFactoryPreservesTagSupportWhenNamespaced(): void
+    public function testRedisFactoryPreservesTagSupportWhenNamespaced()
     {
         if (class_exists(\Redis::class)) {
             self::markTestSkipped('This test uses a local Redis stub.');
@@ -224,7 +224,7 @@ final class FactoryBehaviorTest extends TestCase
     }
 
     #[RunInSeparateProcess]
-    public function testRedisFactoryUsesAclCredentialsFromDsn(): void
+    public function testRedisFactoryUsesAclCredentialsFromDsn()
     {
         if (class_exists(\Redis::class)) {
             self::markTestSkipped('This test uses a local Redis stub.');
@@ -239,7 +239,7 @@ final class FactoryBehaviorTest extends TestCase
         self::assertSame(['alice', 'p@ss:word'], (new \ReflectionClass(\Redis::class))->getStaticPropertyValue('lastAuth'));
     }
 
-    public function testVoidFactoryCreatesPoolThatNeverHits(): void
+    public function testVoidFactoryCreatesPoolThatNeverHits()
     {
         $pool = (new VoidFactory())->createAdapter();
 
@@ -247,7 +247,7 @@ final class FactoryBehaviorTest extends TestCase
         self::assertFalse($pool->getItem('key')->isHit());
     }
 
-    public function testFactoryValidationExplainsInvalidOptions(): void
+    public function testFactoryValidationExplainsInvalidOptions()
     {
         $this->expectException(ConfigurationException::class);
         $this->expectExceptionMessage('cache_adapter.providers.mongodb.options');
@@ -255,7 +255,7 @@ final class FactoryBehaviorTest extends TestCase
         MongoDBFactory::validate(['port' => false], 'mongodb');
     }
 
-    public function testFactoriesRejectEmptyNamespacesDuringValidation(): void
+    public function testFactoriesRejectEmptyNamespacesDuringValidation()
     {
         $configurations = [
             [NamespacedFactory::class, ['service' => new ArrayCachePool(), 'namespace' => '']],
@@ -275,7 +275,7 @@ final class FactoryBehaviorTest extends TestCase
         }
     }
 
-    public function testDsnFactoryRejectsMalformedDsnBeforeCreatingClient(): void
+    public function testDsnFactoryRejectsMalformedDsnBeforeCreatingClient()
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid DSN');
@@ -283,7 +283,7 @@ final class FactoryBehaviorTest extends TestCase
         (new PredisFactory())->createAdapter(['dsn' => 'not-a-dsn']);
     }
 
-    public function testDsnFactoryValidationRejectsMalformedDsn(): void
+    public function testDsnFactoryValidationRejectsMalformedDsn()
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid DSN');
@@ -291,7 +291,7 @@ final class FactoryBehaviorTest extends TestCase
         PredisFactory::validate(['dsn' => 'not-a-dsn'], 'predis');
     }
 
-    public function testFactoryExplainsMissingDependency(): void
+    public function testFactoryExplainsMissingDependency()
     {
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('cache/missing-adapter');
@@ -299,7 +299,7 @@ final class FactoryBehaviorTest extends TestCase
         (new MissingDependencyFactory())->createAdapter();
     }
 
-    public function testDsnStateDoesNotLeakIntoTheNextAdapter(): void
+    public function testDsnStateDoesNotLeakIntoTheNextAdapter()
     {
         $factory = new RecordingDsnFactory();
 

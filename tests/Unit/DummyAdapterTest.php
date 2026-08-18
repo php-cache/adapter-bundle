@@ -12,12 +12,12 @@ use Psr\Log\LoggerInterface;
 
 final class DummyAdapterTest extends TestCase
 {
-    public function testItImplementsThePsrCacheContract(): void
+    public function testItImplementsThePsrCacheContract()
     {
         self::assertInstanceOf(CacheItemPoolInterface::class, new DummyAdapter());
     }
 
-    public function testEveryOperationRejectsDirectUse(): void
+    public function testEveryOperationRejectsDirectUse()
     {
         $adapter = new DummyAdapter();
         $item = $this->createStub(CacheItemInterface::class);

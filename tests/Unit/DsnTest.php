@@ -48,7 +48,7 @@ final class DsnTest extends TestCase
      * @param string|list<string> $host
      */
     #[DataProvider('hostValues')]
-    public function testHost(string $dsn, string|array $host): void
+    public function testHost(string $dsn, string|array $host)
     {
         $dsn = new DSN($dsn);
         if (\is_array($host)) {
@@ -90,7 +90,7 @@ final class DsnTest extends TestCase
      * @param int|list<int> $port
      */
     #[DataProvider('portValues')]
-    public function testPort(string $dsn, int|array $port): void
+    public function testPort(string $dsn, int|array $port)
     {
         $dsn = new DSN($dsn);
         if (\is_array($port)) {
@@ -131,7 +131,7 @@ final class DsnTest extends TestCase
     }
 
     #[DataProvider('databaseValues')]
-    public function testDatabase(string $dsn, int|string|null $database): void
+    public function testDatabase(string $dsn, int|string|null $database)
     {
         $dsn = new DSN($dsn);
         self::assertSame($database, $dsn->getDatabase());
@@ -167,7 +167,7 @@ final class DsnTest extends TestCase
      * @param string|array{string, string}|null $password
      */
     #[DataProvider('passwordValues')]
-    public function testPassword(string $dsn, string|array|null $password): void
+    public function testPassword(string $dsn, string|array|null $password)
     {
         $dsn = new DSN($dsn);
 
@@ -179,7 +179,7 @@ final class DsnTest extends TestCase
         }
     }
 
-    public function testDecodesPercentEncodedAuthentication(): void
+    public function testDecodesPercentEncodedAuthentication()
     {
         $dsn = new DSN('redis://alice%2Eadmin:p%40ss%3Aword@localhost');
 
@@ -213,7 +213,7 @@ final class DsnTest extends TestCase
     }
 
     #[DataProvider('isValidValues')]
-    public function testIsValid(string $dsn, bool $valid): void
+    public function testIsValid(string $dsn, bool $valid)
     {
         $dsn = new DSN($dsn);
         self::assertSame($valid, $dsn->isValid(), 'Failed validating: '.$dsn->getDsn());
@@ -241,7 +241,7 @@ final class DsnTest extends TestCase
      * @param array<string, string|null> $parameters
      */
     #[DataProvider('parameterValues')]
-    public function testParameterValues(string $dsn, array $parameters): void
+    public function testParameterValues(string $dsn, array $parameters)
     {
         $dsn = new DSN($dsn);
         self::assertEquals($parameters, $dsn->getParameters());
