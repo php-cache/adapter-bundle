@@ -119,7 +119,7 @@ final class DSN
             return false;
         }
 
-        if (!in_array($this->getProtocol(), ['redis', 'mongodb', 'tcp'], true)) {
+        if (!\in_array($this->getProtocol(), ['redis', 'mongodb', 'tcp'], true)) {
             return false;
         }
 
@@ -138,7 +138,7 @@ final class DSN
 
         if (isset($matches[1])) {
             $protocol = $matches[1];
-            if (!in_array($protocol, ['redis', 'mongodb', 'tcp'], true)) {
+            if (!\in_array($protocol, ['redis', 'mongodb', 'tcp'], true)) {
                 return;
             }
 
@@ -163,7 +163,7 @@ final class DSN
             $dsn = substr($dsn, $pos + 1);
 
             $auth = [];
-            if (2 === count($temp)) {
+            if (2 === \count($temp)) {
                 $auth['username'] = rawurldecode($temp[0]);
                 $auth['password'] = rawurldecode($temp[1]);
             } else {
@@ -173,8 +173,8 @@ final class DSN
             $this->authentication = $auth;
         }
 
-        if (false !== strpos($dsn, '?')) {
-            if (false === strpos($dsn, '/')) {
+        if (str_contains($dsn, '?')) {
+            if (!str_contains($dsn, '/')) {
                 $dsn = str_replace('?', '/?', $dsn);
             }
         }
@@ -187,7 +187,7 @@ final class DSN
             $temp = explode('?', $params);
             $this->database = '' === $temp[0]
                 ? null
-                : (in_array($protocol, ['redis', 'tcp'], true) && ctype_digit($temp[0]) ? (int) $temp[0] : $temp[0]);
+                : (\in_array($protocol, ['redis', 'tcp'], true) && ctype_digit($temp[0]) ? (int) $temp[0] : $temp[0]);
             if (isset($temp[1])) {
                 $this->parseParameters($temp[1]);
             }

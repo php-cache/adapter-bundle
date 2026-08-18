@@ -39,13 +39,13 @@ final class MongoDBFactory extends AbstractDsnAdapterFactory
     {
         $dsn = $this->getDsn();
         if (null === $dsn) {
-            $manager = new Manager(sprintf('mongodb://%s:%s', $config['host'], $config['port']));
+            $manager = new Manager(\sprintf('mongodb://%s:%s', $config['host'], $config['port']));
         } else {
             $manager = new Manager($dsn->getDsn());
 
             $database = $dsn->getDatabase();
             if (null !== $database) {
-                if (!is_string($database)) {
+                if (!\is_string($database)) {
                     throw new \InvalidArgumentException('The MongoDB database name must be a string.');
                 }
 

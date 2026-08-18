@@ -49,8 +49,8 @@ class CacheAdapterExtension extends Extension
             }
 
             $factoryClass = $container->getDefinition($arguments['factory'])->getClass();
-            if (!is_string($factoryClass) || !is_a($factoryClass, AdapterFactoryInterface::class, true)) {
-                throw new ConfigurationException(sprintf('Service "%s" must use a factory implementing "%s".', $arguments['factory'], AdapterFactoryInterface::class));
+            if (!\is_string($factoryClass) || !is_a($factoryClass, AdapterFactoryInterface::class, true)) {
+                throw new ConfigurationException(\sprintf('Service "%s" must use a factory implementing "%s".', $arguments['factory'], AdapterFactoryInterface::class));
             }
 
             $factoryClass::validate($arguments['options'], $name);
@@ -73,11 +73,11 @@ class CacheAdapterExtension extends Extension
             $defaultProvider = 'cache.provider.'.$first;
             if (null !== $config['fallback_provider']) {
                 $fallbackProvider = ltrim($config['fallback_provider'], '@');
-                if (array_key_exists($fallbackProvider, $config['providers'])) {
+                if (\array_key_exists($fallbackProvider, $config['providers'])) {
                     $fallbackProvider = 'cache.provider.'.$fallbackProvider;
                 }
                 $forbiddenProviders = ['cache', 'php_cache', 'cache.provider.default_fallback'];
-                if (in_array($fallbackProvider, $forbiddenProviders, true)) {
+                if (\in_array($fallbackProvider, $forbiddenProviders, true)) {
                     throw new ConfigurationException('The fallback provider must differ from the default provider.');
                 }
                 $seenAliases = [];
@@ -88,7 +88,7 @@ class CacheAdapterExtension extends Extension
                     $seenAliases[$fallbackProvider] = true;
                     $fallbackProvider = (string) $container->getAlias($fallbackProvider);
                 }
-                if ($defaultProvider === $fallbackProvider || in_array($fallbackProvider, $forbiddenProviders, true)) {
+                if ($defaultProvider === $fallbackProvider || \in_array($fallbackProvider, $forbiddenProviders, true)) {
                     throw new ConfigurationException('The fallback provider must differ from the default provider.');
                 }
 
@@ -119,9 +119,9 @@ class CacheAdapterExtension extends Extension
     private function findReferences(array $options): array
     {
         foreach ($options as $key => $value) {
-            if (is_array($value)) {
+            if (\is_array($value)) {
                 $options[$key] = $this->findReferences($value);
-            } elseif (is_string($value) && (str_ends_with((string) $key, '_service') || str_starts_with($value, '@') || 'service' === $key)) {
+            } elseif (\is_string($value) && (str_ends_with((string) $key, '_service') || str_starts_with($value, '@') || 'service' === $key)) {
                 $options[$key] = new Reference(ltrim($value, '@'));
             }
         }

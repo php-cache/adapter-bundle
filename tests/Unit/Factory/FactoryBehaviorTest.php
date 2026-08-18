@@ -268,7 +268,7 @@ final class FactoryBehaviorTest extends TestCase
         foreach ($configurations as [$factory, $options]) {
             try {
                 $factory::validate($options, 'cache');
-                self::fail(sprintf('%s accepted an empty namespace.', $factory));
+                self::fail(\sprintf('%s accepted an empty namespace.', $factory));
             } catch (ConfigurationException $exception) {
                 self::assertStringContainsString('namespace', $exception->getMessage());
             }

@@ -53,7 +53,7 @@ abstract class AbstractAdapterFactory implements AdapterFactoryInterface
         try {
             $resolver->resolve($options);
         } catch (\Exception $e) {
-            $message = sprintf(
+            $message = \sprintf(
                 'Error while configuring adapter %s. Verify your configuration at "cache_adapter.providers.%s.options". %s',
                 $adapterName,
                 $adapterName,
@@ -73,7 +73,7 @@ abstract class AbstractAdapterFactory implements AdapterFactoryInterface
     {
         foreach (static::DEPENDENCIES as $dependency) {
             if (!class_exists($dependency['requiredClass'])) {
-                throw new \LogicException(sprintf('You must install the "%s" package to use the "%s" factory.', $dependency['packageName'], static::class));
+                throw new \LogicException(\sprintf('You must install the "%s" package to use the "%s" factory.', $dependency['packageName'], static::class));
             }
         }
     }

@@ -37,7 +37,7 @@ abstract class AbstractDsnAdapterFactory extends AbstractAdapterFactory
         parent::validate($options, $adapterName);
 
         $dsnValue = $options['dsn'] ?? '';
-        if (!is_string($dsnValue) || '' === $dsnValue) {
+        if (!\is_string($dsnValue) || '' === $dsnValue) {
             return;
         }
 
@@ -51,7 +51,7 @@ abstract class AbstractDsnAdapterFactory extends AbstractAdapterFactory
     {
         $this->dsn = null;
         $dsnValue = $options['dsn'] ?? '';
-        if (is_string($dsnValue) && '' !== $dsnValue) {
+        if (\is_string($dsnValue) && '' !== $dsnValue) {
             $dsn = new DSN($dsnValue);
             if (!$dsn->isValid()) {
                 throw new \InvalidArgumentException('Invalid DSN: '.$dsnValue);

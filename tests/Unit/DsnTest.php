@@ -51,7 +51,7 @@ final class DsnTest extends TestCase
     public function testHost(string $dsn, string|array $host): void
     {
         $dsn = new DSN($dsn);
-        if (is_array($host)) {
+        if (\is_array($host)) {
             foreach ($dsn->getHosts() as $index => $h) {
                 self::assertSame($host[$index], $h['host']);
             }
@@ -93,7 +93,7 @@ final class DsnTest extends TestCase
     public function testPort(string $dsn, int|array $port): void
     {
         $dsn = new DSN($dsn);
-        if (is_array($port)) {
+        if (\is_array($port)) {
             foreach ($dsn->getHosts() as $index => $host) {
                 self::assertSame($port[$index], $host['port']);
             }
@@ -171,7 +171,7 @@ final class DsnTest extends TestCase
     {
         $dsn = new DSN($dsn);
 
-        if (is_array($password)) {
+        if (\is_array($password)) {
             self::assertSame($password[0], $dsn->getUsername());
             self::assertSame($password[1], $dsn->getPassword());
         } else {

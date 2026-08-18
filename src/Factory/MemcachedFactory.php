@@ -53,9 +53,9 @@ final class MemcachedFactory extends AbstractAdapterFactory
         }
 
         foreach ($config['driver_options'] as $constant => $value) {
-            $option = defined($constant) ? constant($constant) : null;
-            if (!is_int($option)) {
-                throw new \InvalidArgumentException(sprintf('Unknown Memcached option constant "%s".', $constant));
+            $option = \defined($constant) ? \constant($constant) : null;
+            if (!\is_int($option)) {
+                throw new \InvalidArgumentException(\sprintf('Unknown Memcached option constant "%s".', $constant));
             }
 
             $client->setOption($option, $value);

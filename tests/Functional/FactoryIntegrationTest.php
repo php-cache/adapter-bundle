@@ -25,7 +25,7 @@ final class FactoryIntegrationTest extends TestCase
 {
     public function testApcuFactoryCreatesWorkingPool(): void
     {
-        if (!extension_loaded('apcu') || !apcu_enabled()) {
+        if (!\extension_loaded('apcu') || !apcu_enabled()) {
             self::markTestSkipped('APCu is not enabled.');
         }
 
@@ -116,8 +116,8 @@ final class FactoryIntegrationTest extends TestCase
 
     private function requireExtension(string $extension): void
     {
-        if (!extension_loaded($extension)) {
-            self::markTestSkipped(sprintf('The %s extension is not installed.', $extension));
+        if (!\extension_loaded($extension)) {
+            self::markTestSkipped(\sprintf('The %s extension is not installed.', $extension));
         }
     }
 
@@ -127,7 +127,7 @@ final class FactoryIntegrationTest extends TestCase
         $errorMessage = '';
         $socket = @fsockopen($host, $port, $errorCode, $errorMessage, 0.25);
         if (false === $socket) {
-            self::markTestSkipped(sprintf('%s is not available at %s:%d.', $name, $host, $port));
+            self::markTestSkipped(\sprintf('%s is not available at %s:%d.', $name, $host, $port));
         }
 
         fclose($socket);

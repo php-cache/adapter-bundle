@@ -43,7 +43,7 @@ final class RedisFactory extends AbstractDsnAdapterFactory
         $dsn = $this->getDsn();
         if (null === $dsn) {
             if (false === $client->connect($config['host'], (int) $config['port'])) {
-                throw new ConnectException(sprintf('Could not connect to Redis database on "%s:%s".', $config['host'], $config['port']));
+                throw new ConnectException(\sprintf('Could not connect to Redis database on "%s:%s".', $config['host'], $config['port']));
             }
         } else {
             $host = $dsn->getFirstHost();
@@ -53,7 +53,7 @@ final class RedisFactory extends AbstractDsnAdapterFactory
             }
 
             if (false === $client->connect($host, $port)) {
-                throw new ConnectException(sprintf('Could not connect to Redis database on "%s:%s".', $host, $port));
+                throw new ConnectException(\sprintf('Could not connect to Redis database on "%s:%s".', $host, $port));
             }
 
             if (!empty($dsn->getPassword())) {
@@ -66,7 +66,7 @@ final class RedisFactory extends AbstractDsnAdapterFactory
                 }
             }
             $database = $dsn->getDatabase();
-            if (null !== $database && !is_int($database)) {
+            if (null !== $database && !\is_int($database)) {
                 throw new \InvalidArgumentException('The Redis database index must be an integer.');
             }
 
@@ -74,7 +74,7 @@ final class RedisFactory extends AbstractDsnAdapterFactory
         }
 
         if (null !== $config['database'] && false === $client->select($config['database'])) {
-            throw new ConnectException(sprintf('Could not select Redis database with index "%s".', $config['database']));
+            throw new ConnectException(\sprintf('Could not select Redis database with index "%s".', $config['database']));
         }
 
         $pool = new RedisCachePool($client);
