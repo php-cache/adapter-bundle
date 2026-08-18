@@ -14,6 +14,7 @@ namespace Cache\AdapterBundle\Factory;
 use Cache\Adapter\Predis\PredisCachePool;
 use Cache\Namespaced\NamespacedCachePool;
 use Predis\Client;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -22,17 +23,24 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 final class PredisFactory extends AbstractDsnAdapterFactory
 {
-    protected static $dependencies = [
+    protected const DEPENDENCIES = [
         ['requiredClass' => 'Cache\Adapter\Predis\PredisCachePool', 'packageName' => 'cache/predis-adapter'],
     ];
 
     /**
-     * {@inheritdoc}
+     * @param array{
+     *     dsn: string,
+     *     host: string,
+     *     port: int|string,
+     *     scheme: string,
+     *     pool_namespace: string|null,
+     *     persistent: bool
+     * } $config
      */
-    public function getAdapter(array $config)
+    public function getAdapter(array $config): CacheItemPoolInterface
     {
         $dsn = $this->getDsn();
-        if (empty($dsn)) {
+        if (null === $dsn) {
             $client = new Client(
                 [
                     'scheme' => $config['scheme'],
@@ -48,16 +56,13 @@ final class PredisFactory extends AbstractDsnAdapterFactory
         $pool = new PredisCachePool($client);
 
         if (null !== $config['pool_namespace']) {
-            $pool = new NamespacedCachePool($pool, $config['pool_namespace']);
+            $pool = NamespacedCachePool::create($pool, $config['pool_namespace']);
         }
 
         return $pool;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected static function configureOptionResolver(OptionsResolver $resolver)
+    protected static function configureOptionResolver(OptionsResolver $resolver): void
     {
         parent::configureOptionResolver($resolver);
 
@@ -75,6 +80,7 @@ final class PredisFactory extends AbstractDsnAdapterFactory
         $resolver->setAllowedTypes('port', ['string', 'int']);
         $resolver->setAllowedTypes('scheme', ['string']);
         $resolver->setAllowedTypes('pool_namespace', ['string', 'null']);
+        $resolver->setAllowedValues('pool_namespace', static fn (?string $namespace): bool => null === $namespace || '' !== $namespace);
         $resolver->setAllowedTypes('persistent', ['bool']);
     }
 }

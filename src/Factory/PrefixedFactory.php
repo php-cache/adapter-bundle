@@ -12,30 +12,29 @@
 namespace Cache\AdapterBundle\Factory;
 
 use Cache\Prefixed\PrefixedCachePool;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class PrefixedFactory extends AbstractAdapterFactory
 {
-    protected static $dependencies = [
+    protected const DEPENDENCIES = [
         ['requiredClass' => 'Cache\Prefixed\PrefixedCachePool', 'packageName' => 'cache/prefixed-cache'],
     ];
 
     /**
-     * {@inheritdoc}
+     * @param array{service: CacheItemPoolInterface, prefix: string} $config
      */
-    public function getAdapter(array $config)
+    public function getAdapter(array $config): CacheItemPoolInterface
     {
-        return new PrefixedCachePool($config['service'], $config['prefix']);
+        return PrefixedCachePool::create($config['service'], $config['prefix']);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected static function configureOptionResolver(OptionsResolver $resolver)
+    protected static function configureOptionResolver(OptionsResolver $resolver): void
     {
         parent::configureOptionResolver($resolver);
 
         $resolver->setRequired(['prefix', 'service']);
         $resolver->setAllowedTypes('prefix', ['string']);
+        $resolver->setAllowedTypes('service', ['string', CacheItemPoolInterface::class]);
     }
 }

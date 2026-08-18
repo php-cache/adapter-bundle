@@ -1,38 +1,79 @@
-# PSR-6 Cache adapter Bundle
+# PHP Cache AdapterBundle
+
+[![CI](https://github.com/php-cache/adapter-bundle/actions/workflows/ci.yml/badge.svg)](https://github.com/php-cache/adapter-bundle/actions/workflows/ci.yml)
 [![Latest Stable Version](https://poser.pugx.org/cache/adapter-bundle/v/stable)](https://packagist.org/packages/cache/adapter-bundle)
-[![codecov.io](https://codecov.io/github/php-cache/adapter-bundle/coverage.svg?branch=master)](https://codecov.io/github/php-cache/adapter-bundle?branch=master)
-[![Build Status](https://travis-ci.org/php-cache/adapter-bundle.svg?branch=master)](https://travis-ci.org/php-cache/adapter-bundle)
-[![Total Downloads](https://poser.pugx.org/cache/adapter-bundle/downloads)](https://packagist.org/packages/cache/adapter-bundle)
-[![Monthly Downloads](https://poser.pugx.org/cache/adapter-bundle/d/monthly.png)](https://packagist.org/packages/cache/adapter-bundle) 
-[![Quality Score](https://img.shields.io/scrutinizer/g/php-cache/adapter-bundle.svg?style=flat-square)](https://scrutinizer-ci.com/g/php-cache/adapter-bundle)
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/21963379-2b15-4cc4-bdf6-0f98aa292f8a/mini.png)](https://insight.sensiolabs.com/projects/21963379-2b15-4cc4-bdf6-0f98aa292f8a)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 
+AdapterBundle creates PSR-6 cache services from Symfony configuration.
 
-This bundle helps you configurate and register PSR-6 cache services.  It is a part of the PHP Cache organisation. To read about 
-features like tagging and hierarchy support please read the shared documentation at [www.php-cache.com](http://www.php-cache.com). 
- 
+Version 2 requires PHP 8.2, `psr/cache` 3, `psr/log` 3, and Symfony 6.4, 7, or 8. It uses PHP Cache 2 adapters.
 
-### To Install
+## Installation
 
-Run the following in your project root, assuming you have composer set up for your project
-```sh
-composer require cache/adapter-bundle
+Install the bundle and the adapter package your app needs:
+
+```bash
+composer require cache/adapter-bundle:^2.0 cache/redis-adapter:^2.0 cache/void-adapter:^2.0
 ```
 
-Add the bundle to app/AppKernel.php
+Symfony Flex may register the bundle automatically. Otherwise, add it to `config/bundles.php`:
 
 ```php
-$bundles = [
-    // ...
-    new Cache\AdapterBundle\CacheAdapterBundle(),
+return [
+    Cache\AdapterBundle\CacheAdapterBundle::class => ['all' => true],
 ];
 ```
 
-Read the documentation at [www.php-cache.com/symfony/adapter-bundle](http://www.php-cache.com/en/latest/symfony/adapter-bundle/).
+## Configuration
 
+```yaml
+cache_adapter:
+  fallback_provider: void
+  providers:
+    default:
+      factory: cache.factory.redis
+      options:
+        dsn: '%env(REDIS_URL)%'
+        pool_namespace: application
+      aliases:
+        - app.cache
 
-### Contribute
+    void:
+      factory: cache.factory.void
+```
 
-Contributions are very welcome! Send a pull request or report any issues you find on the [issue tracker](http://issues.php-cache.com).
+This example registers `cache.provider.default` and aliases a lazy fallback wrapper as `cache`, `php_cache`, and `app.cache`. If creating the default provider throws, the wrapper creates `cache.provider.void` instead. A full service ID such as `@cache.provider.void` is also accepted.
 
+AdapterBundle matches a bare value against configured provider names first. Provider names that contain dots, such as `warm.tier`, therefore work without a service prefix.
+
+The bundle follows service aliases before creating the wrapper. It rejects the default provider and aliases that lead back to it.
+
+It also rejects `cache`, `php_cache`, `cache.provider.default_fallback`, and circular alias chains.
+
+`fallback_provider` handles failures that occur while Symfony constructs the default provider. For failures raised later by cache operations, configure a Chain provider with `skip_on_failure: true` and place a Void provider last.
+
+Version 2 provides APCu, Array, Chain, Filesystem, Memcache, Memcached, MongoDB, Namespaced, Predis, Prefixed, Redis, and Void factories.
+
+`namespace` and `pool_namespace` must not be empty. Redis DSNs support both password-only authentication and ACL credentials such as `redis://alice:secret@cache.example:6379/0`. Percent-encode reserved characters in usernames and passwords.
+
+Read the [complete AdapterBundle documentation](https://www.php-cache.com/en/latest/symfony/adapter-bundle/) for every factory and option.
+
+## Upgrading from version 1
+
+Version 2 removes the APC factory and every Doctrine-backed factory. Use `cache.factory.apcu`, a supported native adapter, or an external PSR-6 service.
+
+The Namespaced and Prefixed factories preserve native tag support. The Array, Memcached, Predis, and Redis `pool_namespace` options preserve it too. Code that constructs those decorators directly should use their `create()` factories when tagged items are required.
+
+Replace MongoDB's `namespace` option with `database` and `collection`. Replace Predis's `schema` option with `scheme`.
+
+PHP Cache 2 changes APCu payloads, Redis and Predis tag indexes, namespaced tag indexes, and hierarchy storage paths. Do not mix version 1 and version 2 workers on an affected store.
+
+Clear a namespaced store when a namespace contains bytes outside `[A-Za-z0-9_.]` or lowercase `_x`. Also clear it when a public key contains `|`, `!`, or lowercase `_x`.
+
+Clear namespaced stores containing tagged or hierarchy items. Clear a prefixed store when its prefix contains bytes outside `[A-Za-z0-9_.]` or lowercase `_x`.
+
+Stop or drain old workers, clear each affected store, and then deploy version 2. Follow the same sequence before rolling back.
+
+## Contributing
+
+Run `composer quality` before opening a pull request. Report problems on the [GitHub issue tracker](https://github.com/php-cache/adapter-bundle/issues).

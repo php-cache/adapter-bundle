@@ -19,57 +19,45 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 abstract class AbstractDsnAdapterFactory extends AbstractAdapterFactory
 {
-    /**
-     * @var DSN
-     */
-    private $DSN;
+    private ?DSN $dsn = null;
 
-    /**
-     * @return DSN
-     */
-    protected function getDsn()
+    protected function getDsn(): ?DSN
     {
-        return $this->DSN;
+        return $this->dsn;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected static function configureOptionResolver(OptionsResolver $resolver)
+    protected static function configureOptionResolver(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(['dsn' => '']);
         $resolver->setAllowedTypes('dsn', ['string']);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function validate(array $options, $adapterName)
+    public static function validate(array $options, string $adapterName): void
     {
         parent::validate($options, $adapterName);
 
-        if (empty($options['dsn'])) {
+        $dsnValue = $options['dsn'] ?? '';
+        if (!is_string($dsnValue) || '' === $dsnValue) {
             return;
         }
 
-        $dsn = new DSN($options['dsn']);
+        $dsn = new DSN($dsnValue);
         if (!$dsn->isValid()) {
-            throw new \InvalidArgumentException('Invalid DSN: '.$options['dsn']);
+            throw new \InvalidArgumentException('Invalid DSN: '.$dsnValue);
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function createAdapter(array $options = [])
+    public function createAdapter(array $options = []): \Psr\Cache\CacheItemPoolInterface
     {
-        if (!empty($options['dsn'])) {
-            $dsn = new DSN($options['dsn']);
+        $this->dsn = null;
+        $dsnValue = $options['dsn'] ?? '';
+        if (is_string($dsnValue) && '' !== $dsnValue) {
+            $dsn = new DSN($dsnValue);
             if (!$dsn->isValid()) {
-                throw new \InvalidArgumentException('Invalid DSN: '.$options['dsn']);
+                throw new \InvalidArgumentException('Invalid DSN: '.$dsnValue);
             }
 
-            $this->DSN = $dsn;
+            $this->dsn = $dsn;
         }
 
         return parent::createAdapter($options);

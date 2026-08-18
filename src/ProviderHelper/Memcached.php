@@ -18,10 +18,7 @@ namespace Cache\AdapterBundle\ProviderHelper;
  */
 class Memcached extends \Memcached
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function addServer($host, $port, $weight = 0)
+    public function addServer(mixed $host, mixed $port, mixed $weight = 0): bool
     {
         $serverList = $this->getServerList();
         foreach ($serverList as $server) {

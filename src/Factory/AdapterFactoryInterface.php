@@ -19,17 +19,14 @@ use Psr\Cache\CacheItemPoolInterface;
 interface AdapterFactoryInterface
 {
     /**
-     * @param array $options
-     *
-     * @return CacheItemPoolInterface
+     * @param array<string, mixed> $options
      */
-    public function createAdapter(array $options = []);
+    public function createAdapter(array $options = []): CacheItemPoolInterface;
 
     /**
      * Make sure the options are valid and the dependencies are met.
      *
-     * @param array  $options     the options the user has provided
-     * @param string $adapterName the name the user has chosen for this adapter
+     * @param array<string, mixed> $options
      *
      * @throws \LogicException                                                        If the factory has missing dependencies
      * @throws \Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException If an option name is undefined
@@ -39,5 +36,5 @@ interface AdapterFactoryInterface
      * @throws \Symfony\Component\OptionsResolver\Exception\NoSuchOptionException     If a lazy option reads an unavailable option
      * @throws \Symfony\Component\OptionsResolver\Exception\AccessException           If called from a lazy option or normalizer
      */
-    public static function validate(array $options, $adapterName);
+    public static function validate(array $options, string $adapterName): void;
 }

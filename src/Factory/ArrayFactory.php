@@ -13,6 +13,7 @@ namespace Cache\AdapterBundle\Factory;
 
 use Cache\Adapter\PHPArray\ArrayCachePool;
 use Cache\Namespaced\NamespacedCachePool;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -20,37 +21,35 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 final class ArrayFactory extends AbstractAdapterFactory
 {
-    protected static $dependencies = [
+    protected const DEPENDENCIES = [
         ['requiredClass' => 'Cache\Adapter\PHPArray\ArrayCachePool', 'packageName' => 'cache/array-adapter'],
     ];
 
     /**
-     * {@inheritdoc}
+     * @param array{pool_namespace: string|null} $config
      */
-    public function getAdapter(array $config)
+    public function getAdapter(array $config): CacheItemPoolInterface
     {
         $pool = new ArrayCachePool();
 
         if (null !== $config['pool_namespace']) {
-            $pool = new NamespacedCachePool($pool, $config['pool_namespace']);
+            $pool = NamespacedCachePool::create($pool, $config['pool_namespace']);
         }
 
         return $pool;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected static function configureOptionResolver(OptionsResolver $resolver)
+    protected static function configureOptionResolver(OptionsResolver $resolver): void
     {
         parent::configureOptionResolver($resolver);
 
         $resolver->setDefaults(
-          [
-            'pool_namespace' => null,
-          ]
+            [
+                'pool_namespace' => null,
+            ]
         );
 
         $resolver->setAllowedTypes('pool_namespace', ['string', 'null']);
+        $resolver->setAllowedValues('pool_namespace', static fn (?string $namespace): bool => null === $namespace || '' !== $namespace);
     }
 }

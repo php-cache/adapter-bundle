@@ -18,137 +18,108 @@ namespace Cache\AdapterBundle;
  */
 final class DSN
 {
-    private static $PORTS = [
+    private const PORTS = [
         'redis' => 6379,
         'mongodb' => 27017,
         'tcp' => 6379,
     ];
 
-    /**
-     * @var string
-     */
-    protected $dsn;
+    private string $dsn;
+
+    private ?string $protocol = null;
 
     /**
-     * @var string
+     * @var array{username?: string, password?: string}
      */
-    protected $protocol;
+    private array $authentication = [];
 
     /**
-     * @var array
+     * @var list<array{host: string, port: int}>
      */
-    protected $authentication;
+    private array $hosts = [];
+
+    private int|string|null $database = null;
 
     /**
-     * @var array
+     * @var array<string, string|null>
      */
-    protected $hosts;
-
-    /**
-     * @var int
-     */
-    protected $database;
-
-    /**
-     * @var array
-     */
-    protected $parameters = [];
+    private array $parameters = [];
 
     /**
      * Constructor.
-     *
-     * @param string $dsn
      */
-    public function __construct($dsn)
+    public function __construct(string $dsn)
     {
         $this->dsn = $dsn;
         $this->parseDsn($dsn);
     }
 
-    /**
-     * @return string
-     */
-    public function getDsn()
+    public function getDsn(): string
     {
         return $this->dsn;
     }
 
-    /**
-     * @return string
-     */
-    public function getProtocol()
+    public function getProtocol(): ?string
     {
         return $this->protocol;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getDatabase()
+    public function getDatabase(): int|string|null
     {
         return $this->database;
     }
 
     /**
-     * @return array
+     * @return list<array{host: string, port: int}>
      */
-    public function getHosts()
+    public function getHosts(): array
     {
         return $this->hosts;
     }
 
-    /**
-     * @return null|string
-     */
-    public function getFirstHost()
+    public function getFirstHost(): ?string
     {
-        return $this->hosts[0]['host'];
+        return $this->hosts[0]['host'] ?? null;
+    }
+
+    public function getFirstPort(): ?int
+    {
+        return $this->hosts[0]['port'] ?? null;
     }
 
     /**
-     * @return null|int
+     * @return array{username?: string, password?: string}
      */
-    public function getFirstPort()
-    {
-        return $this->hosts[0]['port'];
-    }
-
-    /**
-     * @return array
-     */
-    public function getAuthentication()
+    public function getAuthentication(): array
     {
         return $this->authentication;
     }
 
-    public function getUsername()
+    public function getUsername(): ?string
     {
-        return $this->authentication['username'];
+        return $this->authentication['username'] ?? null;
     }
 
-    public function getPassword()
+    public function getPassword(): ?string
     {
-        return $this->authentication['password'];
+        return $this->authentication['password'] ?? null;
     }
 
     /**
-     * @return array
+     * @return array<string, string|null>
      */
-    public function getParameters()
+    public function getParameters(): array
     {
         return $this->parameters;
     }
 
-    /**
-     * @return bool
-     */
-    public function isValid()
+    public function isValid(): bool
     {
         if (null === $this->getProtocol()) {
             return false;
         }
 
-        if (!in_array($this->getProtocol(), ['redis', 'mongodb', 'tcp'])) {
+        if (!in_array($this->getProtocol(), ['redis', 'mongodb', 'tcp'], true)) {
             return false;
         }
 
@@ -159,7 +130,7 @@ final class DSN
         return true;
     }
 
-    private function parseProtocol($dsn)
+    private function parseProtocol(string $dsn): void
     {
         $regex = '/^(\w+):\/\//i';
 
@@ -167,38 +138,36 @@ final class DSN
 
         if (isset($matches[1])) {
             $protocol = $matches[1];
-            if (!in_array($protocol, ['redis', 'mongodb', 'tcp'])) {
-                return false;
+            if (!in_array($protocol, ['redis', 'mongodb', 'tcp'], true)) {
+                return;
             }
 
             $this->protocol = $protocol;
         }
     }
 
-    /**
-     * @param string $dsn
-     */
-    private function parseDsn($dsn)
+    private function parseDsn(string $dsn): void
     {
         $this->parseProtocol($dsn);
-        if (null === $this->getProtocol()) {
+        $protocol = $this->getProtocol();
+        if (null === $protocol) {
             return;
         }
 
         // Remove the protocol
-        $dsn = str_replace($this->protocol.'://', '', $dsn);
+        $dsn = str_replace($protocol.'://', '', $dsn);
 
         // Parse and remove auth if they exist
         if (false !== $pos = strrpos($dsn, '@')) {
-            $temp = explode(':', str_replace('\@', '@', substr($dsn, 0, $pos)));
+            $temp = explode(':', str_replace('\@', '@', substr($dsn, 0, $pos)), 2);
             $dsn = substr($dsn, $pos + 1);
 
             $auth = [];
             if (2 === count($temp)) {
-                $auth['username'] = $temp[0];
-                $auth['password'] = $temp[1];
+                $auth['username'] = rawurldecode($temp[0]);
+                $auth['password'] = rawurldecode($temp[1]);
             } else {
-                $auth['password'] = $temp[0];
+                $auth['password'] = rawurldecode($temp[0]);
             }
 
             $this->authentication = $auth;
@@ -211,19 +180,21 @@ final class DSN
         }
 
         $temp = explode('/', $dsn);
-        $this->parseHosts($temp[0]);
+        $this->parseHosts($temp[0], $protocol);
 
         if (isset($temp[1])) {
             $params = $temp[1];
             $temp = explode('?', $params);
-            $this->database = empty($temp[0]) ? null : $temp[0];
+            $this->database = '' === $temp[0]
+                ? null
+                : (in_array($protocol, ['redis', 'tcp'], true) && ctype_digit($temp[0]) ? (int) $temp[0] : $temp[0]);
             if (isset($temp[1])) {
                 $this->parseParameters($temp[1]);
             }
         }
     }
 
-    private function parseHosts($hostString)
+    private function parseHosts(string $hostString, string $protocol): void
     {
         preg_match_all('/(?P<host>[\w\-._]+)(?::(?P<port>\d+))?/mi', $hostString, $matches);
 
@@ -231,19 +202,14 @@ final class DSN
         foreach ($matches['host'] as $index => $match) {
             $port = !empty($matches['port'][$index])
                 ? (int) $matches['port'][$index]
-                : self::$PORTS[$this->protocol];
+                : self::PORTS[$protocol];
             $hosts[] = ['host' => $match, 'port' => $port];
         }
 
         $this->hosts = $hosts;
     }
 
-    /**
-     * @param string $params
-     *
-     * @return string
-     */
-    protected function parseParameters($params)
+    private function parseParameters(string $params): void
     {
         $parameters = explode('&', $params);
 
@@ -251,7 +217,5 @@ final class DSN
             $kv = explode('=', $parameter, 2);
             $this->parameters[$kv[0]] = isset($kv[1]) ? $kv[1] : null;
         }
-
-        return '';
     }
 }

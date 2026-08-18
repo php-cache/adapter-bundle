@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of php-cache organization.
  *
@@ -12,19 +14,15 @@
 namespace Cache\AdapterBundle\Tests\Unit;
 
 use Cache\AdapterBundle\DSN;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-/**
- * DsnTest.
- */
-class DsnTest extends TestCase
+final class DsnTest extends TestCase
 {
     /**
-     * @static
-     *
-     * @return array
+     * @return array<int, array{string, string|list<string>}>
      */
-    public static function hostValues()
+    public static function hostValues(): array
     {
         return [
             ['redis://localhost', 'localhost'],
@@ -47,29 +45,25 @@ class DsnTest extends TestCase
     }
 
     /**
-     * @param string $dsn  DSN
-     * @param string $host Host
-     *
-     * @dataProvider hostValues
+     * @param string|list<string> $host
      */
-    public function testHost($dsn, $host)
+    #[DataProvider('hostValues')]
+    public function testHost(string $dsn, string|array $host): void
     {
         $dsn = new DSN($dsn);
         if (is_array($host)) {
             foreach ($dsn->getHosts() as $index => $h) {
-                $this->assertEquals($host[$index], $h['host']);
+                self::assertSame($host[$index], $h['host']);
             }
         } else {
-            $this->assertEquals($host, $dsn->getFirstHost());
+            self::assertSame($host, $dsn->getFirstHost());
         }
     }
 
     /**
-     * @static
-     *
-     * @return array
+     * @return array<int, array{string, int|list<int>}>
      */
-    public static function portValues()
+    public static function portValues(): array
     {
         return [
             ['redis://localhost', 6379],
@@ -93,29 +87,25 @@ class DsnTest extends TestCase
     }
 
     /**
-     * @param string $dsn  DSN
-     * @param int    $port Port
-     *
-     * @dataProvider portValues
+     * @param int|list<int> $port
      */
-    public function testPort($dsn, $port)
+    #[DataProvider('portValues')]
+    public function testPort(string $dsn, int|array $port): void
     {
         $dsn = new DSN($dsn);
         if (is_array($port)) {
             foreach ($dsn->getHosts() as $index => $host) {
-                $this->assertEquals($port[$index], $host['port']);
+                self::assertSame($port[$index], $host['port']);
             }
         } else {
-            $this->assertEquals($port, $dsn->getFirstPort());
+            self::assertSame($port, $dsn->getFirstPort());
         }
     }
 
     /**
-     * @static
-     *
-     * @return array
+     * @return array<int, array{string, int|string|null}>
      */
-    public static function databaseValues()
+    public static function databaseValues(): array
     {
         return [
             ['redis://localhost', null],
@@ -135,28 +125,22 @@ class DsnTest extends TestCase
             ['mongodb://dev:pass@127.0.0.1', null],
             ['mongodb://dev:pass@127.0.0.1:27371', null],
             ['mongodb://dev:pass@127.0.0.1:27371/database', 'database'],
+            ['mongodb://dev:pass@127.0.0.1:27371/123', '123'],
             ['mongodb://dev:pass@127.0.0.1,192.168.1.1:27371/database', 'database'],
         ];
     }
 
-    /**
-     * @param string $dsn      DSN
-     * @param int    $database Database
-     *
-     * @dataProvider databaseValues
-     */
-    public function testDatabase($dsn, $database)
+    #[DataProvider('databaseValues')]
+    public function testDatabase(string $dsn, int|string|null $database): void
     {
         $dsn = new DSN($dsn);
-        $this->assertEquals($database, $dsn->getDatabase());
+        self::assertSame($database, $dsn->getDatabase());
     }
 
     /**
-     * @static
-     *
-     * @return array
+     * @return array<int, array{string, string|array{string, string}|null}>
      */
-    public static function passwordValues()
+    public static function passwordValues(): array
     {
         return [
             ['redis://localhost', null],
@@ -180,29 +164,33 @@ class DsnTest extends TestCase
     }
 
     /**
-     * @param string $dsn      DSN
-     * @param string $password Password
-     *
-     * @dataProvider passwordValues
+     * @param string|array{string, string}|null $password
      */
-    public function testPassword($dsn, $password)
+    #[DataProvider('passwordValues')]
+    public function testPassword(string $dsn, string|array|null $password): void
     {
         $dsn = new DSN($dsn);
 
         if (is_array($password)) {
-            $this->assertEquals($password[0], $dsn->getUsername());
-            $this->assertEquals($password[1], $dsn->getPassword());
+            self::assertSame($password[0], $dsn->getUsername());
+            self::assertSame($password[1], $dsn->getPassword());
         } else {
-            $this->assertEquals($password, $dsn->getPassword());
+            self::assertSame($password, $dsn->getPassword());
         }
     }
 
+    public function testDecodesPercentEncodedAuthentication(): void
+    {
+        $dsn = new DSN('redis://alice%2Eadmin:p%40ss%3Aword@localhost');
+
+        self::assertSame('alice.admin', $dsn->getUsername());
+        self::assertSame('p@ss:word', $dsn->getPassword());
+    }
+
     /**
-     * @static
-     *
-     * @return array
+     * @return array<int, array{string, bool}>
      */
-    public static function isValidValues()
+    public static function isValidValues(): array
     {
         return [
             ['redis://localhost', true],
@@ -224,32 +212,25 @@ class DsnTest extends TestCase
         ];
     }
 
-    /**
-     * @param string $dsn   DSN
-     * @param bool   $valid Valid
-     *
-     * @dataProvider isValidValues
-     */
-    public function testIsValid($dsn, $valid)
+    #[DataProvider('isValidValues')]
+    public function testIsValid(string $dsn, bool $valid): void
     {
         $dsn = new DSN($dsn);
-        $this->assertEquals($valid, $dsn->isValid(), 'Failed validating: '.$dsn->getDsn());
+        self::assertSame($valid, $dsn->isValid(), 'Failed validating: '.$dsn->getDsn());
     }
 
     /**
-     * @static
-     *
-     * @return array
+     * @return array<int, array{string, array<string, string|null>}>
      */
-    public static function parameterValues()
+    public static function parameterValues(): array
     {
         return [
             ['redis://localhost', []],
-            ['redis://localhost/1?weight=1&alias=master', ['weight' => 1, 'alias' => 'master']],
-            ['redis://pw@localhost:63790/10?alias=master&weight=2', ['weight' => 2, 'alias' => 'master']],
-            ['redis://127.0.0.1?weight=3', ['weight' => 3]],
-            ['redis://127.0.0.1/1?alias=master&weight=4', ['weight' => 4, 'alias' => 'master']],
-            ['redis://pw@127.0.0.1:63790/10?weight=5&alias=master', ['weight' => 5, 'alias' => 'master']],
+            ['redis://localhost/1?weight=1&alias=master', ['weight' => '1', 'alias' => 'master']],
+            ['redis://pw@localhost:63790/10?alias=master&weight=2', ['weight' => '2', 'alias' => 'master']],
+            ['redis://127.0.0.1?weight=3', ['weight' => '3']],
+            ['redis://127.0.0.1/1?alias=master&weight=4', ['weight' => '4', 'alias' => 'master']],
+            ['redis://pw@127.0.0.1:63790/10?weight=5&alias=master', ['weight' => '5', 'alias' => 'master']],
             ['redis://localhost?alias=master', ['alias' => 'master']],
             ['mongodb://dev:pass@127.0.0.1,192.168.1.1:27371/database?replicaSet=test', ['replicaSet' => 'test']],
             ['mongodb://dev:pass@127.0.0.1,192.168.1.1:27371/database?test', ['test' => null]],
@@ -257,16 +238,12 @@ class DsnTest extends TestCase
     }
 
     /**
-     * @param string $dsn
-     * @param array  $parameters
-     *
-     * @dataProvider parameterValues
+     * @param array<string, string|null> $parameters
      */
-    public function testParameterValues($dsn, $parameters)
+    #[DataProvider('parameterValues')]
+    public function testParameterValues(string $dsn, array $parameters): void
     {
         $dsn = new DSN($dsn);
-        foreach ($parameters as $key => $value) {
-            $this->assertEquals($value, $dsn->getParameters()[$key]);
-        }
+        self::assertEquals($parameters, $dsn->getParameters());
     }
 }

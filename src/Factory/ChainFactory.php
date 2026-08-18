@@ -12,6 +12,8 @@
 namespace Cache\AdapterBundle\Factory;
 
 use Cache\Adapter\Chain\CachePoolChain;
+use Cache\Adapter\Common\PhpCachePool;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -19,22 +21,22 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 final class ChainFactory extends AbstractAdapterFactory
 {
-    protected static $dependencies = [
+    protected const DEPENDENCIES = [
         ['requiredClass' => 'Cache\Adapter\Chain\CachePoolChain', 'packageName' => 'cache/chain-adapter'],
     ];
 
     /**
-     * {@inheritdoc}
+     * @param array{
+     *     services: array<array-key, PhpCachePool>,
+     *     skip_on_failure: bool
+     * } $config
      */
-    public function getAdapter(array $config)
+    public function getAdapter(array $config): CacheItemPoolInterface
     {
         return new CachePoolChain($config['services'], ['skip_on_failure' => $config['skip_on_failure']]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected static function configureOptionResolver(OptionsResolver $resolver)
+    protected static function configureOptionResolver(OptionsResolver $resolver): void
     {
         parent::configureOptionResolver($resolver);
 
@@ -42,5 +44,6 @@ final class ChainFactory extends AbstractAdapterFactory
         $resolver->setAllowedTypes('services', ['array']);
 
         $resolver->setDefault('skip_on_failure', false);
+        $resolver->setAllowedTypes('skip_on_failure', ['bool']);
     }
 }

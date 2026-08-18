@@ -14,6 +14,7 @@ namespace Cache\AdapterBundle\Factory;
 use Cache\Adapter\Redis\RedisCachePool;
 use Cache\AdapterBundle\Exception\ConnectException;
 use Cache\Namespaced\NamespacedCachePool;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -22,33 +23,54 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 final class RedisFactory extends AbstractDsnAdapterFactory
 {
-    protected static $dependencies = [
+    protected const DEPENDENCIES = [
         ['requiredClass' => 'Cache\Adapter\Redis\RedisCachePool', 'packageName' => 'cache/redis-adapter'],
     ];
 
     /**
-     * {@inheritdoc}
+     * @param array{
+     *     dsn: string,
+     *     host: string,
+     *     port: int|string,
+     *     pool_namespace: string|null,
+     *     database: int|null
+     * } $config
      */
-    public function getAdapter(array $config)
+    public function getAdapter(array $config): CacheItemPoolInterface
     {
         $client = new \Redis();
 
         $dsn = $this->getDsn();
-        if (empty($dsn)) {
-            if (false === $client->connect($config['host'], $config['port'])) {
+        if (null === $dsn) {
+            if (false === $client->connect($config['host'], (int) $config['port'])) {
                 throw new ConnectException(sprintf('Could not connect to Redis database on "%s:%s".', $config['host'], $config['port']));
             }
         } else {
-            if (false === $client->connect($dsn->getFirstHost(), $dsn->getFirstPort())) {
-                throw new ConnectException(sprintf('Could not connect to Redis database on "%s:%s".', $dsn->getFirstHost(), $dsn->getFirstPort()));
+            $host = $dsn->getFirstHost();
+            $port = $dsn->getFirstPort();
+            if (null === $host || null === $port) {
+                throw new \InvalidArgumentException('The Redis DSN must include a host and port.');
+            }
+
+            if (false === $client->connect($host, $port)) {
+                throw new ConnectException(sprintf('Could not connect to Redis database on "%s:%s".', $host, $port));
             }
 
             if (!empty($dsn->getPassword())) {
-                if (false === $client->auth($dsn->getPassword())) {
+                $username = $dsn->getUsername();
+                $credentials = null !== $username && '' !== $username
+                    ? [$username, $dsn->getPassword()]
+                    : $dsn->getPassword();
+                if (false === $client->auth($credentials)) {
                     throw new ConnectException('Could not connect authenticate connection to Redis database.');
                 }
             }
-            $config['database'] = $dsn->getDatabase();
+            $database = $dsn->getDatabase();
+            if (null !== $database && !is_int($database)) {
+                throw new \InvalidArgumentException('The Redis database index must be an integer.');
+            }
+
+            $config['database'] = $database;
         }
 
         if (null !== $config['database'] && false === $client->select($config['database'])) {
@@ -58,16 +80,13 @@ final class RedisFactory extends AbstractDsnAdapterFactory
         $pool = new RedisCachePool($client);
 
         if (null !== $config['pool_namespace']) {
-            $pool = new NamespacedCachePool($pool, $config['pool_namespace']);
+            $pool = NamespacedCachePool::create($pool, $config['pool_namespace']);
         }
 
         return $pool;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected static function configureOptionResolver(OptionsResolver $resolver)
+    protected static function configureOptionResolver(OptionsResolver $resolver): void
     {
         parent::configureOptionResolver($resolver);
 
@@ -83,6 +102,7 @@ final class RedisFactory extends AbstractDsnAdapterFactory
         $resolver->setAllowedTypes('host', ['string']);
         $resolver->setAllowedTypes('port', ['string', 'int']);
         $resolver->setAllowedTypes('pool_namespace', ['string', 'null']);
+        $resolver->setAllowedValues('pool_namespace', static fn (?string $namespace): bool => null === $namespace || '' !== $namespace);
         $resolver->setAllowedTypes('database', ['int', 'null']);
     }
 }

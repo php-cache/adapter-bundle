@@ -27,35 +27,23 @@ class Configuration implements ConfigurationInterface
      *
      * @return TreeBuilder The tree builder
      */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('cache_adapter');
-
-        if (method_exists($treeBuilder, 'getRootNode')) {
-            $rootNode = $treeBuilder->getRootNode();
-        } else {
-            $rootNode = $treeBuilder->root('cache_adapter');
-        }
+        $rootNode = $treeBuilder->getRootNode();
 
         $rootNode->children()
+            ->scalarNode('fallback_provider')->defaultNull()->end()
             ->append($this->getClustersNode())
             ->end();
 
         return $treeBuilder;
     }
 
-    /**
-     * @return ArrayNodeDefinition
-     */
-    private function getClustersNode()
+    private function getClustersNode(): ArrayNodeDefinition
     {
         $treeBuilder = new TreeBuilder('providers');
-
-        if (method_exists($treeBuilder, 'getRootNode')) {
-            $node = $treeBuilder->getRootNode();
-        } else {
-            $node = $treeBuilder->root('providers');
-        }
+        $node = $treeBuilder->getRootNode();
 
         $node
             ->requiresAtLeastOneElement()

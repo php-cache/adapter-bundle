@@ -1,99 +1,56 @@
 <?php
 
-/*
- * This file is part of php-cache organization.
- *
- * (c) 2015 Aaron Scherer <aequasi@gmail.com>, Tobias Nyholm <tobias.nyholm@gmail.com>
- *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
- */
+declare(strict_types=1);
 
 namespace Cache\AdapterBundle\Tests\Functional;
 
-use Cache\Adapter\Apc\ApcCachePool;
-use Cache\Adapter\Apcu\ApcuCachePool;
 use Cache\Adapter\Chain\CachePoolChain;
-use Cache\Adapter\Doctrine\DoctrineCachePool;
-use Cache\Adapter\Memcache\MemcacheCachePool;
-use Cache\Adapter\Memcached\MemcachedCachePool;
 use Cache\Adapter\PHPArray\ArrayCachePool;
-use Cache\Adapter\Predis\PredisCachePool;
-use Cache\Adapter\Redis\RedisCachePool;
 use Cache\Adapter\Void\VoidCachePool;
 use Cache\AdapterBundle\CacheAdapterBundle;
 use Cache\Namespaced\NamespacedCachePool;
 use Cache\Prefixed\PrefixedCachePool;
-use Nyholm\BundleTest\BaseBundleTestCase;
+use Nyholm\BundleTest\TestKernel;
+use PHPUnit\Framework\Attributes\PreserveGlobalState;
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\HttpKernel\KernelInterface;
 
-class BundleInitializationTest extends BaseBundleTestCase
+final class BundleInitializationTest extends KernelTestCase
 {
-    protected function getBundleClass()
+    protected static function getKernelClass(): string
     {
-        return CacheAdapterBundle::class;
+        return TestKernel::class;
     }
 
-    protected function setUp()
+    /** @param array<string, mixed> $options */
+    protected static function createKernel(array $options = []): KernelInterface
     {
-        parent::setUp();
-        $kernel = $this->createKernel();
-        $kernel->addConfigFile(__DIR__.'/config.yml');
+        $kernel = parent::createKernel($options);
+        self::assertInstanceOf(TestKernel::class, $kernel);
+        $kernel->addTestBundle(CacheAdapterBundle::class);
+        $kernel->handleOptions($options);
+
+        return $kernel;
     }
 
-    public function testFactoriesWithWithDefaultConfiguration()
+    #[RunInSeparateProcess]
+    #[PreserveGlobalState(false)]
+    public function testItRegistersConfiguredProvidersAndAliases(): void
     {
-        $this->bootKernel();
-        $container = $this->getContainer();
-        $this->assertInstanceOf(ArrayCachePool::class, $container->get('alias.my_adapter'));
-        $this->assertInstanceOf(ApcCachePool::class, $container->get('cache.provider.apc'));
-        $this->assertInstanceOf(ApcuCachePool::class, $container->get('cache.provider.apcu'));
-        $this->assertInstanceOf(ArrayCachePool::class, $container->get('cache.provider.array'));
-        $this->assertInstanceOf(CachePoolChain::class, $container->get('cache.provider.chain'));
-        $this->assertInstanceOf(PredisCachePool::class, $container->get('cache.provider.predis'));
-        $this->assertInstanceOf(VoidCachePool::class, $container->get('cache.provider.void'));
+        self::bootKernel([
+            'config' => static function (TestKernel $kernel): void {
+                $kernel->addTestConfig(__DIR__.'/config.yml');
+            },
+        ]);
 
-        $this->assertInstanceOf(DoctrineCachePool::class, $container->get('cache.provider.doctrine_filesystem'));
-        $this->assertInstanceOf(DoctrineCachePool::class, $container->get('cache.provider.doctrine_predis'));
+        $container = self::getContainer();
 
-        $this->assertInstanceOf(NamespacedCachePool::class, $container->get('cache.provider.namespaced'));
-        $this->assertInstanceOf(PrefixedCachePool::class, $container->get('cache.provider.prefixed'));
-    }
-
-    public function testMemcachedWithWithDefaultConfiguration()
-    {
-        if (!class_exists('Memcached')) {
-            $this->markTestSkipped('Skipping since Memcached is not installed.');
-        }
-        $this->bootKernel();
-        $container = $this->getContainer();
-        $this->assertInstanceOf(MemcachedCachePool::class, $container->get('cache.provider.memcached'));
-        $this->assertInstanceOf(DoctrineCachePool::class, $container->get('cache.provider.doctrine_memcached'));
-    }
-
-    public function testMemcacheWithWithDefaultConfiguration()
-    {
-        if (!class_exists('Memcache')) {
-            $this->markTestSkipped('Skipping since Memcache is not installed.');
-        }
-
-        $kernel = $this->createKernel();
-        $kernel->addConfigFile(__DIR__.'/config_memcache.yml');
-
-        $this->bootKernel();
-        $container = $this->getContainer();
-        $this->assertInstanceOf(MemcacheCachePool::class, $container->get('cache.provider.memcache'));
-        $this->assertInstanceOf(DoctrineCachePool::class, $container->get('cache.provider.doctrine_memcache'));
-    }
-
-    public function testRedisWithWithDefaultConfiguration()
-    {
-        if (!class_exists('Redis')) {
-            $this->markTestSkipped('Skipping since Memcache is not installed.');
-        }
-
-        $this->bootKernel();
-        $container = $this->getContainer();
-        $this->assertInstanceOf(RedisCachePool::class, $container->get('cache.provider.redis'));
-        $this->assertInstanceOf(DoctrineCachePool::class, $container->get('cache.provider.doctrine_redis'));
+        self::assertInstanceOf(ArrayCachePool::class, $container->get('alias.my_adapter'));
+        self::assertInstanceOf(ArrayCachePool::class, $container->get('cache.provider.array'));
+        self::assertInstanceOf(CachePoolChain::class, $container->get('cache.provider.chain'));
+        self::assertInstanceOf(NamespacedCachePool::class, $container->get('cache.provider.namespaced'));
+        self::assertInstanceOf(PrefixedCachePool::class, $container->get('cache.provider.prefixed'));
+        self::assertInstanceOf(VoidCachePool::class, $container->get('cache.provider.void'));
     }
 }

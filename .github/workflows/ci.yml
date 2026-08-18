@@ -1,0 +1,136 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: PHP ${{ matrix.php }} / Symfony ${{ matrix.symfony }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - php: '8.2'
+            symfony: '^6.4'
+          - php: '8.2'
+            symfony: '^7.0'
+          - php: '8.3'
+            symfony: '^7.0'
+          - php: '8.4'
+            symfony: '^8.0'
+          - php: '8.5'
+            symfony: '^8.0'
+
+    services:
+      redis:
+        image: redis:7.2.15-bookworm
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+      memcached:
+        image: memcached:1.6.5
+        ports:
+          - 11211:11211
+      mongodb:
+        image: mongo:8.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7
+        with:
+          repository: php-cache/cache
+          path: .ci/cache
+      - uses: shivammathur/setup-php@2.37.2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+          extensions: apcu, memcache, memcached, mongodb, redis
+          ini-values: apc.enable_cli=1
+          tools: composer:v2
+      - run: composer config repositories.php-cache path .ci/cache
+      - run: composer require --no-update symfony/framework-bundle:${{ matrix.symfony }} symfony/options-resolver:${{ matrix.symfony }} symfony/yaml:${{ matrix.symfony }}
+      - run: composer update --no-interaction --prefer-dist --no-progress
+      - run: composer test
+
+  quality:
+    name: Quality
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7
+        with:
+          repository: php-cache/cache
+          path: .ci/cache
+      - uses: shivammathur/setup-php@2.37.2
+        with:
+          php-version: '8.2'
+          coverage: none
+          extensions: apcu, memcache, memcached, mongodb, redis
+          tools: composer:v2
+      - run: composer config repositories.php-cache path .ci/cache
+      - run: composer update --no-interaction --prefer-dist --no-progress
+      - run: composer validate --strict --no-check-lock
+      - run: composer phpstan
+      - run: composer cs:check
+
+  coverage:
+    name: Coverage
+    runs-on: ubuntu-latest
+
+    services:
+      redis:
+        image: redis:7.2.15-bookworm
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+      memcached:
+        image: memcached:1.6.5
+        ports:
+          - 11211:11211
+      mongodb:
+        image: mongo:8.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7
+        with:
+          repository: php-cache/cache
+          path: .ci/cache
+      - uses: shivammathur/setup-php@2.37.2
+        with:
+          php-version: '8.2'
+          coverage: pcov
+          extensions: apcu, memcache, memcached, mongodb, redis
+          ini-values: apc.enable_cli=1
+          tools: composer:v2
+      - run: composer config repositories.php-cache path .ci/cache
+      - run: composer update --no-interaction --prefer-dist --no-progress
+      - run: composer coverage

@@ -23,15 +23,16 @@ class ServiceAliasCompilerPass implements CompilerPassInterface
 {
     /**
      * You can modify the container here before it is dumped to PHP code.
-     *
-     * @param ContainerBuilder $container
      */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $serviceIds = array_keys($container->findTaggedServiceIds('cache.provider'));
         foreach ($serviceIds as $serviceId) {
             $definition = $container->getDefinition($serviceId);
-            $container->setAlias($definition->getClass(), $serviceId);
+            $class = $definition->getClass();
+            if (null !== $class) {
+                $container->setAlias($class, $serviceId);
+            }
         }
     }
 }

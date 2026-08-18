@@ -16,26 +16,23 @@ use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * An abstract factory that makes it easier to implement new factories. A class that extend the AbstractAdapterFactory
- * should override AbstractAdapterFactory::$dependencies and AbstractAdapterFactory::configureOptionResolver().
+ * Base implementation for adapter factories.
+ *
+ * Subclasses declare their dependencies in AbstractAdapterFactory::DEPENDENCIES and configure their options in
+ * AbstractAdapterFactory::configureOptionResolver().
  *
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
 abstract class AbstractAdapterFactory implements AdapterFactoryInterface
 {
-    protected static $dependencies = [];
+    protected const DEPENDENCIES = [];
 
     /**
-     * @param array $config
-     *
-     * @return CacheItemPoolInterface
+     * @param array<string, mixed> $config
      */
-    abstract protected function getAdapter(array $config);
+    abstract protected function getAdapter(array $config): CacheItemPoolInterface;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function createAdapter(array $options = [])
+    public function createAdapter(array $options = []): CacheItemPoolInterface
     {
         $this->verifyDependencies();
 
@@ -46,10 +43,7 @@ abstract class AbstractAdapterFactory implements AdapterFactoryInterface
         return $this->getAdapter($config);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function validate(array $options, $adapterName)
+    public static function validate(array $options, string $adapterName): void
     {
         static::verifyDependencies();
 
@@ -60,7 +54,7 @@ abstract class AbstractAdapterFactory implements AdapterFactoryInterface
             $resolver->resolve($options);
         } catch (\Exception $e) {
             $message = sprintf(
-                'Error while configure adapter %s. Verify your configuration at "cache_adapter.providers.%s.options". %s',
+                'Error while configuring adapter %s. Verify your configuration at "cache_adapter.providers.%s.options". %s',
                 $adapterName,
                 $adapterName,
                 $e->getMessage()
@@ -71,32 +65,23 @@ abstract class AbstractAdapterFactory implements AdapterFactoryInterface
     }
 
     /**
-     * Make sure that we have the required class and throw and exception if we don't.
+     * Make sure that the required classes are available.
      *
      * @throws \LogicException
      */
-    protected static function verifyDependencies()
+    protected static function verifyDependencies(): void
     {
-        foreach (static::$dependencies as $dependency) {
+        foreach (static::DEPENDENCIES as $dependency) {
             if (!class_exists($dependency['requiredClass'])) {
-                throw new \LogicException(
-                    sprintf(
-                        'You must install the "%s" package to use the "%s" factory.',
-                        $dependency['packageName'],
-                        static::class
-                    )
-                );
+                throw new \LogicException(sprintf('You must install the "%s" package to use the "%s" factory.', $dependency['packageName'], static::class));
             }
         }
     }
 
     /**
-     * By default we do not have any options to configure. A factory should override this function and confgure
-     * the options resolver.
-     *
-     * @param OptionsResolver $resolver
+     * Configure the options accepted by the factory.
      */
-    protected static function configureOptionResolver(OptionsResolver $resolver)
+    protected static function configureOptionResolver(OptionsResolver $resolver): void
     {
     }
 }

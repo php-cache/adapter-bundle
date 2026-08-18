@@ -23,43 +23,56 @@ use Psr\Log\LoggerInterface;
  */
 final class DummyAdapter implements CacheItemPoolInterface, LoggerAwareInterface
 {
-    public function getItem($key)
+    public function getItem(string $key): CacheItemInterface
     {
+        throw new \LogicException('The dummy adapter cannot be used.');
     }
 
-    public function getItems(array $keys = [])
+    /**
+     * @return iterable<string, CacheItemInterface>
+     */
+    public function getItems(array $keys = []): iterable
     {
+        throw new \LogicException('The dummy adapter cannot be used.');
     }
 
-    public function hasItem($key)
+    public function hasItem(string $key): bool
     {
+        throw new \LogicException('The dummy adapter cannot be used.');
     }
 
-    public function clear()
+    public function clear(): bool
     {
+        throw new \LogicException('The dummy adapter cannot be used.');
     }
 
-    public function deleteItem($key)
+    public function deleteItem(string $key): bool
     {
+        throw new \LogicException('The dummy adapter cannot be used.');
     }
 
-    public function deleteItems(array $keys)
+    public function deleteItems(array $keys): bool
     {
+        throw new \LogicException('The dummy adapter cannot be used.');
     }
 
-    public function save(CacheItemInterface $item)
+    public function save(CacheItemInterface $item): bool
     {
+        throw new \LogicException('The dummy adapter cannot be used.');
     }
 
-    public function saveDeferred(CacheItemInterface $item)
+    public function saveDeferred(CacheItemInterface $item): bool
     {
+        throw new \LogicException('The dummy adapter cannot be used.');
     }
 
-    public function commit()
+    public function commit(): bool
     {
+        throw new \LogicException('The dummy adapter cannot be used.');
     }
 
-    public function setLogger(LoggerInterface $logger)
+    public function setLogger(LoggerInterface $logger): void
     {
+        throw new \LogicException('The dummy adapter cannot be used.');
     }
 }

@@ -12,20 +12,18 @@
 namespace Cache\AdapterBundle\Factory;
 
 use Cache\Adapter\Apcu\ApcuCachePool;
+use Psr\Cache\CacheItemPoolInterface;
 
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
 final class ApcuFactory extends AbstractAdapterFactory
 {
-    protected static $dependencies = [
+    protected const DEPENDENCIES = [
         ['requiredClass' => 'Cache\Adapter\Apcu\ApcuCachePool', 'packageName' => 'cache/apcu-adapter'],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getAdapter(array $config)
+    public function getAdapter(array $config): CacheItemPoolInterface
     {
         return new ApcuCachePool();
     }

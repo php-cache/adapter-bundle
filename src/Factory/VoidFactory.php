@@ -12,20 +12,18 @@
 namespace Cache\AdapterBundle\Factory;
 
 use Cache\Adapter\Void\VoidCachePool;
+use Psr\Cache\CacheItemPoolInterface;
 
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
 final class VoidFactory extends AbstractAdapterFactory
 {
-    protected static $dependencies = [
+    protected const DEPENDENCIES = [
         ['requiredClass' => 'Cache\Adapter\Void\VoidCachePool', 'packageName' => 'cache/void-adapter'],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getAdapter(array $config)
+    public function getAdapter(array $config): CacheItemPoolInterface
     {
         return new VoidCachePool();
     }

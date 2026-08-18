@@ -1,10 +1,8 @@
 {
     "name": "cache/adapter-bundle",
-    "type": "symfony-bundle",
     "description": "A bundle that registers cache implementations as Symfony services supporting PSR-6 and tagging",
-    "keywords": [],
-    "homepage": "https://github.com/php-cache/adapter-bundle",
     "license": "MIT",
+    "type": "symfony-bundle",
     "authors": [
         {
             "name": "Aaron Scherer",
@@ -17,36 +15,30 @@
             "homepage": "https://github.com/Nyholm"
         }
     ],
+    "homepage": "https://github.com/php-cache/adapter-bundle",
     "require": {
-        "php": "^5.6 || ^7.0",
-        "cache/array-adapter": "^1.0",
-        "cache/namespaced-cache": "^1.0",
-        "psr/cache": "^1.0",
-        "psr/log": "^1.0",
-        "symfony/framework-bundle": "^2.7 || ^3.0 || ^4.0",
-        "symfony/options-resolver": "^2.7 || ^3.0 || ^4.0"
+        "php": "^8.2",
+        "cache/array-adapter": "^2.0",
+        "cache/namespaced-cache": "^2.0",
+        "psr/cache": "^3.0",
+        "psr/log": "^3.0",
+        "symfony/framework-bundle": "^6.4 || ^7.0 || ^8.0",
+        "symfony/options-resolver": "^6.4 || ^7.0 || ^8.0",
+        "symfony/yaml": "^6.4 || ^7.0 || ^8.0"
     },
     "require-dev": {
-        "cache/apc-adapter": "^1.0",
-        "cache/apcu-adapter": "^1.0",
-        "cache/chain-adapter": "^1.0",
-        "cache/doctrine-adapter": "^1.0",
-        "cache/filesystem-adapter": "^1.0",
-        "cache/memcache-adapter": "^1.0",
-        "cache/memcached-adapter": "^1.0",
-        "cache/predis-adapter": "^1.0",
-        "cache/prefixed-cache": "^1.0",
-        "cache/redis-adapter": "^1.0",
-        "cache/void-adapter": "^1.0",
-        "doctrine/cache": "^1.6",
-        "matthiasnoback/symfony-dependency-injection-test": "^1.1 || ^2.3",
-        "nyholm/symfony-bundle-test": "^1.2.0",
-        "predis/predis": "^1.1",
-        "symfony/phpunit-bridge": "^3.3 || ^4.0"
+        "cache/cache": "^2.0@dev",
+        "matthiasnoback/symfony-dependency-injection-test": "^6.3",
+        "mongodb/mongodb": "^2.0",
+        "nyholm/symfony-bundle-test": "^3.1",
+        "php-cs-fixer/shim": "3.95.19",
+        "phpstan/phpstan": "2.2.8",
+        "phpunit/phpunit": "^11.5",
+        "predis/predis": "^2.0 || ^3.0"
     },
     "suggest": {
-        "cache/*-adapter": "A actual implementation of PSR-6 cache",
-        "cache/cache-bundle": "To integrate with the symfony framework"
+        "cache/*-adapter": "An implementation of PSR-6 cache",
+        "cache/cache-bundle": "Integrates cache services with the Symfony framework"
     },
     "autoload": {
         "psr-4": {
@@ -58,11 +50,27 @@
             "Cache\\AdapterBundle\\Tests\\": "tests/"
         }
     },
-    "scripts": {
-        "test": "vendor/bin/simple-phpunit",
-        "test-ci": "vendor/bin/simple-phpunit --coverage-text --coverage-clover=build/coverage.xml"
-    },
     "config": {
         "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.0-dev"
+        }
+    },
+    "scripts": {
+        "coverage": [
+            "phpunit --coverage-text --coverage-clover=build/coverage.xml",
+            "php tools/check-coverage.php build/coverage.xml 95"
+        ],
+        "cs:check": "php-cs-fixer fix --dry-run --diff --sequential",
+        "cs:fix": "php-cs-fixer fix --sequential",
+        "phpstan": "phpstan analyse --debug --no-progress --memory-limit=1G",
+        "quality": [
+            "@cs:check",
+            "@phpstan",
+            "@test"
+        ],
+        "test": "phpunit"
     }
 }

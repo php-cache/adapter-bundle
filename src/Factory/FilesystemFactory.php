@@ -12,6 +12,8 @@
 namespace Cache\AdapterBundle\Factory;
 
 use Cache\Adapter\Filesystem\FilesystemCachePool;
+use League\Flysystem\FilesystemOperator;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -19,25 +21,22 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 final class FilesystemFactory extends AbstractAdapterFactory
 {
-    protected static $dependencies = [
+    protected const DEPENDENCIES = [
         ['requiredClass' => 'Cache\Adapter\Filesystem\FilesystemCachePool', 'packageName' => 'cache/filesystem-adapter'],
     ];
 
     /**
-     * {@inheritdoc}
+     * @param array{flysystem_service: FilesystemOperator} $config
      */
-    public function getAdapter(array $config)
+    public function getAdapter(array $config): CacheItemPoolInterface
     {
         return new FilesystemCachePool($config['flysystem_service']);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected static function configureOptionResolver(OptionsResolver $resolver)
+    protected static function configureOptionResolver(OptionsResolver $resolver): void
     {
         $resolver->setRequired(['flysystem_service']);
 
-        $resolver->setAllowedTypes('flysystem_service', ['string', 'object']);
+        $resolver->setAllowedTypes('flysystem_service', ['string', FilesystemOperator::class]);
     }
 }

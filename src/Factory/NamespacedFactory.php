@@ -12,6 +12,7 @@
 namespace Cache\AdapterBundle\Factory;
 
 use Cache\Namespaced\NamespacedCachePool;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -19,26 +20,25 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 final class NamespacedFactory extends AbstractAdapterFactory
 {
-    protected static $dependencies = [
+    protected const DEPENDENCIES = [
         ['requiredClass' => 'Cache\Namespaced\NamespacedCachePool', 'packageName' => 'cache/namespaced-cache'],
     ];
 
     /**
-     * {@inheritdoc}
+     * @param array{service: CacheItemPoolInterface, namespace: string} $config
      */
-    public function getAdapter(array $config)
+    public function getAdapter(array $config): CacheItemPoolInterface
     {
-        return new NamespacedCachePool($config['service'], $config['namespace']);
+        return NamespacedCachePool::create($config['service'], $config['namespace']);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected static function configureOptionResolver(OptionsResolver $resolver)
+    protected static function configureOptionResolver(OptionsResolver $resolver): void
     {
         parent::configureOptionResolver($resolver);
 
         $resolver->setRequired(['namespace', 'service']);
         $resolver->setAllowedTypes('namespace', ['string']);
+        $resolver->setAllowedValues('namespace', static fn (string $namespace): bool => '' !== $namespace);
+        $resolver->setAllowedTypes('service', ['string', CacheItemPoolInterface::class]);
     }
 }

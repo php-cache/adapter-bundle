@@ -14,6 +14,7 @@ namespace Cache\AdapterBundle\Factory;
 use Cache\Adapter\Memcached\MemcachedCachePool;
 use Cache\AdapterBundle\ProviderHelper\Memcached;
 use Cache\Namespaced\NamespacedCachePool;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -21,17 +22,24 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 final class MemcachedFactory extends AbstractAdapterFactory
 {
-    protected static $dependencies = [
+    protected const DEPENDENCIES = [
         ['requiredClass' => 'Cache\Adapter\Memcached\MemcachedCachePool', 'packageName' => 'cache/memcached-adapter'],
     ];
 
     /**
-     * {@inheritdoc}
+     * @param array{
+     *     persistent_id: string|null,
+     *     host: string,
+     *     port: int|string,
+     *     pool_namespace: string|null,
+     *     redundant_servers: list<array{host?: string, port?: int|string}>,
+     *     driver_options: array<string, mixed>
+     * } $config
      */
-    public function getAdapter(array $config)
+    public function getAdapter(array $config): CacheItemPoolInterface
     {
-        $client = new Memcached($config['persistent_id']);
-        $client->addServer($config['host'], $config['port']);
+        $client = null === $config['persistent_id'] ? new Memcached() : new Memcached($config['persistent_id']);
+        $client->addServer($config['host'], (int) $config['port']);
 
         foreach ($config['redundant_servers'] as $server) {
             if (!isset($server['host'])) {
@@ -41,26 +49,28 @@ final class MemcachedFactory extends AbstractAdapterFactory
             if (isset($server['port'])) {
                 $port = $server['port'];
             }
-            $client->addServer($server['host'], $port);
+            $client->addServer($server['host'], (int) $port);
         }
 
         foreach ($config['driver_options'] as $constant => $value) {
-            $client->setOption(constant($constant), $value);
+            $option = defined($constant) ? constant($constant) : null;
+            if (!is_int($option)) {
+                throw new \InvalidArgumentException(sprintf('Unknown Memcached option constant "%s".', $constant));
+            }
+
+            $client->setOption($option, $value);
         }
 
         $pool = new MemcachedCachePool($client);
 
         if (null !== $config['pool_namespace']) {
-            $pool = new NamespacedCachePool($pool, $config['pool_namespace']);
+            $pool = NamespacedCachePool::create($pool, $config['pool_namespace']);
         }
 
         return $pool;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected static function configureOptionResolver(OptionsResolver $resolver)
+    protected static function configureOptionResolver(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'persistent_id' => null,
@@ -75,6 +85,7 @@ final class MemcachedFactory extends AbstractAdapterFactory
         $resolver->setAllowedTypes('host', ['string']);
         $resolver->setAllowedTypes('port', ['string', 'int']);
         $resolver->setAllowedTypes('pool_namespace', ['string', 'null']);
+        $resolver->setAllowedValues('pool_namespace', static fn (?string $namespace): bool => null === $namespace || '' !== $namespace);
         $resolver->setAllowedTypes('redundant_servers', ['array']);
         $resolver->setAllowedTypes('driver_options', ['array']);
     }

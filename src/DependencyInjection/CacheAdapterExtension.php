@@ -12,8 +12,11 @@
 namespace Cache\AdapterBundle\DependencyInjection;
 
 use Cache\AdapterBundle\DummyAdapter;
+use Cache\AdapterBundle\Exception\ConfigurationException;
+use Cache\AdapterBundle\Factory\AdapterFactoryInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Alias;
+use Symfony\Component\DependencyInjection\Argument\ServiceClosureArgument;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\DependencyInjection\Reference;
@@ -27,10 +30,10 @@ class CacheAdapterExtension extends Extension
     /**
      * Loads the configs for Cache and puts data into the container.
      *
-     * @param array            $configs   Array of configs
-     * @param ContainerBuilder $container Container Object
+     * @param array<array-key, mixed> $configs   Array of configs
+     * @param ContainerBuilder        $container Container Object
      */
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
@@ -46,6 +49,10 @@ class CacheAdapterExtension extends Extension
             }
 
             $factoryClass = $container->getDefinition($arguments['factory'])->getClass();
+            if (!is_string($factoryClass) || !is_a($factoryClass, AdapterFactoryInterface::class, true)) {
+                throw new ConfigurationException(sprintf('Service "%s" must use a factory implementing "%s".', $arguments['factory'], AdapterFactoryInterface::class));
+            }
+
             $factoryClass::validate($arguments['options'], $name);
 
             // See if any option has a service reference
@@ -63,22 +70,58 @@ class CacheAdapterExtension extends Extension
         }
 
         if (null !== $first) {
-            $container->setAlias('cache', 'cache.provider.'.$first);
-            $container->setAlias('php_cache', 'cache.provider.'.$first);
+            $defaultProvider = 'cache.provider.'.$first;
+            if (null !== $config['fallback_provider']) {
+                $fallbackProvider = ltrim($config['fallback_provider'], '@');
+                if (array_key_exists($fallbackProvider, $config['providers'])) {
+                    $fallbackProvider = 'cache.provider.'.$fallbackProvider;
+                }
+                $forbiddenProviders = ['cache', 'php_cache', 'cache.provider.default_fallback'];
+                if (in_array($fallbackProvider, $forbiddenProviders, true)) {
+                    throw new ConfigurationException('The fallback provider must differ from the default provider.');
+                }
+                $seenAliases = [];
+                while ($container->hasAlias($fallbackProvider)) {
+                    if (isset($seenAliases[$fallbackProvider])) {
+                        throw new ConfigurationException('The fallback provider contains a circular alias.');
+                    }
+                    $seenAliases[$fallbackProvider] = true;
+                    $fallbackProvider = (string) $container->getAlias($fallbackProvider);
+                }
+                if ($defaultProvider === $fallbackProvider || in_array($fallbackProvider, $forbiddenProviders, true)) {
+                    throw new ConfigurationException('The fallback provider must differ from the default provider.');
+                }
+
+                $fallbackDefinition = $container->register('cache.provider.default_fallback', DummyAdapter::class);
+                $fallbackDefinition
+                    ->setFactory([new Reference('cache.factory.fallback'), 'createAdapter'])
+                    ->addArgument(new ServiceClosureArgument(new Reference($defaultProvider)))
+                    ->addArgument(new ServiceClosureArgument(new Reference($fallbackProvider)))
+                    ->setPublic(true)
+                    ->addTag('cache.provider');
+
+                $defaultProvider = 'cache.provider.default_fallback';
+                foreach ($config['providers'][$first]['aliases'] as $alias) {
+                    $container->setAlias($alias, new Alias($defaultProvider, true));
+                }
+            }
+
+            $container->setAlias('cache', $defaultProvider);
+            $container->setAlias('php_cache', $defaultProvider);
         }
     }
 
     /**
-     * @param array $options
+     * @param array<array-key, mixed> $options
      *
-     * @return array
+     * @return array<array-key, mixed>
      */
-    private function findReferences(array $options)
+    private function findReferences(array $options): array
     {
         foreach ($options as $key => $value) {
             if (is_array($value)) {
                 $options[$key] = $this->findReferences($value);
-            } elseif ('_service' === substr($key, -8) || 0 === strpos($value, '@') || 'service' === $key) {
+            } elseif (is_string($value) && (str_ends_with((string) $key, '_service') || str_starts_with($value, '@') || 'service' === $key)) {
                 $options[$key] = new Reference(ltrim($value, '@'));
             }
         }

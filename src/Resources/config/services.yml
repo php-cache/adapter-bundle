@@ -1,6 +1,4 @@
 services:
-  cache.factory.apc:
-    class: Cache\AdapterBundle\Factory\ApcFactory
   cache.factory.apcu:
     class: Cache\AdapterBundle\Factory\ApcuFactory
   cache.factory.array:
@@ -9,10 +7,14 @@ services:
     class: Cache\AdapterBundle\Factory\ChainFactory
   cache.factory.filesystem:
     class: Cache\AdapterBundle\Factory\FilesystemFactory
+  cache.factory.fallback:
+    class: Cache\AdapterBundle\Factory\FallbackAdapterFactory
   cache.factory.memcached:
     class: Cache\AdapterBundle\Factory\MemcachedFactory
   cache.factory.memcache:
     class: Cache\AdapterBundle\Factory\MemcacheFactory
+  cache.factory.mongodb:
+    class: Cache\AdapterBundle\Factory\MongoDBFactory
   cache.factory.namespaced:
     class: Cache\AdapterBundle\Factory\NamespacedFactory
   cache.factory.predis:
@@ -23,28 +25,3 @@ services:
     class: Cache\AdapterBundle\Factory\RedisFactory
   cache.factory.void:
     class: Cache\AdapterBundle\Factory\VoidFactory
-
-  cache.factory.doctrine_couchbase:
-    class: Cache\AdapterBundle\Factory\DoctrineCouchbaseFactory
-  cache.factory.doctrine_filesystem:
-    class: Cache\AdapterBundle\Factory\DoctrineFilesystemFactory
-  cache.factory.doctrine_memcached:
-    class: Cache\AdapterBundle\Factory\DoctrineMemcachedFactory
-  cache.factory.doctrine_memcache:
-    class: Cache\AdapterBundle\Factory\DoctrineMemcacheFactory
-  cache.factory.doctrine_mongodb:
-    class: Cache\AdapterBundle\Factory\DoctrineMongodDBFactory
-  cache.factory.doctrine_predis:
-    class: Cache\AdapterBundle\Factory\DoctrinePredisFactory
-  cache.factory.doctrine_redis:
-    class: Cache\AdapterBundle\Factory\DoctrineRedisFactory
-  cache.factory.doctrine_riak:
-    class: Cache\AdapterBundle\Factory\DoctrineRiakFactory
-  cache.factory.doctrine_sqlite3:
-    class: Cache\AdapterBundle\Factory\DoctrineSQLite3Factory
-  cache.factory.doctrine_wincache:
-    class: Cache\AdapterBundle\Factory\DoctrineWinCacheFactory
-  cache.factory.doctrine_xcache:
-    class: Cache\AdapterBundle\Factory\DoctrineXcacheFactory
-  cache.factory.doctrine_zenddata:
-    class: Cache\AdapterBundle\Factory\DoctrineZendDataFactory

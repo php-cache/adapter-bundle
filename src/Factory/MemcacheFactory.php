@@ -12,7 +12,7 @@
 namespace Cache\AdapterBundle\Factory;
 
 use Cache\Adapter\Memcache\MemcacheCachePool;
-use Memcache;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -20,17 +20,21 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 final class MemcacheFactory extends AbstractAdapterFactory
 {
-    protected static $dependencies = [
+    protected const DEPENDENCIES = [
         ['requiredClass' => 'Cache\Adapter\Memcache\MemcacheCachePool', 'packageName' => 'cache/memcache-adapter'],
     ];
 
     /**
-     * {@inheritdoc}
+     * @param array{
+     *     host: string,
+     *     port: int|string,
+     *     redundant_servers: list<array{host?: string, port?: int|string}>
+     * } $config
      */
-    public function getAdapter(array $config)
+    public function getAdapter(array $config): CacheItemPoolInterface
     {
-        $client = new Memcache();
-        $client->connect($config['host'], $config['port']);
+        $client = new \Memcache();
+        $client->connect($config['host'], (int) $config['port']);
 
         foreach ($config['redundant_servers'] as $server) {
             if (!isset($server['host'])) {
@@ -40,16 +44,13 @@ final class MemcacheFactory extends AbstractAdapterFactory
             if (isset($server['port'])) {
                 $port = $server['port'];
             }
-            $client->addserver($server['host'], $port);
+            $client->addserver($server['host'], (int) $port);
         }
 
         return new MemcacheCachePool($client);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected static function configureOptionResolver(OptionsResolver $resolver)
+    protected static function configureOptionResolver(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'host' => '127.0.0.1',
