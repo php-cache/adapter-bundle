@@ -2,6 +2,15 @@
 
 declare(strict_types=1);
 
+/*
+ * This file is part of php-cache organization.
+ *
+ * (c) 2015 Aaron Scherer <aequasi@gmail.com>, Tobias Nyholm <tobias.nyholm@gmail.com>
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
+
 $arguments = $_SERVER['argv'] ?? [];
 if (!is_array($arguments) || !array_is_list($arguments) || 3 !== count($arguments) || !is_string($arguments[1]) || !is_string($arguments[2]) || !is_numeric($arguments[2])) {
     fwrite(\STDERR, "Usage: php tools/check-coverage.php <clover.xml> <minimum-percent>\n");
