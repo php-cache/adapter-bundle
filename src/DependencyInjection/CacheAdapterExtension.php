@@ -13,7 +13,6 @@ namespace Cache\AdapterBundle\DependencyInjection;
 
 use Cache\AdapterBundle\DummyAdapter;
 use Cache\AdapterBundle\Exception\ConfigurationException;
-use Cache\AdapterBundle\Factory\AdapterFactoryInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\Argument\ServiceClosureArgument;
@@ -43,17 +42,16 @@ class CacheAdapterExtension extends Extension
 
         // Configure client services
         $first = isset($config['providers']['default']) ? 'default' : null;
+        $factoryConfigurations = [];
         foreach ($config['providers'] as $name => $arguments) {
             if (null === $first) {
                 $first = $name;
             }
 
-            $factoryClass = $container->getDefinition($arguments['factory'])->getClass();
-            if (!\is_string($factoryClass) || !is_a($factoryClass, AdapterFactoryInterface::class, true)) {
-                throw new ConfigurationException(\sprintf('Service "%s" must use a factory implementing "%s".', $arguments['factory'], AdapterFactoryInterface::class));
-            }
-
-            $factoryClass::validate($arguments['options'], $name);
+            $factoryConfigurations[$name] = [
+                'factory' => $arguments['factory'],
+                'options' => $arguments['options'],
+            ];
 
             // See if any option has a service reference
             $arguments['options'] = $this->findReferences($arguments['options']);
@@ -68,6 +66,7 @@ class CacheAdapterExtension extends Extension
                 $container->setAlias($alias, new Alias('cache.provider.'.$name, true));
             }
         }
+        $container->setParameter('cache_adapter.factory_configurations', $factoryConfigurations);
 
         if (null !== $first) {
             $defaultProvider = 'cache.provider.'.$first;

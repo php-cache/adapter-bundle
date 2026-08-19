@@ -11,6 +11,7 @@
 
 namespace Cache\AdapterBundle;
 
+use Cache\AdapterBundle\DependencyInjection\CompilerPass\AdapterFactoryCompilerPass;
 use Cache\AdapterBundle\DependencyInjection\CompilerPass\ServiceAliasCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -24,6 +25,7 @@ class CacheAdapterBundle extends Bundle
     {
         parent::build($container);
 
+        $container->addCompilerPass(new AdapterFactoryCompilerPass());
         $container->addCompilerPass(new ServiceAliasCompilerPass());
     }
 }

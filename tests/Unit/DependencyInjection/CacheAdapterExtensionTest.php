@@ -13,11 +13,17 @@ declare(strict_types=1);
 
 namespace Cache\AdapterBundle\Tests\Unit\DependencyInjection;
 
+use Cache\Adapter\PHPArray\ArrayCachePool;
+use Cache\AdapterBundle\CacheAdapterBundle;
 use Cache\AdapterBundle\DependencyInjection\CacheAdapterExtension;
 use Cache\AdapterBundle\DummyAdapter;
 use Cache\AdapterBundle\Exception\ConfigurationException;
+use Cache\AdapterBundle\Factory\AbstractAdapterFactory;
 use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractExtensionTestCase;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\DependencyInjection\Argument\ServiceClosureArgument;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Reference;
 
 final class CacheAdapterExtensionTest extends AbstractExtensionTestCase
@@ -37,6 +43,24 @@ final class CacheAdapterExtensionTest extends AbstractExtensionTestCase
         $this->assertContainerBuilderHasService('cache.provider.foo', DummyAdapter::class);
         $this->assertContainerBuilderHasAlias('cache', 'cache.provider.foo');
         $this->assertContainerBuilderHasService('cache.factory.mongodb');
+    }
+
+    public function testItResolvesApplicationDefinedFactoryServicesAfterExtensionsMerge()
+    {
+        $container = new ContainerBuilder();
+        $container->registerExtension(new CacheAdapterExtension());
+        $container->registerExtension(new ApplicationCacheExtension());
+        (new CacheAdapterBundle())->build($container);
+        $container->loadFromExtension('cache_adapter', [
+            'providers' => [
+                'custom' => ['factory' => 'application.cache_factory'],
+            ],
+        ]);
+        $container->loadFromExtension('application_cache');
+
+        $container->compile();
+
+        self::assertInstanceOf(ArrayCachePool::class, $container->get('cache.provider.custom'));
     }
 
     public function testAliasProvidersExists()
@@ -185,17 +209,17 @@ final class CacheAdapterExtensionTest extends AbstractExtensionTestCase
     public function testItRejectsServicesThatAreNotAdapterFactories()
     {
         $this->registerService('not_a_factory', \stdClass::class);
+        $this->load(['providers' => ['foo' => ['factory' => 'not_a_factory']]]);
+
         $this->expectException(ConfigurationException::class);
         $this->expectExceptionMessage('must use a factory implementing');
 
-        $this->load(['providers' => ['foo' => ['factory' => 'not_a_factory']]]);
+        (new CacheAdapterBundle())->build($this->container);
+        $this->compile();
     }
 
     public function testItRejectsAnEmptyNamespaceBeforeTheProviderIsInstantiated()
     {
-        $this->expectException(ConfigurationException::class);
-        $this->expectExceptionMessage('pool_namespace');
-
         $this->load([
             'providers' => [
                 'foo' => [
@@ -204,5 +228,32 @@ final class CacheAdapterExtensionTest extends AbstractExtensionTestCase
                 ],
             ],
         ]);
+
+        $this->expectException(ConfigurationException::class);
+        $this->expectExceptionMessage('pool_namespace');
+
+        (new CacheAdapterBundle())->build($this->container);
+        $this->compile();
+    }
+}
+
+final class ApplicationCacheExtension extends Extension
+{
+    public function load(array $configs, ContainerBuilder $container): void
+    {
+        $container->register('application.cache_factory', ApplicationCacheFactory::class);
+    }
+
+    public function getAlias(): string
+    {
+        return 'application_cache';
+    }
+}
+
+final class ApplicationCacheFactory extends AbstractAdapterFactory
+{
+    protected function getAdapter(array $config): CacheItemPoolInterface
+    {
+        return new ArrayCachePool();
     }
 }
