@@ -52,6 +52,8 @@ final class MemcachedFactory extends AbstractAdapterFactory
             $client->addServer($server['host'], (int) $port);
         }
 
+        $pool = new MemcachedCachePool($client);
+
         foreach ($config['driver_options'] as $constant => $value) {
             $option = \defined($constant) ? \constant($constant) : null;
             if (!\is_int($option)) {
@@ -60,8 +62,6 @@ final class MemcachedFactory extends AbstractAdapterFactory
 
             $client->setOption($option, $value);
         }
-
-        $pool = new MemcachedCachePool($client);
 
         if (null !== $config['pool_namespace']) {
             $pool = NamespacedCachePool::create($pool, $config['pool_namespace']);

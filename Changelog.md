@@ -2,6 +2,13 @@
 
 Each release groups changes under Added, Removed, Changed, or Fixed headings.
 
+## 2.0.1
+
+### Fixed
+
+- Resolve app-defined factory services after Symfony merges all extension definitions.
+- Let Memcached `driver_options` override pool defaults, including the binary protocol setting.
+
 ## 2.0.0
 
 ### Added

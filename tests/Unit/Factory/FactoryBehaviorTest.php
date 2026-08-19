@@ -150,6 +150,25 @@ final class FactoryBehaviorTest extends TestCase
         self::assertInstanceOf(TaggableCacheItemInterface::class, $pool->getItem('key'));
     }
 
+    #[RunInSeparateProcess]
+    public function testMemcachedDriverOptionsOverridePoolDefaults()
+    {
+        if (class_exists(\Memcached::class)) {
+            $this->markTestSkipped('This test uses a local Memcached stub.');
+        }
+
+        eval('namespace { class Memcached { public const OPT_BINARY_PROTOCOL = 18; private array $servers = []; public function __construct(?string $persistentId = null) {} public function getServerList(): array { return $this->servers; } public function addServer(mixed $host, mixed $port, mixed $weight = 0): bool { $this->servers[] = ["host" => $host, "port" => $port]; return true; } public function setOption(int $option, mixed $value): bool { \\Cache\\AdapterBundle\\Tests\\Unit\\Factory\\MemcachedOptionRecorder::$options[$option] = $value; return true; } } }');
+
+        (new MemcachedFactory())->createAdapter();
+        self::assertTrue(MemcachedOptionRecorder::$options[\Memcached::OPT_BINARY_PROTOCOL]);
+
+        (new MemcachedFactory())->createAdapter([
+            'driver_options' => ['Memcached::OPT_BINARY_PROTOCOL' => false],
+        ]);
+
+        self::assertFalse(MemcachedOptionRecorder::$options[\Memcached::OPT_BINARY_PROTOCOL]);
+    }
+
     public function testNamespacedFactoryCreatesUsablePool()
     {
         $pool = (new NamespacedFactory())->createAdapter([
@@ -342,4 +361,10 @@ final class RecordingDsnFactory extends AbstractDsnAdapterFactory
 
         return new VoidCachePool();
     }
+}
+
+final class MemcachedOptionRecorder
+{
+    /** @var array<int, mixed> */
+    public static array $options = [];
 }

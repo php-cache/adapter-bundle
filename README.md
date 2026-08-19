@@ -54,6 +54,20 @@ It also rejects `cache`, `php_cache`, `cache.provider.default_fallback`, and cir
 
 Version 2 provides APCu, Array, Chain, Filesystem, Memcache, Memcached, MongoDB, Namespaced, Predis, Prefixed, Redis, and Void factories.
 
+Applications can use a custom service that implements `AdapterFactoryInterface` as a provider factory. AdapterBundle validates the service after Symfony merges all extension definitions, so another app bundle can define it.
+
+Memcached `driver_options` override the pool defaults. This configuration keeps the default server and uses the ASCII protocol:
+
+```yaml
+cache_adapter:
+  providers:
+    memcached:
+      factory: cache.factory.memcached
+      options:
+        driver_options:
+          Memcached::OPT_BINARY_PROTOCOL: false
+```
+
 `namespace` and `pool_namespace` must not be empty. Redis DSNs support both password-only authentication and ACL credentials such as `redis://alice:secret@cache.example:6379/0`. Percent-encode reserved characters in usernames and passwords.
 
 Read the [complete AdapterBundle documentation](https://www.php-cache.com/en/latest/symfony/adapter-bundle/) for every factory and option.
