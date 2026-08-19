@@ -16,6 +16,7 @@ namespace Cache\AdapterBundle\Tests\Unit\DependencyInjection;
 use Cache\Adapter\PHPArray\ArrayCachePool;
 use Cache\AdapterBundle\CacheAdapterBundle;
 use Cache\AdapterBundle\DependencyInjection\CacheAdapterExtension;
+use Cache\AdapterBundle\DependencyInjection\CompilerPass\AdapterFactoryCompilerPass;
 use Cache\AdapterBundle\DummyAdapter;
 use Cache\AdapterBundle\Exception\ConfigurationException;
 use Cache\AdapterBundle\Factory\AbstractAdapterFactory;
@@ -61,6 +62,15 @@ final class CacheAdapterExtensionTest extends AbstractExtensionTestCase
         $container->compile();
 
         self::assertInstanceOf(ArrayCachePool::class, $container->get('cache.provider.custom'));
+    }
+
+    public function testFactoryCompilerPassIgnoresContainersWithoutFactoryConfiguration()
+    {
+        $container = new ContainerBuilder();
+
+        (new AdapterFactoryCompilerPass())->process($container);
+
+        self::assertFalse($container->hasParameter('cache_adapter.factory_configurations'));
     }
 
     public function testAliasProvidersExists()

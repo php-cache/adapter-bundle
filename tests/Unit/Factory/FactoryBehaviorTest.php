@@ -154,7 +154,18 @@ final class FactoryBehaviorTest extends TestCase
     public function testMemcachedDriverOptionsOverridePoolDefaults()
     {
         if (class_exists(\Memcached::class)) {
-            $this->markTestSkipped('This test uses a local Memcached stub.');
+            $defaultId = 'adapter-bundle-default-'.bin2hex(random_bytes(8));
+            (new MemcachedFactory())->createAdapter(['persistent_id' => $defaultId]);
+            self::assertTrue((bool) (new \Memcached($defaultId))->getOption(\Memcached::OPT_BINARY_PROTOCOL));
+
+            $configuredId = 'adapter-bundle-configured-'.bin2hex(random_bytes(8));
+            (new MemcachedFactory())->createAdapter([
+                'persistent_id' => $configuredId,
+                'driver_options' => ['Memcached::OPT_BINARY_PROTOCOL' => false],
+            ]);
+            self::assertFalse((bool) (new \Memcached($configuredId))->getOption(\Memcached::OPT_BINARY_PROTOCOL));
+
+            return;
         }
 
         eval('namespace { class Memcached { public const OPT_BINARY_PROTOCOL = 18; private array $servers = []; public function __construct(?string $persistentId = null) {} public function getServerList(): array { return $this->servers; } public function addServer(mixed $host, mixed $port, mixed $weight = 0): bool { $this->servers[] = ["host" => $host, "port" => $port]; return true; } public function setOption(int $option, mixed $value): bool { \\Cache\\AdapterBundle\\Tests\\Unit\\Factory\\MemcachedOptionRecorder::$options[$option] = $value; return true; } } }');
