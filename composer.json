@@ -18,7 +18,7 @@
     "homepage": "https://github.com/php-cache/adapter-bundle",
     "require": {
         "php": "^8.2",
-        "cache/array-adapter": "^2.0",
+        "cache/array-adapter": "^2.0 || ^3.0",
         "cache/namespaced-cache": "^2.0",
         "psr/cache": "^3.0",
         "psr/log": "^3.0",
@@ -27,7 +27,7 @@
         "symfony/yaml": "^6.4 || ^7.0 || ^8.0"
     },
     "require-dev": {
-        "cache/cache": "^2.0@dev",
+        "cache/cache": "^3.0@dev",
         "matthiasnoback/symfony-dependency-injection-test": "^6.3",
         "mongodb/mongodb": "^2.0",
         "nyholm/symfony-bundle-test": "^3.1",
@@ -55,7 +55,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.0-dev"
+            "dev-master": "2.1-dev"
         }
     },
     "scripts": {

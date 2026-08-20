@@ -2,6 +2,13 @@
 
 Each release groups changes under Added, Removed, Changed, or Fixed headings.
 
+## 2.1.0
+
+### Changed
+
+- Support PHP Cache 2 and 3 adapters.
+- Support the PHP Cache 3 tag-generation storage format. Clear shared caches before upgrading or rolling back.
+
 ## 2.0.1
 
 ### Fixed

@@ -6,14 +6,14 @@
 
 AdapterBundle creates PSR-6 cache services from Symfony configuration.
 
-Version 2 requires PHP 8.2, `psr/cache` 3, `psr/log` 3, and Symfony 6.4, 7, or 8. It uses PHP Cache 2 adapters.
+Version 2.1 requires PHP 8.2, `psr/cache` 3, `psr/log` 3, and Symfony 6.4, 7, or 8. It supports PHP Cache 2 and 3 adapters.
 
 ## Installation
 
 Install the bundle and the adapter package your app needs:
 
 ```bash
-composer require cache/adapter-bundle:^2.0 cache/redis-adapter:^2.0 cache/void-adapter:^2.0
+composer require cache/adapter-bundle:^2.1 cache/redis-adapter:^3.0 cache/void-adapter:^3.0
 ```
 
 Symfony Flex may register the bundle automatically. Otherwise, add it to `config/bundles.php`:
@@ -52,7 +52,7 @@ It also rejects `cache`, `php_cache`, `cache.provider.default_fallback`, and cir
 
 `fallback_provider` handles failures that occur while Symfony constructs the default provider. For failures raised later by cache operations, configure a Chain provider with `skip_on_failure: true` and place a Void provider last.
 
-Version 2 provides APCu, Array, Chain, Filesystem, Memcache, Memcached, MongoDB, Namespaced, Predis, Prefixed, Redis, and Void factories.
+Version 2.1 provides APCu, Array, Chain, Filesystem, Memcache, Memcached, MongoDB, Namespaced, Predis, Prefixed, Redis, and Void factories for PHP Cache 2 and 3.
 
 Applications can use a custom service that implements `AdapterFactoryInterface` as a provider factory. AdapterBundle validates the service after Symfony merges all extension definitions, so another app bundle can define it.
 
@@ -71,6 +71,14 @@ cache_adapter:
 `namespace` and `pool_namespace` must not be empty. Redis DSNs support both password-only authentication and ACL credentials such as `redis://alice:secret@cache.example:6379/0`. Percent-encode reserved characters in usernames and passwords.
 
 Read the [complete AdapterBundle documentation](https://www.php-cache.com/en/latest/symfony/adapter-bundle/) for every factory and option.
+
+## Using version 3 adapters
+
+AdapterBundle 2.1 supports PHP Cache 3 adapters while it remains compatible with PHP Cache 2 adapters.
+
+PHP Cache 3 stores a generation snapshot with each tagged item and a generation marker for each tag. Version 2 and 3 workers cannot safely share tagged cache storage.
+
+Stop or drain all workers, clear each shared cache, and then deploy AdapterBundle 2.1 with version 3 adapters. Follow the same sequence before a rollback.
 
 ## Upgrading from version 1
 
